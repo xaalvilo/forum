@@ -14,17 +14,23 @@ abstract class Field
 	// Nom HTML du champ
 	protected $name;
 	
-	// valeur par dÃ©faut HTML du champ
+	// valeur par défaut HTML du champ
 	protected $value;
 	
-	// id du champ, permettant en HTML de liÃ© le champ Ã  son nom
+	// id du champ, permettant en HTML de lié le champ Ã  son nom
 	protected $id;
 	
-	// message d'erreur associÃ© au champ
+	// message d'erreur associé au champ
 	protected $errorMessage;
 	
 	//tableau des validateurs
 	protected $validators = array();
+	
+	// indication pour remplir le champ
+	protected $placeholder;
+	
+	// indication HTML de champ obligatoire
+	protected $required;
 	
 	/**
 	* Le constructeur  demande la liste des attributs avec leur valeur afin d'hydrater l'objet
@@ -120,6 +126,21 @@ abstract class Field
 	}
 	
 	/**
+	 * getter de placeholder
+	 */
+	public function placeholder()
+	{
+		return $this->placeholder;
+	}
+	
+	/**  
+	 * getter de required
+	 */
+	public function required()
+	{
+		return $this->required;
+	}
+	/**
 	 * setter de validators
 	 * 
 	 * @param array $validators
@@ -165,5 +186,23 @@ abstract class Field
 	public function setId($id)
 	{
 		$this->id=$id;
+	}
+	/**
+	 * setter de placeholder
+	 */
+	public function setPlaceholder($placeholder)
+	{
+		$this->placeholder=$placeholder;
+	}
+	
+	/**
+	 * 
+	 * Setter de required
+	 * 
+	 * @param unknown $required
+	 */
+	public function setRequired($required)
+	{
+		$this->required = $required;
 	}
 }

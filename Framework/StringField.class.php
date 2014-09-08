@@ -6,19 +6,13 @@
 
 namespace Framework;
 
-class  StringField extends Field
+class StringField extends Field
 {
 	// longueur maximale du champ
 	protected $maxLength;
 	
 	// taille du champ
 	protected $size;
-	
-	// indication pour remplir le champ
-	protected $placeholder;
-	
-	// indication HTML de champ obligatoire
-	protected $required;
 	
 	/**
 	* Méthode permettant de générer le code HTML pour un champ de chaîne de caractère
@@ -35,7 +29,7 @@ class  StringField extends Field
 		}
 		
 		//début du code HTML du champ avec le label, le type et le nom
-		$widget.='<label>'.$this->label.'</label><input type="text" name="'.$this->name.'" id="'.$this->id.'"';
+		$widget.='<label for='.$this->id.'>'.$this->label.'</label><input type="text" name="'.$this->name.'" id="'.$this->id.'"';
 		
 		// s'il y a une valeur, échapper les caractères HTML
 		if(!empty($this->value))
@@ -101,19 +95,5 @@ class  StringField extends Field
 			throw new \Exception('la longueur du champ doit être un entier positif');
 		}
 	}
-	/**
-	* setter de placeholder
-	*/
-	public function setPlaceholder($placeholder)
-	{
-		$this->placeholder=$placeholder;
-	}
-	
-	/**
-	* setter de required
-	*/
-	public function setRequired($required)
-	{
-		$this->required = $required;
-	}
+
 }

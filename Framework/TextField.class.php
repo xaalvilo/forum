@@ -29,7 +29,14 @@ class  TextField extends Field
 		}
 		
 		//début du code HTML du champ avec le label, le nom et l'id du champ
-		$widget.='<label>'.$this->label.'</label><textarea name="'.$this->name.' "id="'.$this->id.'"';
+		$widget.='<label for='.$this->id.'>'.$this->label.'</label><textarea name="'.$this->name.' "id="'.$this->id.'"';
+		
+		
+		//prise en compte de la chaîne de caractère d'indication pour l'utilisateur, si elle existe
+		if(!empty($this->placeholder))
+		{
+			$widget.='placeholder="'.htmlspecialchars($this->placeholder).'"';
+		}
 		
 		//s'il y a un nombre de colonnes, l'intégrer
 		if(!empty($this->cols))
@@ -48,7 +55,15 @@ class  TextField extends Field
 		{
 			$widget.='value="'.htmlspecialchars($this->value.'"');
 		}
-		return $widget.='</textarea>';
+		
+		if($this->required==true)
+		{
+			return $widget.='required </textarea>';
+		}
+		else
+		{
+			return $widget.='</textarea>';
+		}
 	}
 	/**
 	* setter de rows
