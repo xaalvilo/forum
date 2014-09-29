@@ -7,7 +7,7 @@ class Reponse extends ApplicationComponent
 	protected $vue;
 	
 	/*
-	 * permet de spcifier l'en-tte HTTP string lors de l'envoi des fichiers HTML
+	 * permet de spï¿½cifier l'en-tï¿½te HTTP string lors de l'envoi des fichiers HTML
 	 */
 	public function redirect($location)
 	{
@@ -30,16 +30,16 @@ class Reponse extends ApplicationComponent
 	}
 	
 	/**
-	* setcookie() dfinit un cookie qui sera envoy avec le reste des en-ttes. Comme pour les autres en-ttes, 
-	* les cookies doivent tre envoys avant toute autre sortie (c'est une restriction du protocole HTTP, pas de PHP).
+	* setcookie() dï¿½finit un cookie qui sera envoyï¿½ avec le reste des en-tï¿½tes. Comme pour les autres en-tï¿½tes, 
+	* les cookies doivent ï¿½tre envoyï¿½s avant toute autre sortie (c'est une restriction du protocole HTTP, pas de PHP).
 	* Cela impose d'appeler cette fonction avant toute balise <html> ou <head>. 
 	* @param string $nom  Le nom du cookie.
-	* @param string $valeur La valeur du cookie. Cette valeur est stocke sur l'ordinateur du client  
-	* @param number $expire Le temps aprs lequel le cookie expire.
+	* @param string $valeur La valeur du cookie. Cette valeur est stockï¿½e sur l'ordinateur du client  
+	* @param number $expire Le temps aprï¿½s lequel le cookie expire.
 	* @param string $path Le chemin sur le serveur sur lequel le cookie sera disponible
 	* @param string $domain Le domaine pour lequel le cookie est disponible.
-	* @param string $secure Indique si le cookie doit uniquement tre transmis ˆ travers une connexion scurise HTTPS depuis le client (si TRUE)
-	* @param string $httpOnly Lorsque ce paramtre vaut TRUE, le cookie ne sera accessible que par le protocole HTTP. 
+	* @param string $secure Indique si le cookie doit uniquement ï¿½tre transmis ï¿½ travers une connexion sï¿½curisï¿½e HTTPS depuis le client (si TRUE)
+	* @param string $httpOnly Lorsque ce paramï¿½tre vaut TRUE, le cookie ne sera accessible que par le protocole HTTP. 
 	* Cela signifie que le cookie ne sera pas accessible via des langages de scripts, comme Javascript
 	*/
 	public function setCookie($nom,$valeur='',$expire = 0,$path = null, $domain = null,$secure = FALSE,$httpOnly = TRUE)

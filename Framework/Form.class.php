@@ -10,14 +10,29 @@ namespace Framework;
 class Form
 {
 	/* objet instance d'une classe fille de Entité, auquel sera rattaché le formulaire  */
-	protected $entity;
+	protected $entite;
+	
+	/* methode associée au formulaire */
+	protected $method;
+	
+	/* action associée au formulaire */
+	protected $action;
 	
 	/* liste des champs sous forme de tableau */
 	protected $fields;
 	
-	public function __construct(Entity $entity)
+	/* liste des boutons sous forme de tableau */
+	protected $buttons;
+	
+	public function __construct(Entite $entite,$method,$action)
 	{
-		$this->setEntity($entity);
+		$this->setEntite($entite);	
+		
+		if((!empty($method))&&(!empty($action)))
+		{
+		  $this->setMethod($method);
+		  $this->setAction($action);
+		}
 	}
 	
 	/**
@@ -32,11 +47,53 @@ class Form
 		$attr=$field->name();
 		
 		// assignation de la valeur correspondante au champ
-		$field->setValue($this->entity->$attr());
+		$field->setValue($this->entite->$attr());
 		
 		// ajout du champ passé en argument à la liste de champs
-		$this->field[]=$field;
+		$this->fields[]=$field;
+		
 		return $this;
+	}
+	
+	/**
+	 * 
+	 * Méthode
+	 *
+	 * \Framework\Form
+	 * 
+	 * @param Button $button
+	 * @return \Framework\Form
+	 */
+	public function addButton(Button $button)
+	{
+	    // ajout du bouton passé en argument à la liste des boutons
+	    $this->buttons[]=$button;
+	   
+	    return $this;
+	}
+	
+	/**
+	 * 
+	 * Méthode
+	 *
+	 * Cette méthode permet de créerles balises HTML d'ouverture et de cloture d'un formulaire
+	 * 
+	 * return_type string
+	 * 
+	 * @param string $method méthode associée au formulaire
+	 * @param string $action action associée au formulaire
+	 */
+	public function InitForm()
+	{
+	   if (isset($this->method,$this->action))
+	   {
+	      $balise='<form method="'.$this->method.'" action="'.$this->action.'"><p>';
+	   }
+	   else
+	   {
+	      $balise='<form><p>';
+	   }
+	   return $balise;
 	}
 	
 	/**
@@ -46,13 +103,26 @@ class Form
 	*/
 	public function createView()
 	{
-		$view ='';
+	    $view = $this->InitForm();
 		
-		// génération pas à pas de chaque champ du formulaire
-		foreach($this->field as $field)
+		// g�n�ration pas � pas de chaque champ du formulaire
+		foreach($this->fields as $field)
 		{
 			$view.=$field->buildWidget().'<br />';
 		}	
+		
+		// insertion des éventuels boutons du formulaire
+		if (!empty($this->buttons))
+		{		   
+		    foreach($this->buttons as $button)
+		    {
+		        $view.=$button->buildWidget().'<br />';
+		    }
+		}
+		
+		// insertion de la balise de cloture du formulaire
+		$view.='</p></form>';
+				
 		return $view;
 	}
 	
@@ -66,7 +136,7 @@ class Form
 		$valid=true;
 		
 		//vérification pas à pas que les champs sont valides
-		foreach($this->field as $field)
+		foreach($this->fields as $field)
 		{
 			if (!$field->isValid())
 			{
@@ -77,19 +147,61 @@ class Form
 	}
 	
 	/**
-	* setter de entity
+	* setter de entite
 	*/
-	public function setEntity(Entity $entity)
+	public function setEntite(Entite $entite)
 	{
-		$this->entity=$entity;
+		$this->entite=$entite;
 	}
 	
 	/**
-	* getter de entity
+	* getter de entite
 	*/
-	public function entity()
+	public function entite()
 	{
-		return $this->entity;
+		return $this->entite;
+	}
+	
+	/**
+	 * setter de method
+	 */
+	public function setMethod($method)
+	{
+	    if(is_string($method))
+	    {
+	         $this->method=$method;
+	    }	   
+	}
+	
+	/**
+	 * 
+	 * getter de method
+	 *
+	 * return_type
+	 *
+	 */
+	public function method()
+	{
+	    return $this->method;
+	}
+	
+	/**
+	 * setter de action
+	 */
+	public function setAction($action)
+	{
+	    if(is_string($action))
+	    {
+	       $this->action=$action;
+	    }
+	}
+	
+	/**
+	 * getter de action
+	 */
+	public function action()
+	{
+	    return $this->action;
 	}
 }		
 	

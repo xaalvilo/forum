@@ -29,41 +29,42 @@ class  TextField extends Field
 		}
 		
 		//début du code HTML du champ avec le label, le nom et l'id du champ
-		$widget.='<label for='.$this->id.'>'.$this->label.'</label><textarea name="'.$this->name.' "id="'.$this->id.'"';
-		
-		
+		$widget.='<label for='.$this->id.'>'.$this->label.'</label><br /><textarea name="'.$this->name.'" id="'.$this->id.'"';
+				
 		//prise en compte de la chaîne de caractère d'indication pour l'utilisateur, si elle existe
 		if(!empty($this->placeholder))
 		{
-			$widget.='placeholder="'.htmlspecialchars($this->placeholder).'"';
+			$widget.=' placeholder="'.htmlspecialchars($this->placeholder).'"';
 		}
 		
 		//s'il y a un nombre de colonnes, l'intégrer
 		if(!empty($this->cols))
 		{
-			$widget.='cols="'.$this->cols.'"';
+			$widget.=' cols="'.$this->cols.'"';
 		}
 		
 		//s'il y a un nombre de lignes, l'intégrer
 		if(!empty($this->rows))
 		{
-			$widget.='rows="'.$this->rows.'"';
-		}
-		
-		//s'il y a une valeur par défaut au champ,l'intégrer après l'avoir échappée
-		if(!empty($this->value))
-		{
-			$widget.='value="'.htmlspecialchars($this->value.'"');
+			 $widget.=' rows="'.$this->rows.'"';
 		}
 		
 		if($this->required==true)
 		{
-			return $widget.='required </textarea>';
+			$widget.=' required>';
 		}
 		else
 		{
-			return $widget.='</textarea>';
+			$widget.='>';
 		}
+		
+		//s'il y a une valeur par défaut au champ,l'intégrer après l'avoir échappée. Rappel la valeur par défaut 
+		//d'un texte multiligne en html5 s'insère entre <textarea> et </textarea>, il n'y a pas de "value"
+		if(!empty($this->value))
+		{
+		   $widget.= htmlspecialchars($this->value);
+		}
+		return $widget.='</textarea>';
 	}
 	/**
 	* setter de rows

@@ -34,33 +34,33 @@ class StringField extends Field
 		// s'il y a une valeur, échapper les caractères HTML
 		if(!empty($this->value))
 		{
-			$widget.='value="'.htmlspecialchars($this->value).'"';
+			$widget.=' value="'.htmlspecialchars($this->value).'"';
 		}
 		
 		//prise en compte de la chaîne de caractère d'indication pour l'utilisateur, si elle existe
 		if(!empty($this->placeholder))
 		{
-			$widget.='placeholder="'.htmlspecialchars($this->placeholder).'"';
+			$widget.=' placeholder="'.htmlspecialchars($this->placeholder).'"';
 		}
 		
 		//prise en compte de la taille du champ, si elle existe
 		if(!empty($this->size))
 		{
-			$widget.='size"'.htmlspecialchars($this->size).'"';
+			$widget.='size="'.htmlspecialchars($this->size).'"';
 		}
 		//prise en compte de la longueur maximale, si elle existe
 		if(!empty($this->maxlength))
 		{
-			$widget.='maxlength"'.htmlspecialchars($this->maxLength).'"';
+			$widget.='maxlength="'.htmlspecialchars($this->maxLength).'"';
 		}
 		
 		if($this->required==true)
 		{
-			return $widget.='required />';
+			return $widget.=' required />';
 		}
 		else
 		{
-			return $widget.='/>';
+			return $widget.=' />';
 		}
 	}
 	

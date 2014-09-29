@@ -1,6 +1,6 @@
 <?php
 /**
- * Classe abstraite reprŽsente une Application
+ * Classe abstraite reprï¿½sente une Application
  * 
  * @author tarreau
  *

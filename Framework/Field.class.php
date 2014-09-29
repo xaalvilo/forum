@@ -14,13 +14,13 @@ abstract class Field
 	// Nom HTML du champ
 	protected $name;
 	
-	// valeur par défaut HTML du champ
+	// valeur du champ
 	protected $value;
 	
-	// id du champ, permettant en HTML de lié le champ Ã  son nom
+	// id du champ, permettant en HTML de liï¿½ le champ Ã  son nom
 	protected $id;
 	
-	// message d'erreur associé au champ
+	// message d'erreur associï¿½ au champ
 	protected $errorMessage;
 	
 	//tableau des validateurs
@@ -57,12 +57,12 @@ abstract class Field
 	*/
 	public function hydrate($options)
 	{
-		foreach($options as $type->$value)
+		foreach($options as $type=>$value)
 		{
 			$method='set'.ucfirst($type);
 			if (is_callable(array($this,$method)))
 			{
-				$this->method($value);
+				$this->$method($value);
 			}
 		}
 	}

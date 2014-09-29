@@ -1,1 +1,83 @@
-<?phpnamespace Framework;/** * @author Frédéric Tarreau *  * Classe fille de la classe AppComponent dont le rôle est la gestion de la configuration du site, permettant d'externaliser la configuration du site en dehors du code source * elle charge le fichier de configuration dev.ini ou prod.ini *  * 11 sept. 2014 - file_name * */class Configuration extends ApplicationComponent{    /**    * cette classe encapsule un tableau associatif clés/valeurs (attribut $parametres) stockant les valeurs des paramÃ¨tres de configuration. ce tableau est statique (un seul exemplaire par classe)    * ce qui permet de l'utiliser sans instancier d'objet Configuration    */    private static $parametres ;    /**    * Méthode statique publique permettant de rechercher la valeur d'un paramêtre à partir de son nom.    * si le paramêtre en question est trouvÃ© dans le tableau associatif, la méthode renvoie la valeur du parametre de configuration     * sinon une valeur par défaut est renvoyée    *    * @param string $nom Nom du paramêtre    * @param string $valeurParDefaut Valeur Ã  renvoyer par défaut    * @return string Valeur du paramêtre    */    public static function get($nom, $valeurParDefaut = null)    {        if(isset(self::getParametres()[$nom]))        {            $valeur = self::getParametres()[$nom];        }        else         {            $valeur = $valeurParDefaut;        }        return $valeur;    }    /**    * Méthode statique privée getParametres() effectue le chargement tardif du fichier contenant les paramÃ¨tres de configuration. Afin de faire figurer sur     * un même serveur une configuration de développement  et une configuration de production, 2 fichiers sont recherchÃ©s dans le rÃ©pertoire Config du site : dev.ini et prod.ini.     *     * @return array $_parametres tableau associatif des parametres de configuration    * @throws Exception Si aucun fichier de configuration n'est trouvÃ©    */    private static function getParametres()    {        //si le fichier n'a pas déjÃ  été chargé         if (self::$parametres == null)        {            //prendre le fichier de configuration de dÃ©veloppement            $cheminFichier = "Config/dev.ini";                       // s'il n'existe pas , prendre le fichier de configuration de production            if (!file_exists($cheminFichier))            {                $cheminFichier = "Config/prod.ini ";            }                        // si ce dernier n'existe pas non plus, envoyer une erreur             if (!file_exists($cheminFichier))            {                throw new \Exception("Aucun fichier de configuration trouvé");            }                        // sinon instancier et renvoyer un tableau associatif attribuÃ© Ã  l'attribut $_parametres grÃ¢ce Ã  la fonction parse_iniÂ°file() qui analyse un fichier de configuration             // et retourne la configuration sous forme de tableau associatif            else            {                self::$parametres = parse_ini_file($cheminFichier);            }        }                // si le fichier de configuration a déjà été chargé, le renvoyer        return self::$parametres;    }}                            
+<?php
+namespace Framework;
+/**
+ * @author Frï¿½dï¿½ric Tarreau
+ * 
+ * Classe fille de la classe AppComponent dont le rï¿½le est la gestion de la configuration du site, permettant d'externaliser la configuration du site en dehors du code source
+ * elle charge le fichier de configuration dev.ini ou prod.ini
+ * 
+ * 11 sept. 2014 - file_name
+ *
+ */
+
+class Configuration extends ApplicationComponent
+{
+    /**
+    * cette classe encapsule un tableau associatif clï¿½s/valeurs (attribut $parametres) stockant les valeurs des paramÃ¨tres de configuration. ce tableau est statique (un seul exemplaire par classe)
+    * ce qui permet de l'utiliser sans instancier d'objet Configuration
+    */
+    private static $parametres ;
+
+    /**
+    * Mï¿½thode statique publique permettant de rechercher la valeur d'un paramï¿½tre ï¿½ partir de son nom.
+    * si le paramï¿½tre en question est trouvÃ© dans le tableau associatif, la mï¿½thode renvoie la valeur du parametre de configuration 
+    * sinon une valeur par dï¿½faut est renvoyï¿½e
+    *
+    * @param string $nom Nom du paramï¿½tre
+    * @param string $valeurParDefaut Valeur Ã  renvoyer par dï¿½faut
+    * @return string Valeur du paramï¿½tre
+    */
+    public static function get($nom, $valeurParDefaut = null)
+    {
+        if(isset(self::getParametres()[$nom]))
+        {
+            $valeur = self::getParametres()[$nom];
+        }
+        else 
+        {
+            $valeur = $valeurParDefaut;
+        }
+        return $valeur;
+    }
+
+    /**
+    * Mï¿½thode statique privï¿½e getParametres() effectue le chargement tardif du fichier contenant les paramÃ¨tres de configuration. Afin de faire figurer sur 
+    * un mï¿½me serveur une configuration de dï¿½veloppement  et une configuration de production, 2 fichiers sont recherchÃ©s dans le rÃ©pertoire Config du site : dev.ini et prod.ini. 
+    * 
+    * @return array $_parametres tableau associatif des parametres de configuration
+    * @throws Exception Si aucun fichier de configuration n'est trouvÃ©
+    */
+    private static function getParametres()
+    {
+        //si le fichier n'a pas dï¿½jÃ  ï¿½tï¿½ chargï¿½ 
+        if (self::$parametres == null)
+        {
+            //prendre le fichier de configuration de dÃ©veloppement
+            $cheminFichier = "Config/dev.ini";
+           
+            // s'il n'existe pas , prendre le fichier de configuration de production
+            if (!file_exists($cheminFichier))
+            {
+                $cheminFichier = "Config/prod.ini ";
+            }
+            
+            // si ce dernier n'existe pas non plus, envoyer une erreur 
+            if (!file_exists($cheminFichier))
+            {
+                throw new \Exception("Aucun fichier de configuration trouvï¿½");
+            }
+            
+            // sinon instancier et renvoyer un tableau associatif attribuÃ© Ã  l'attribut $_parametres grÃ¢ce Ã  la fonction parse_iniÂ°file() qui analyse un fichier de configuration 
+            // et retourne la configuration sous forme de tableau associatif
+            else
+            {
+                self::$parametres = parse_ini_file($cheminFichier);
+            }
+        }
+        
+        // si le fichier de configuration a dï¿½jï¿½ ï¿½tï¿½ chargï¿½, le renvoyer
+        return self::$parametres;
+    }
+}
+                
+            

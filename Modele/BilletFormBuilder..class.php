@@ -1,20 +1,19 @@
-<?php
-namespace Modele; 
+<?php namespace Modele; 
 require_once './Framework/autoload.php';
 
 /**
  * 
- * @author Frédéric Tarreau
+ * @author Frï¿½dï¿½ric Tarreau
  *
  * 7 sept. 2014 
  * 
- * Classe fille de FormBuilder dont le rôle est de créer le formulaire associé aux billets
+ * Classe fille de FormBuilder dont le rï¿½le est de crï¿½er le formulaire associï¿½ aux billets
  *
  */
  class BilletFormBuilder extends \Framework\FormBuilder
  {
  	/*
- 	 * méthode de construction du formulaire d'ajout de billet
+ 	 * mï¿½thode de construction du formulaire d'ajout de billet
  	 */
  	public function build()
  	{
@@ -27,8 +26,8 @@ require_once './Framework/autoload.php';
  		 													'required'=>true,
  		 													'placeholder'=> 'nom de l\'auteur',
  		 													'validators'=>array(
- 		 																		new \Framework\NotNullValidator('Merci de spécifier l\'auteur du billet'),
- 		 																		new \Framework\MaxLengthValidator('le nombre maximal de caractère est fixé à 15', 15)
+ 		 																		new \Framework\NotNullValidator('Merci de spï¿½cifier l\'auteur du billet'),
+ 		 																		new \Framework\MaxLengthValidator('le nombre maximal de caractï¿½re est fixï¿½ ï¿½ 15', 15)
  		 			       ))))
  		 			->add(new \Framework\StringField (array(
  		 													'label'=>'Titre',
@@ -40,18 +39,17 @@ require_once './Framework/autoload.php';
  		 													'placeholder'=> 'titre du billet',
  		 													'validators'=>array(
  		 																		new \Framework\NotNullValidator('Merci de donner un titre au billet'),
- 		 																		new \Framework\MaxLengthValidator('le nombre maximal de caractère est fixé à 15', 15)
+ 		 																		new \Framework\MaxLengthValidator('le nombre maximal de caractï¿½re est fixï¿½ ï¿½ 15', 15)
  		 					))))
  		 			->add(new \Framework\TextField(array(
- 		 													'label'=>'Texte',
- 		 													'name'=>'texte',
- 		 													'id'=>'texte',
- 		 													'cols'=>100,
- 		 													'rows'=>20,
- 		 													'required'=>true,
- 		 													'placeholder'=>'texte du billet',
- 		 													'validators'=>array(new \Framework\NotNullValidator('Merci d\'écrire un billet')
- 		 					))));
+ 		 							'label'=>'Texte','name'=>'texte','id'=>'texte',
+ 		 						    'cols'=>100,'rows'=>20,'required'=>true,
+ 		 							'placeholder'=>'texte du billet','validators'=>array(
+ 		 									new \Framework\NotNullValidator('Merci d\'ecrire un billet')
+ 		 					)
+ 		 					)
+ 		 					)
+ 		 					);
  	}
  }
  

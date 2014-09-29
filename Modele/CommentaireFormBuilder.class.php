@@ -1,45 +1,50 @@
 <?php
 namespace Modele; 
+use Framework\Form;
 require_once './Framework/autoload.php';
-
 /**
   * 
-  * @author Frédéric Tarreau
+  * @author Frï¿½dï¿½ric Tarreau
   * 
-  * Classe fille de FormBuilder dont le rôle est de créer le formulaire associé aux commantaires
+  * Classe fille de FormBuilder dont le rï¿½le est de crï¿½er le formulaire associï¿½ aux commentaires
   *
   */
  class CommentaireFormBuilder extends \Framework\FormBuilder
  {
  	/**
- 	 * Méthode permettant de construire le formulaire d'ajout de commentaire
- 	 * 
- 	 * @see \Framework\FormBuilder::build()
- 	 */
+ 	* Mï¿½thode permettant de construire le formulaire d'ajout de commentaire
+ 	* 
+ 	* @see \Framework\FormBuilder::build()
+ 	*/
  	public function build()
  	{
- 		 $this->form->add(new \Framework\StringField(array(
+ 	    // ajout du champ de nom auteur, attention, il faut bien reprendre le nom de l'attribut "auteur" de l'objet commentaire
+ 	    $this->form->add(new \Framework\StringField(array(
  		 													'label'=>'Auteur',
  		 													'name'=>'auteur',
  		 													'maxLength'=>15,
  		 													'id'=>'auteur',
  		 													'size'=>20,
  		 													'required'=>true,
- 		 													'placeholder'=> 'nom de l\'auteur',
+ 		 													'placeholder'=> 'votre pseudo',
  		 													'validators'=>array(
- 		 																		new \Framework\NotNullValidator('Merci de spécifier l\'auteur du commentaire'),
- 		 																		new \Framework\MaxLengthValidator('le nombre maximal de caractère est fixé à 15', 15)
+ 		 																		new \Framework\NotNullValidator('Merci de spï¿½cifier l\'auteur du commentaire'),
+ 		 																		new \Framework\MaxLengthValidator('le nombre maximal de caractï¿½re est fixï¿½ ï¿½ 15', 15)
  		 			       ))))
+ 		 			// ajout du champ de texte, attention, il faut bien reprendre le nom de l'attribut "contenu" de l'objet commentaire
  		 			->add(new \Framework\TextField(array(
- 		 													'label'=>'Texte',
- 		 													'name'=>'texte',
- 		 													'id'=>'texte',
- 		 													'cols'=>100,
- 		 													'rows'=>20,
+ 		 													'label'=>'Commentaire',
+ 		 													'name'=>'contenu',
+ 		 													'id'=>'contenu',
+ 		 													'cols'=>75,
+ 		 													'rows'=>10,
  		 													'required'=>true,
- 		 													'placeholder'=>'texte du commentaire',
- 		 													'validators'=>array(new \Framework\NotNullValidator('Merci d\'écrire un commentaire')
+ 		 													'placeholder'=>'votre commentaire',
+ 		 													'validators'=>array(new \Framework\NotNullValidator('Merci d\'ecrire une commentaire')
  		 					))));
+ 		 			
+ 		 $hiddenValue=$this->form->entite()->idBillet;
+ 		 $this->form->addButton(new \Framework\Button('submit','Commenter','id',$hiddenValue));
  	}
  }
  

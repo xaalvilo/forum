@@ -1,19 +1,19 @@
 <?php
 
 /**
- * cette classe reprŽsente un visiteur du site. Elle a pour r™le d'enregistrer des informations
-* temporaires le concernant et de gŽrer ainsi la session de l'utilisateur
+ * cette classe reprï¿½sente un visiteur du site. Elle a pour rï¿½le d'enregistrer des informations
+* temporaires le concernant et de gï¿½rer ainsi la session de l'utilisateur
 */
 Namespace Framework;
 
-// ds l'inclusion du fichier par l'auto_load, la session se crŽŽe
+// dï¿½s l'inclusion du fichier par l'auto_load, la session se crï¿½ï¿½e
 session_start();
 
 class User extends ApplicationComponent
 {
 
 	/**
-	 * cette mŽthode permet d'assigner un attribut associŽ ˆ l'utilisateur
+	 * cette mï¿½thode permet d'assigner un attribut associï¿½ ï¿½ l'utilisateur
 	 *
 	 * @param &attribut attribut
 	 * @param $valeur valeur de l'attribut
@@ -24,47 +24,47 @@ class User extends ApplicationComponent
 	}
 
 	/**
-	 * cette mŽthode permet d'obtenir la valeur de l'attribut associŽ ˆ l'utilisateur
+	 * cette mï¿½thode permet d'obtenir la valeur de l'attribut associï¿½ ï¿½ l'utilisateur
 	 */
 	public function getAttribute($attribut)
 	{
-		return isset($_SESSION[$attribut])? $_SESSION[$attribut]: NULLÊ;
+		return isset($_SESSION[$attribut])? $_SESSION[$attribut]: NULLï¿½;
 	}
 
 	/**
-	 * cette mŽthode permet de prŽciser que l'utilisateur est bien authentifiŽ
+	 * cette mï¿½thode permet de prï¿½ciser que l'utilisateur est bien authentifiï¿½
 	 */
 	public function setAuthenticated($authenticated=true)
 	{
 		if(!is_bool($authenticated))
 		{
-			throw new \Exception ('la valeur spŽcifiŽe ˆ UserÊ::authenticated doit tre un boolŽen');
+			throw new \Exception ('la valeur spï¿½cifiï¿½e ï¿½ Userï¿½::authenticated doit ï¿½tre un boolï¿½en');
 		}
 		$_SESSION['auth']=$authenticated;
 	}
 	/**
-	 * cette mŽthode permet de vŽrifier que l'utilisateur est bien authentifiŽ
+	 * cette mï¿½thode permet de vï¿½rifier que l'utilisateur est bien authentifiï¿½
 	 *
 	 * @return Boolean
 	 */
 	public function isAuthenticated()
 	{
-		return isset($_SESSION['auth']) && $_SESSION['auth']=trueÊ;
+		return isset($_SESSION['auth']) && $_SESSION['auth']=trueï¿½;
 	}
 
 	/**
-	 * cette mŽthode permet d'assigner un message ÇÊflashÊÈ informatif ˆ l'utilisateur qui s'affichera sur
+	 * cette mï¿½thode permet d'assigner un message ï¿½ï¿½flashï¿½ï¿½ informatif ï¿½ l'utilisateur qui s'affichera sur
 	 * la page
 	 *
 	 * @param string $valeur correspondant au texte du message
 	 */
 	public function setFlash($valeur)
 	{
-		$_SESSION['flash'] = $valeurÊ;
+		$_SESSION['flash'] = $valeurï¿½;
 	}
 
 	/**
-	 * cette mŽthode permet de rŽcupŽrer le message ÇÊflashÊÈ informatif  qui s'affichera sur
+	 * cette mï¿½thode permet de rï¿½cupï¿½rer le message ï¿½ï¿½flashï¿½ï¿½ informatif  qui s'affichera sur
 	 * la page de l'utilisateur
 	 *
 	 * @return string $flash correspondant au texte du message
@@ -75,7 +75,7 @@ class User extends ApplicationComponent
 	}
 
 	/**
-	 * cette mŽthode permet de savoir si un message ÇÊflashÊÈ informatif  est associŽ ˆ
+	 * cette mï¿½thode permet de savoir si un message ï¿½ï¿½flashï¿½ï¿½ informatif  est associï¿½ ï¿½
 	 * l'utilisateur
 	 *
 	 * @return boolean
@@ -84,6 +84,6 @@ class User extends ApplicationComponent
 	{
 		$flash = $_SESSION['flash'];
 		unset ($_SESSION['flash']);
-		return $flashÊ;
+		return $flashï¿½;
 	}
 }

@@ -24,6 +24,7 @@ abstract class Validator
 	
 	/*
 	* setter de errorMessage
+	*  
 	*/
 	public function setErrorMessage($errorMessage)
 	{

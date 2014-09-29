@@ -1,34 +1,59 @@
 <?php
-
-namespace Framework;
-
 /**
+ * 
+ * @author FrÃ©dÃ©ric Tarreau
  *
- * @author Frédéric Tarreau
- *        
- *         Classe abstraire dont le rôle est la construction d'un formulaire
+ * 18 sept. 2014 - file_name
+ * 
+ * Classe abstraire dont le rï¿½le est la construction d'un formulaire
  *        
  */
+ 
+namespace Framework;
+
+
 abstract class FormBuilder 
 {
-	
-	/* forumlaire à créer */
+	/* formulaire ï¿½ crï¿½er */
 	protected $form;
 	
-	public function __construct(Entite $entity)
+	/** 
+	 * MÃ©thode constructeur
+	 *
+	 * return_type
+	 * 
+	 * @param Entite $entity
+	 */
+	public function __construct(Entite $entite,$method,$action)
 	{
-		$this->setForm(new Form($entity));
+		$this->setForm(new Form($entite,$method,$action));
 	}
 	
 	abstract public function build();
 	
+	/**
+	 * 
+	 * Setter
+	 *
+	 * return_type
+	 * 
+	 * @param unknown $form
+	 * @return Form
+	 */
 	public function setForm($form)
 	{
 		$this->form = $form;
 	}
 	
+	/**
+	 * 
+	 * Getter
+	 * 
+	 * @return Form  
+	 */
 	public function form() 
 	{
 		return $this->form;
 	}
+	
 }
