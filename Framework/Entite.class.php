@@ -89,7 +89,7 @@ abstract class Entite implements \ArrayAccess
             // on utilise "is_callable()" qui vérifie qu'une variable peut être appelée comme fonction. 
             // Cette fonction peut vérifier qu'une variable contient un nom de fonction valide, 
             // ou bien qu'elle contient un tableau, avec un objet et un nom de méthode. 
-            if (is_callable(array($this, $methode)))
+            if (is_callable(array($this,$methode)))
             {
                $this->$methode($valeur);           
             }

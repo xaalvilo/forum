@@ -11,8 +11,12 @@ class Requete extends ApplicationComponent
     private $_parametres;
     
     /**
+    * 
+    * Constructeur
+    * 
     * cette méthode permet de construire l'objet requête
     *
+    * @param Application $app instance de l'application
     * @param array $parametres Tableau Paramètres de la requête
     */
      public function __construct($app,$parametres)
@@ -22,6 +26,9 @@ class Requete extends ApplicationComponent
      }
      
     /**
+    * 
+    * Méthode existeParametre
+    * 
     * cette méthode teste si le parametre existe bien dans la requête
     *
     * @param string $nom Nom du paramètre
@@ -33,6 +40,9 @@ class Requete extends ApplicationComponent
     }
      
     /**
+    * 
+    * Méthode getParametre
+    * 
     * cette méthode renvoie la valeur du parametre demandé et lève une exception si le parametre est introuvable
     *
     * @param string $nom Nom du paramètre
@@ -41,8 +51,8 @@ class Requete extends ApplicationComponent
     */
      public function getParametre($nom)
      {
-         /* vérification de l'existence du parametre */
-         if ($this->existeParametre($nom))
+         // vérification de l'existence du parametre, si ce n'est pas le cas, envoi d'une exception
+        if ($this->existeParametre($nom))
         {
             return $this->_parametres[$nom];
         }
@@ -53,7 +63,24 @@ class Requete extends ApplicationComponent
     }
     
     /**
-    * cette methode d�termine si un cookie existe
+     * 
+     * Méthode getMethode
+     * 
+     * cette methode permet de savoir quelle methode a ete utilisée dans la requete en utilisant la superglobale $_SERVER
+     *
+     * @return string Methode utilisée par la requête du client (GET ou POST)
+     *
+     */
+    public function getMethode()
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
+    
+    /**
+    * 
+    * Methode cookieExists
+    * 
+    * cette methode determine si un cookie existe
     * 
     * @param string $key nom du cookie
     * @return boolean TRUE si la valeur du cookie existe
@@ -64,6 +91,9 @@ class Requete extends ApplicationComponent
     }
     
     /**
+    * 
+    * Methode cookieData
+    * 
     * cette m�thode renvoie le Cookie
     * 
     * @param string $key nom du cookie

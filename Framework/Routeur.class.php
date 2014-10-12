@@ -3,12 +3,12 @@ namespace Framework;
 require_once './Framework/autoload.php';
 
 /**
-  *  la classe Routeur a pour rôle d'analyser une requête entrante afin d'en déduire le contrôleur à utiliser ainsi que l'action (methode) à exécuter. Il s'agit d'un contrôleur frontal
-  */
+ *  la classe Routeur a pour rôle d'analyser une requête entrante afin d'en déduire le contrôleur à utiliser ainsi que 
+ *  l'action (methode) à exécuter. Il s'agit d'un contrôleur frontal
+ */
 
 class Routeur
-{ 
-    
+{     
     /* constante de classe déterminant la page d'accueil */
     const PAGE_ACCUEIL = "Forum" ; 
     
@@ -19,13 +19,17 @@ class Routeur
     {      
         try 
         {
-            // instanciation de l'objet Requête, Fusion des paramètres GET et POST de la requête
+            // instanciation de l'objet Requête, Fusion des paramètres des tableaux superglobales 
+            // GET et POST de la requête
             // Permet de gérer uniformément ces deux types de requête HTTP
             $requete = new Requete($app,array_merge($_GET,$_POST));
+            
             // création du controleur associé à l'action de la requete
             $controleur = $this->creerControleur($requete);
+            
             // détermination de l'action à exécuter
             $action= $this->creerAction($requete);
+            
             // exécuter la méthode du controleur correspondant à l'action
             $controleur->executerAction($action);
         }
@@ -36,18 +40,18 @@ class Routeur
     } 
             
     /** 
-    * Méhode privée permettant de créer le controleur adapté à la requete entrante et renvoyant une instance de la classe associée
-    *
+    * Méhode privée creerControleur
+    * 
+    * Elle permet de créer le controleur adapté à la requete entrante et renvoyant une instance de la classe
+    * associée. Grâce à la redirection, toutes les URL entrantes sont du type :
+    * index.php?controleur=XXX&action=YYY&id=ZZZ 
+    * 
     * @param Requete $requete Requête reçue
     * @return Instance d'un contrôleur
     * @throws Exception Si la création du contrôleur échoue
     */   
     private function creerControleur(Requete $requete)
     {
-        
-        // Grâce à la redirection, toutes les URL entrantes sont du type :
-        /* index.php?controleur=XXX&action=YYY&id=ZZZ */
-        
         // il s'agit de définir le controleur par defaut 
         $controleur = self::PAGE_ACCUEIL;
         
@@ -55,7 +59,8 @@ class Routeur
         if ($requete->existeParametre('controleur'))
         {
             $controleur=$requete->getParametre('controleur');
-            // met la première lettre en majuscule par cohérence à la convention de nommage des fichiers
+            
+            // mettre la première lettre en majuscule par cohérence à la convention de nommage des fichiers
             // Controleur/Controleur<$controleur>.php , après avoir tout converti en minuscule 
             $controleur = ucfirst(strtolower($controleur));
         }
@@ -64,7 +69,7 @@ class Routeur
         $classeControleur = "Controleur".$controleur;
         
         // création du nom du fichier du controleur dans le répertoire "Controleur" de notre arborescence 
-        $fichierControleur = "Controleur/" .$classeControleur . ".class.php" ;
+        $fichierControleur = "Controleur/" .$classeControleur.".class.php" ;
         
         // si ce fichier existe, instanciation de l'objet controleur associé à l'action 
         if (file_exists($fichierControleur))

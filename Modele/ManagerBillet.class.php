@@ -9,6 +9,9 @@ require_once './Framework/autoload.php';
 class ManagerBillet extends \Framework\Manager
 {
     /**
+    *
+    * Méthode getBillet
+    * 
     * méthode renvoyant la liste de l'ensemble des billets de la BDD
     *
     * @return PDOStatement la liste des billets
@@ -39,6 +42,9 @@ class ManagerBillet extends \Framework\Manager
     }
     
     /**
+    * 
+    * Méthode getBillets
+    * 
     * méthode renvoyant l'ensemble des informations sur le billet sélectionné
     *
     * @param int $idBillet identifiant du billet
@@ -70,6 +76,21 @@ class ManagerBillet extends \Framework\Manager
             throw new \Exception("Aucun billet ne correspond à l'identifiant '$idBillet'");
         }
     }
+    
+    public function ajouterBillet($titre,$auteur,$contenu)
+    {
+        //requ�te avec insertion du commentaire
+        $sql = 'insert into T_BILLET(BIL_DATE, BIL_TITRE, BIL_AUTEUR, BIL_CONTENU)'
+                . ' values(?, ?, ?, ?)';
+        // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
+        $odate = new \DateTime();
+    
+        // il faut formater la date en cha�ne de caract�re
+        $date = $odate->format('Y-m-d H:i:s');
+    
+        $this->executerRequete($sql,array($date,$titre,$auteur,$contenu),'\Modele\Billet');
+    }
 }
+
     
     

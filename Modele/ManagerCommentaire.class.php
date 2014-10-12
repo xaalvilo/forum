@@ -55,6 +55,7 @@ class ManagerCommentaire extends \Framework\Manager
             . ' values(?, ?, ?, ?)';
         // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
         $odate = new \DateTime();
+        
         // il faut formater la date en cha�ne de caract�re
         $date = $odate->format('Y-m-d H:i:s');
         

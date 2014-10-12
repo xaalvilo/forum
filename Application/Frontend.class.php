@@ -7,7 +7,7 @@ class Frontend extends \Framework\Application
 	public function __construct()
 	{
 		parent::__construct();
-		$this->nom = 'Frontend';
+		$this->_nom = 'Frontend';
 	}
 	
 	public function run()

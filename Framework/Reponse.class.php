@@ -1,19 +1,40 @@
 <?php
+/**
+ * 
+ * @author Frédéric Tarreau
+ *
+ * 3 oct. 2014 - file_name
+ * 
+ * Cette classe héritée de ApplicationComponent représente la réponse HTTP envoyée au client. Elle a pour rôle d'assigner une vue
+ * à la réponse, de rediriger l'utilisateur en cas d'erreur, d'ajouter un cookie, d'ajouter un header spéciifique
+ *
+ */
 namespace Framework;
 require_once './Framework/autoload.php';
 
 class Reponse extends ApplicationComponent
 {
-	protected $vue;
+	protected $_vue;
 	
-	/*
-	 * permet de sp�cifier l'en-t�te HTTP string lors de l'envoi des fichiers HTML
+	/**
+	 * 
+	 * Méthode redirect
+	 * 
+	 * Cette méthode permet de sp�cifier l'en-t�te HTTP string lors de l'envoi des fichiers HTML
+	 * 
 	 */
 	public function redirect($location)
 	{
 		header('Location: '.$location);
 	}
 	
+	/**
+	 * 
+	 * Méthode redirect404
+	 *
+	 * return_type
+	 *
+	 */
 	public function redirect404()
 	{
 		
@@ -24,9 +45,19 @@ class Reponse extends ApplicationComponent
 		
 	}
 	
+	/**
+	 * 
+	 * Méthode setVue
+	 * 
+	 * Setter de l'attribut $vue
+	 *
+	 * return_type
+	 * 
+	 * @param Vue $vue
+	 */
 	public function setVue(Vue $vue)
 	{
-		
+		$this->_vue=$vue;		
 	}
 	
 	/**

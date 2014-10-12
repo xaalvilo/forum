@@ -16,6 +16,6 @@ class TphValidator extends Validator
 	public function isValid($value)
 	{
 		/* expression reguliere acceptant un numero de t�l�phone � 10 chiffres en France */
-		return preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#",$value);
+		return preg_match("#^0[1-68]([-. ]?[0-9]{2}){4}$#",$value);
 	}
 }

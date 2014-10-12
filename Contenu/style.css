@@ -84,5 +84,5 @@ td{
 /*pseudos format pour le style des elements required, invalid et focus*/
 :required
 {
-	background-color=green;
+	background:#b6d991;
 }

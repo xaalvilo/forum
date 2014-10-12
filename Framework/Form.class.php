@@ -24,6 +24,9 @@ class Form
 	/* liste des boutons sous forme de tableau */
 	protected $buttons;
 	
+	/*liste des couples nom/valeur des champs valides sous forme de tableau associatif */
+	protected $_validField;
+	
 	public function __construct(Entite $entite,$method,$action)
 	{
 		$this->setEntite($entite);	
@@ -74,16 +77,16 @@ class Form
 	
 	/**
 	 * 
-	 * Méthode
+	 * Méthode baliseForm
 	 *
-	 * Cette méthode permet de créerles balises HTML d'ouverture et de cloture d'un formulaire
+	 * Cette méthode permet de créer les balises HTML 5 d'ouverture et de cloture d'un formulaire
 	 * 
 	 * return_type string
 	 * 
 	 * @param string $method méthode associée au formulaire
 	 * @param string $action action associée au formulaire
 	 */
-	public function InitForm()
+	public function baliseForm()
 	{
 	   if (isset($this->method,$this->action))
 	   {
@@ -103,7 +106,7 @@ class Form
 	*/
 	public function createView()
 	{
-	    $view = $this->InitForm();
+	    $view = $this->baliseForm();
 		
 		// g�n�ration pas � pas de chaque champ du formulaire
 		foreach($this->fields as $field)
@@ -127,9 +130,11 @@ class Form
 	}
 	
 	/**
-	* Méthode permettant d'acter que tous les champs sont valides
+	* Méthode isValid
+	* 
+	* Cette méthode permet d'acter que tous les champs du formulaire sont valides
 	*
-	* @return Boolean vrai si le formulaire est valide
+	* @return Boolean Vrai si le formulaire est valide, Faux sinon
 	*/
 	public function isValid()
 	{
@@ -141,6 +146,10 @@ class Form
 			if (!$field->isValid())
 			{
 				$valid=false;
+			}
+			else 
+			{
+				$this->_validField[$field->name()]=$field->value();
 			}
 		}
 		return $valid;
@@ -203,5 +212,22 @@ class Form
 	{
 	    return $this->action;
 	}
+	
+	/**
+	 * setter de validField
+	 */
+	public function setValidField($validField)
+	{
+	    $this->_validField=$validField;
+    }
+	
+	/**
+	 * getter de validField
+	 */
+	public function validField()
+	{
+	    return $this->_validField;
+	}
+	
 }		
 	

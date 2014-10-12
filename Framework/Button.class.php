@@ -14,16 +14,16 @@ class Button
 	
 	
 	// Nom de l'action associée
-	protected $action;
+	protected $_action;
 	
 	// type de bouton : submit, reset, image, button
-	protected $type;
+	protected $_type;
 	
 	//nom du champ caché "hidden"
-	protected $hiddenName;
+	protected $_hiddenName;
 	
 	// valeur associée au champ, hidden
-	protected $hiddenValue;
+	protected $_hiddenValue;
 	
 	/**
 	* Le constructeur demande la liste des attributs avec leur valeur 
@@ -53,12 +53,12 @@ class Button
 	  $widget='';
 	      
       // s'il faut transférer des données cachés, créer le champ de type "hidden"
-      if(isset($this->hiddenName,$this->hiddenValue))
+      if(isset($this->_hiddenName,$this->_hiddenValue))
 	  {
-	      $widget.='<input type="hidden" name="'.$this->hiddenName.'" value="'.$this->hiddenValue.'"/>';
+	      $widget.='<input type="hidden" name="'.$this->_hiddenName.'" value="'.$this->_hiddenValue.'"/>';
 	  }
 	  
-	  $widget.='<input type="'.$this->type.'" value="'.$this->action.'"/>';
+	  $widget.='<input type="'.$this->_type.'" value="'.$this->_action.'"/>';
 	  return $widget;
 	}
 	
@@ -67,7 +67,7 @@ class Button
 	*/
 	public function action()
 	{
-	    return $this->action;
+	    return $this->_action;
 	}
 		
 	/**
@@ -75,7 +75,7 @@ class Button
 	 */
 	public function hiddenName()
 	{
-	    return $this->hiddenName;
+	    return $this->_hiddenName;
 	}
 	
 	/**
@@ -83,7 +83,7 @@ class Button
 	*/
 	public function hiddenValue()
 	{
-		return $this->hiddenValue;
+		return $this->_hiddenValue;
 	}
 	
 	/**
@@ -91,7 +91,7 @@ class Button
 	*/
 	public function type()
 	{
-		return $this->type;
+		return $this->_type;
 	}
 			
 	/**
@@ -101,7 +101,7 @@ class Button
 	{
 		if(is_string($type))
 		{
-	       $this->type=$type;
+	       $this->_type=$type;
 		}
 	}
 	
@@ -112,7 +112,7 @@ class Button
 	{
 	    if(is_string($hiddenName))
 	    {
-	        $this->hiddenName=$hiddenName;
+	        $this->_hiddenName=$hiddenName;
 	    }
 	}
 	
@@ -121,7 +121,7 @@ class Button
 	*/
 	public function setHiddenValue($hiddenValue)
 	{
-	    $this->hiddenValue=$hiddenValue;
+	    $this->_hiddenValue=$hiddenValue;
 	}
 		
 	/**
@@ -131,7 +131,7 @@ class Button
 	{
 		if(is_string($action))
 		{
-	       $this->action=$action;
+	       $this->_action=$action;
 		}
 	}	
 }

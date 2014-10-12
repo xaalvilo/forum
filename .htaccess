@@ -1,3 +1,4 @@
-#Réécrit une URL de type xxx/yyy/zzz en index.php?controleur=xxx&action=yyy&id=zzz
+#Rï¿½ï¿½crit une URL de type xxx/yyy/zzz en index.php?controleur=xxx&action=yyy&id=zzz
+#toutes les URL vont pointer vers le fichier index.php
 RewriteEngine on
 RewriteRule ^([a-zA-Z]*)/?([a-zA-Z]*)?/?([a-zA-Z0-9]*)?/?$ index.php?controleur=$1&action=$2&id=$3 [NC,L]

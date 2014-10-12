@@ -12,15 +12,15 @@ abstract class ApplicationComponent
 	/*
 	 * instance de l'application ex�cut�e
 	 */
-	protected $app;
+	protected $_app;
 	
 	public function __construct(Application $app)
 	{
-		$this->app = $app;
+		$this->_app = $app;
 	}
 	
 	public function app()
 	{
-		return $this->app;
+		return $this->_app;
 	}
 }

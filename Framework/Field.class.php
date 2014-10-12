@@ -11,7 +11,9 @@ abstract class Field
 	// label HTML du champ
 	protected $label;
 	
-	// Nom HTML du champ
+	// Nom HTML du champ. Il est rappelé que ce nom apparaît dans les superglobales sous forme de tableau 
+	// $GET, $POST,$REQUEST, il est donc important de ne pas choisir ce nom au hasard par rapport aux objets à hydrater
+	// avec les valeurs des INPUT
 	protected $name;
 	
 	// valeur du champ
@@ -51,9 +53,11 @@ abstract class Field
 	abstract public function buildWidget() ;
 	
 	/**
-	* Méthode permettant d'hydrater le champ avec les valeurs passées en paramètre au constructeur
+	* Méthode hydrate
+	* 
+	* cette méthode permet d'hydrater le champ avec les valeurs passées en paramètre au constructeur
 	*
-	* @param array options
+	* @param array $options
 	*/
 	public function hydrate($options)
 	{
@@ -74,15 +78,15 @@ abstract class Field
 	*/
 	public function isValid()
 	{
-		foreach ($this->validators as $validator)
+	   foreach ($this->validators as $validator)
 		{
-			if (!$validator->isValid($this->value))
+		    if (!$validator->isValid($this->value))
 			{
 				$this->errorMessage = $validator->errorMessage();
 				return FALSE;
 			}
-			return TRUE;
 		}
+		return TRUE;
 	}
 	
 	/**
