@@ -70,7 +70,7 @@ class Vue extends ApplicationComponent
             extract($donnees);
             
             //demarrage de la temporisation de sortie 
-            ob_start ();
+            ob_start();
             
             //inclusion du fichier vue 
             require $fichier;

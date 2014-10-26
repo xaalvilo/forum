@@ -39,7 +39,10 @@ class Form
 	}
 	
 	/**
-	* Méthode permettant d'ajouter des champs
+	* 
+	* Méthode add
+	* 
+	* Méthode permettant d'ajouter des champs au formulaire
 	* 
 	* @param Field champs à ajouter
 	* @return Form nouveau formulaire
@@ -60,7 +63,9 @@ class Form
 	
 	/**
 	 * 
-	 * Méthode
+	 * Méthode addButton
+	 * 
+	 * Cette méthode permet d'ajouter un bouton au formulaire
 	 *
 	 * \Framework\Form
 	 * 
@@ -94,7 +99,7 @@ class Form
 	   }
 	   else
 	   {
-	      $balise='<form><p>';
+	      $balise ='<form><p>';
 	   }
 	   return $balise;
 	}

@@ -43,7 +43,7 @@ class ControleurBillet extends \Framework\Controleur
     * elle utilise les m�thodes getter des mod�les instanci�s pour r�cup�rer les donn�es n�cessaires aux vues
     * elle créée le formulaire d'ajout de commentaire par la méthode initForm
     * 
-    * @param array $donnees tableau de données optionnel, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
+    * @param array $donnees tableau de données optionnel, permettant d'afficher dans le formulaire les données de champs valides saisis lors d'une
     * requête précédente
     * 
     */
@@ -56,7 +56,7 @@ class ControleurBillet extends \Framework\Controleur
         $tableauValeur = array('idBillet'=>$idBillet,'methode'=>'post','action'=>'billet/commenter');
         
         // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
-        // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (cazr est en second argument de la fonction
+        // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (car est en second argument de la fonction
         // array_merge(..)
         if(!empty ($donnees))
         {

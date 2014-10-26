@@ -48,6 +48,10 @@ td{
 	padding-right: 20px;
 }
 
+.titreArticle {
+	margin-bottom : 0px;
+}
+
 .titreBillet {
     margin-bottom : 0px;
 }
@@ -65,12 +69,12 @@ td{
     margin-bottom : 30px;
 }
 
-#titreBlog{
+#titrePage{
     text-align: center;
     font-size: 30px;
 }
 
-#piedBlog{
+#piedPage{
 	 text-align: center;
 }
 #titreReponses {

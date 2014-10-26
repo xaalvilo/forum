@@ -30,7 +30,7 @@ require_once './Framework/autoload.php';
  		 													'validators'=>array(
  		 																		new \Framework\NotNullValidator('Merci de sp�cifier l\'auteur du commentaire'),
  		 																		new \Framework\MaxLengthValidator('le nombre maximal de caract�re est fixe a 15', 15),
- 		 													                    new \Framework\StringValidator('Merci d\'entrer une chaine de caractere')
+ 		 													                    new \Framework\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
  		 			// ajout du champ de texte, attention, il faut bien reprendre le nom de l'attribut "contenu" de l'objet commentaire
  		 			->add(new \Framework\TextField(array(
@@ -45,7 +45,7 @@ require_once './Framework/autoload.php';
  		 					))));
  		 			
  		 // prise en compte de la valeur cachée à transmettre
- 		 $hiddenValue=$this->form->entite()->idBillet;
+ 		 $hiddenValue=$this->form->entite()->idBillet();
  		 
  		 // ajout du bouton de validation du formulaire
  		 $this->form->addButton(new \Framework\Button('submit','Commenter','id',$hiddenValue));

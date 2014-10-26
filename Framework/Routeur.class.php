@@ -10,7 +10,7 @@ require_once './Framework/autoload.php';
 class Routeur
 {     
     /* constante de classe déterminant la page d'accueil */
-    const PAGE_ACCUEIL = "Forum" ; 
+    const PAGE_ACCUEIL = "Accueil"; 
     
     /** 
     * Méthode principale appelée par le contrôleur frontal. Elle examine la requête et exécute l'action appropriée
@@ -43,7 +43,7 @@ class Routeur
     * Méhode privée creerControleur
     * 
     * Elle permet de créer le controleur adapté à la requete entrante et renvoyant une instance de la classe
-    * associée. Grâce à la redirection, toutes les URL entrantes sont du type :
+    * associée. Grâce à la redirection dans la fichier .htaccess, toutes les URL entrantes sont du type :
     * index.php?controleur=XXX&action=YYY&id=ZZZ 
     * 
     * @param Requete $requete Requête reçue

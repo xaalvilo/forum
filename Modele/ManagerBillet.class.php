@@ -10,7 +10,7 @@ class ManagerBillet extends \Framework\Manager
 {
     /**
     *
-    * Méthode getBillet
+    * Méthode getBillets
     * 
     * méthode renvoyant la liste de l'ensemble des billets de la BDD
     *
@@ -43,7 +43,7 @@ class ManagerBillet extends \Framework\Manager
     
     /**
     * 
-    * Méthode getBillets
+    * Méthode getBillet
     * 
     * méthode renvoyant l'ensemble des informations sur le billet sélectionné
     *
@@ -77,6 +77,16 @@ class ManagerBillet extends \Framework\Manager
         }
     }
     
+    /**
+     * 
+     * Méthode ajouterBillet
+     *
+     * Cette méthode insère un nouveau billet en BDD
+     * 
+     * @param string $titre
+     * @param string $auteur
+     * @param string $contenu
+     */
     public function ajouterBillet($titre,$auteur,$contenu)
     {
         //requ�te avec insertion du commentaire

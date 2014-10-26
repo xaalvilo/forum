@@ -1,31 +1,36 @@
 <?php
 namespace Controleur;
 require_once './Framework/autoload.php';
-
 /**
-*  la classe ControleurForum hérite de la classe abstraite Controleur du framework. 
-*  elle utilise également la methode genererVue pour générer la vue associée à l'action
-*/
+ * 
+ * @author Frédéric Tarreau
+ *
+ * 25 oct. 2014 - ControleurBlog.class.php
+ * 
+ * la classe ControleurBlog hérite de la classe abstraite Controleur du framework. 
+ * elle utilise également la methode genererVue pour générer la vue associée à l'action
+ * 
+ */
 
-class ControleurForum extends \Framework\Controleur
+class ControleurBlog extends \Framework\Controleur
 {
-    /* Manager de billet */
-    private $_managerBillet;
+    /* Manager de article */
+    private $_managerArticle;
  
     /** 
-    * le constructeur instancie les classes "mod�les" requises
+    * le constructeur instancie les classes "modèles" requises
     */
     public function __construct(\Framework\Application $app) 
     {
     	parent::__construct($app);
-        $this->_managerBillet= new \Modele\ManagerBillet();
+        $this->_managerArticle= new \Modele\ManagerArticle();
     }
      
     /**
     * 
     * Méthode index
     * 
-    * cette m�thode est l'action par d�faut consistant � afficher la liste de tous les billets (articles) du forum
+    * cette méthode est l'action par défaut consistant à afficher la liste de tous les articles du blog
     * elle créée le formulaire d'ajout de commentaire par la méthode initForm
     * 
     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
@@ -34,11 +39,11 @@ class ControleurForum extends \Framework\Controleur
     */
     public function index(array $donnees = array())
     {
-        // récupération de la liste des billets
-        $billets = $this->_managerBillet->getBillets();  
+        // récupération de la liste des articles
+        $articles = $this->_managerArticle->getArticles();  
        
         // tableau des valeurs à prendre en compte pour le formulaire
-        $tableauValeur = array('methode'=>'post','action'=>'forum/editer');
+        $tableauValeur = array('methode'=>'post','action'=>'blog/editer');
         
         // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
         // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (cazr est en second argument de la fonction
@@ -48,18 +53,18 @@ class ControleurForum extends \Framework\Controleur
             $tableauValeur=array_merge($tableauValeur,$donnees);
         }
         
-        // création du formulaire d'ajout de Billet
-        $form=$this->initForm('Billet',$tableauValeur);
+        // création du formulaire d'ajout d'un article
+        $form=$this->initForm('article',$tableauValeur);
          
-        // génération de la vue avec les données : liste des billets et formulaire d'ajout de billet
-        $this->genererVue(array('billets'=>$billets,'formulaire'=>$form->createView()));
+        // génération de la vue avec les données : liste des articles et formulaire d'ajout d'article
+        $this->genererVue(array('articles'=>$articles,'formulaire'=>$form->createView()));
     }
     
     /**
      * 
      * Méthode editer
      * 
-     * cette méthode correspond à l'action "editer" permettant d'ajouter un billet au forum
+     * cette méthode correspond à l'action "editer" permettant d'ajouter un article du blog
      * Elle ne doit être exécutée que si les données insérées dans le formulaire sont valides
      *
      * return_type
@@ -68,19 +73,19 @@ class ControleurForum extends \Framework\Controleur
     public function editer()
     {
         $titre = $this->requete->getParametre("titre");
-        $auteur = $this->requete->getParametre("auteur");
         $contenu = $this->requete->getParametre("contenu");
+        $image = $this->requete->getParametre("image");
         
         // prise en compte de la date courante
         $date = new \DateTime();
         
-        // création du formulaire d'ajout d'un billet en l'hydratant avec les valeurs de la requête
-        $form=$this->initForm('Billet',array('titre'=>$titre,
-                                             'auteur'=>$auteur,
+        // création du formulaire d'ajout d'un article en l'hydratant avec les valeurs de la requête
+        $form=$this->initForm('article',array('titre'=>$titre,
                                              'contenu'=>$contenu,
                                              'date'=>$date,
+                                             'image'=>$image,
                                              'methode'=>'post',
-                                             'action'=>'forum/editer'));
+                                             'action'=>'blog/editer'));
         
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
         if (($this->requete->getMethode() =='POST'))
@@ -89,8 +94,8 @@ class ControleurForum extends \Framework\Controleur
         
             if ($form->isValid())
             {
-                // appelle de la m�thode permettant d'enregistrer un billet en BDD
-                $this->_managerBillet->ajouterBillet($titre, $auteur, $contenu);
+                // appelle de la m�thode permettant d'enregistrer un article en BDD
+                $this->_managerArticle->ajouterArticle($titre,$contenu,$image);
             }
             else
             {
@@ -99,7 +104,7 @@ class ControleurForum extends \Framework\Controleur
             }
          }
         
-         //il s'agit sinon ou ensuite d'executer l'action par d�faut permettant d'afficher la liste des billets
+         //il s'agit sinon ou ensuite d'executer l'action par d�faut permettant d'afficher la liste des articles
          $this->executerAction("index",$options);
     }
 }    

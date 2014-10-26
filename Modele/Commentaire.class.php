@@ -8,10 +8,10 @@ require_once './Framework/autoload.php';
 
 class Commentaire extends \Framework\Entite
 {
-  public $idBillet;
-  public $date;
-  public $contenu;
-  public $auteur;
+  protected $idBillet;
+  protected $date;
+  protected $contenu;
+  protected $auteur;
   
   const AUTEUR_INVALIDE=1;
   const CONTENU_INVALIDE=2;
@@ -82,7 +82,7 @@ class Commentaire extends \Framework\Entite
     }
     
     /**
-     * @return number
+     * @return int $idBillet
      */
    public function idBillet()
     {
@@ -98,7 +98,7 @@ class Commentaire extends \Framework\Entite
     }
     
     /**
-     * @return DateTime
+     * @return string $date au format de date
      */
     public function date()
     {

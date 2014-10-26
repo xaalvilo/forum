@@ -12,14 +12,15 @@
     </head>
     <body>
         <div id="global">
-            <header>
-                <a href=""><h1 id="titreBlog">Mon Forum</h1></a>
-                <p>Bienvenue sur le site etc....</p>
+            <header>                
+                <a href="Accueil"><h1 id="titrePage">Accueil</h1></a>
+                <a href="Forum"><h1 id="titrePage">Forum</h1></a>
+                <a href="Blog"><h1 id="titrePage">Blog</h1></a>                
             </header>
             <div id="contenu">
                 <?= $contenu?>
             </div> 
-            <footer id="piedBlog">
+            <footer id="piedPage">
                     pied de site � définir
             </footer>
         </div> 

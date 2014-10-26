@@ -1,6 +1,6 @@
-<!-- Portion de Vue spécifique à l'affichage du Blog -->
+<!-- Portion de Vue spécifique à l'affichage du Forum -->
 
-<?php $this->_titre = "Blog AtelierBlancNordOuest"; ?>
+<?php $this->_titre = "Forum AtelierBlancNordOuest"; ?>
 <table>
 <?php foreach ($billets as $billet):?>
     <tr>
@@ -23,3 +23,5 @@
     </tr>
 <?php endforeach; ?>
 </table>
+<!-- Formulaire de création de commentaire -->
+   <?= $this->nettoyer($formulaire)?>    

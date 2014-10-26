@@ -10,9 +10,7 @@
 namespace Framework;
 
 class Button
-{
-	
-	
+{	
 	// Nom de l'action associée
 	protected $_action;
 	
@@ -26,10 +24,10 @@ class Button
 	protected $_hiddenValue;
 	
 	/**
-	* Le constructeur demande la liste des attributs avec leur valeur 
+	* Le constructeur demande la liste des attributs avec leur valeur, avec une valeur par défaut pour les champs cachés
 	* 
 	*/
-	public function __construct($type,$action,$hiddenName,$hiddenValue)
+	public function __construct($type,$action,$hiddenName='',$hiddenValue='')
 	{
 	   $this->setType($type);
 	   $this->setAction($action);
@@ -38,7 +36,7 @@ class Button
 	   {
 		  $this->setHiddenName($hiddenName);
 	      $this->setHiddenValue($hiddenValue);		 
-	   }
+	   }	  
 	}
 	
 	/**

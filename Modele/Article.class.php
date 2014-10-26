@@ -3,35 +3,45 @@ namespace Modele;
 require_once './Framework/autoload.php';
 
 /**
-* cette classe reprÃ©sente l'entitÃ© Billet du forum
-*/
+ * 
+ * @author Frédéric Tarreau
+ *
+ * 20 oct. 2014 - Article.class.php
+ * 
+ * Cette classe hérite de la classe entité et représente l'article d'un Blog
+ *
+ */
 
-class Billet extends \Framework\Entite
+class Article extends \Framework\Entite
 {
   protected $date;
   protected $dateModif;
   protected $titre;
   protected $contenu;
-  protected $auteur;
+  protected $image;
   
-  const AUTEUR_INVALIDE=1;
   const TITRE_INVALIDE=2;
   const CONTENU_INVALIDE=3;
   
     /**
-    * mÃ©thode testant si l'objet Billet est valide
+    * mÃ©thode testant si l'objet Article est valide
     * elle utilise la fonction "empty(var)" qui  retourne FALSE si la variable existe et est non vide
     *
     * @return Boolean TRUE valide / FALSE non valide
     */
-    public function isValid()
-    {
-        return !(empty($this->auteur) || empty($this->contenu) || empty($this->titre));
-    }
+    //public function isValid()
+    //{
+      //  return !(empty($this->auteur) || empty($this->contenu) || empty($this->titre));
+    //}
     
     /**
-    * mÃ©thodes "setters" des attributs privÃ©s
-    */
+     * 
+     * Méthode setTitre
+     * 
+     * Setter de titre
+     * 
+     * @param string $titre
+     */
     public function setTitre($titre)
     {
         // $titre doit �tre une cha”ne de caract�re infŽrieure ˆ 30
@@ -44,22 +54,14 @@ class Billet extends \Framework\Entite
         	$this->titre=$titre;
         }
     }
-    
-    public function setAuteur($auteur)
-    {
-    	// $auteur doit etre une chaine de caractere
-    	if (!is_string($auteur) || empty($auteur))
-    	{
-    		$this->erreurs[]=self::AUTEUR_INVALIDE;
-    	}
-    	else
-    	{
-    		$this->auteur=$auteur;
-    	}
-    }
-    
+          
     /**
-     * @param unknown $contenu
+     * 
+     * Méthode setContenu
+     * 
+     * Setter de contenu
+     * 
+     * @param string $contenu
      */
     public function setContenu($contenu)
     {
@@ -74,6 +76,11 @@ class Billet extends \Framework\Entite
     }
     
     /**
+     * 
+     * Méthode setDate
+     * 
+     * Setter de date
+     * 
      * @param \DateTime $date
      */
     public function setDate(\DateTime $date)
@@ -81,30 +88,64 @@ class Billet extends \Framework\Entite
     	$this->date=$date; 
     }
     
+    /**
+     *
+     * Méthode setDateModif
+     *
+     * Setter de dateModif
+     *
+     * @param \DateTime $dateModif
+     */
     public function setDateModif(\DateTime $dateModif)
     {
     	$this->dateModif=$dateModif;
     }
 
     /**
-     * mÃ©thodes "getters" des attributs privÃ©s
+     *
+     * Méthode setImage
+     *
+     * Setter de Image
+     *
+     * @param string $image
      */
-    public function auteur()
+    public function setImage($image)
     {
-    	return $this->auteur;	
+        $this->image=$image;
     }
     
+    /**
+     * 
+     * Méthode titre
+     * 
+     * Getter de titre
+     *
+     * @return string $_titre
+     */
     public function titre()
     {
     	return $this->titre;
     }
     
+    /**
+     * 
+     * Méthode contenu
+     *
+     * Getter de contenu
+     * 
+     * @return string $contenu
+     */
     public function contenu()
     {
     	return $this->contenu;
     }
     
     /**
+     * 
+     * Méthode date
+     * 
+     * Getter de date
+     * 
      * @return string $date au format de date
      */
     public function date()
@@ -113,11 +154,29 @@ class Billet extends \Framework\Entite
     }
     
     /**
-     * @return string $_dateModif au format de date
+     * 
+     * Méthode dateModif
+     * 
+     * Getter de dateModif
+     * 
+     * @return string $dateModif au format de date
      */
     public function dateModif()
     {
     	return $this->dateModif;
+    }
+    
+    /**
+     *
+     * Méthode image
+     *
+     * Getter de image
+     *
+     * @return String $image
+     */
+    public function image()
+    {
+        return $this->image;
     }
 }
        
