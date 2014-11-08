@@ -15,7 +15,7 @@ class Routeur
     /** 
     * Méthode principale appelée par le contrôleur frontal. Elle examine la requête et exécute l'action appropriée
     */
-    public function routerRequete(Application$app)
+    public function routerRequete(Application $app)
     {      
         try 
         {
@@ -64,25 +64,29 @@ class Routeur
             // Controleur/Controleur<$controleur>.php , après avoir tout converti en minuscule 
             $controleur = ucfirst(strtolower($controleur));
         }
-        
+                
         //  création du nom de la classe controleur correspondante 
         $classeControleur = "Controleur".$controleur;
+               
+        // création du nom du fichier du controleur dans le répertoire suivant :
+        // Applications/$nomApplication/Modules/$controleur/ de notre arborescence 
+        // cela nécessite la récuperation de l'application ex�cut�e
+        $app = $requete->app();
+        $nomApplication = $app->nom();
+                
+        $repertoireControleur = "Applications/".$nomApplication."/Modules/".$controleur."/";
+                
+        $fichierControleur =  $repertoireControleur.$classeControleur.".class.php" ;
         
-        // création du nom du fichier du controleur dans le répertoire "Controleur" de notre arborescence 
-        $fichierControleur = "Controleur/" .$classeControleur.".class.php" ;
+        
         
         // si ce fichier existe, instanciation de l'objet controleur associé à l'action 
         if (file_exists($fichierControleur))
-        {
-            // inclusion du script du controleur 
-            //require($fichierControleur) ; pas utile il y a d�j� l'autoload
-            
-            // recuperation de l'application ex�cut�e
-            $app = $requete->app();
+        {            
+            // création de l'espace de nom correspondant
+            $NamespaceClasseControleur = "\\Applications\\".$nomApplication."\\Modules\\".$controleur."\\".$classeControleur;
             
             // instanciation du controleur adapté à la requête
-            $NamespaceClasseControleur = "\\Controleur\\".$classeControleur;
-            
             $controleur = new $NamespaceClasseControleur ($app);
             
             // le requete en paramètre est associée à ce controleur */
@@ -91,7 +95,7 @@ class Routeur
         }
         else
         {
-            throw new \Exception ("Fichier '$fichierControleur' introuvable");
+           throw new \Exception ("Fichier '$fichierControleur' introuvable");
         }
     }
     

@@ -1,4 +1,8 @@
+RewriteEngine on
+# toute URL commençant par admin a rediriger ves Backend.php
+RewriteRule ^admin/ Backend.php [QSA,L]
+# si le fichier existe, comme une image par exemple, on ne traite pas l'URL
+RewriteCond %{REQUEST_FILENAME} !-f
 #R��crit une URL de type xxx/yyy/zzz en index.php?controleur=xxx&action=yyy&id=zzz
 #toutes les URL vont pointer vers le fichier index.php
-RewriteEngine on
 RewriteRule ^([a-zA-Z]*)/?([a-zA-Z]*)?/?([a-zA-Z0-9]*)?/?$ index.php?controleur=$1&action=$2&id=$3 [NC,L]

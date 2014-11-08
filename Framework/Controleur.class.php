@@ -79,13 +79,13 @@ abstract class Controleur extends ApplicationComponent
         $classeEntite = ucfirst(strtolower($nomEntite));
                
         //  création du nom de la classe entite en tenant compte du namespace
-        $NamespaceClasseEntite ="\\Modele\\".$classeEntite;
+        $NamespaceClasseEntite ="\\Framework\\Entites\\".$classeEntite;
                 
         // il faut hydrater l'objet $entite avec les valeurs du tableau $donnees
         $entite = new $NamespaceClasseEntite($donnees);
-        
+                
         //  création du nom de la classe FormBuilder du modele en tenant compte du namespace
-        $NamespaceClasseFormBuilder = $NamespaceClasseEntite."FormBuilder";
+        $NamespaceClasseFormBuilder = "\\Framework\\FormBuilder\\".$classeEntite."FormBuilder";
         
         // création du constructeur de formulaire avec l'objet monEntite instancié
         $formBuilder = new $NamespaceClasseFormBuilder($entite,$donnees['methode'],$donnees['action']);
@@ -97,18 +97,40 @@ abstract class Controleur extends ApplicationComponent
     }
     
     /**
+    * 
+    * Méthode genererVue
+    * 
     * cette méthode entraine la generation de la vue associée au controleur courant 
+    * Pour cela elle détermine le nom du repertoire de la Vue à partir du nom du controleur actuel
+    * Il est rappelé que les vues spécifiques sont dans les répertoires de type :
+    *                    Applications/NomApplication/Modules/NomModule
+    * et le nom du contrôleur est de type : ControleurNomModule également dans ces répertoires
     *
     * @param array $donneesVue Données nécessaires pour la génération de la vue
     */
     protected function genererVue($donneesVue=array())
     {
-        //détermination du  nom du fichier Vue à partir du nom du controleur actuel
+        // récupération du nom de la classe qui sera du type Namespace\classe du controleur
         $classeControleur = get_class($this);
-              
-        // suppression de la chaîne de caractère "Controleur\Controleur"  dans le nom de la classe
-        $controleur = str_replace("Controleur\\Controleur","",$classeControleur);
+               
+        // il faut retirer le nom du Namespace pour en extraire le nom du repertoire où doit être
+        // pris le fichier Vue. 
+        // Il est nécessaire de récupérer le nom de l'application en cours d'exécution
+        $app = $this->_app;
+        $nomApplication = $app->nom();
+
+        // il faut déterminer la chaîne de caractère à supprimer
+        $nameSpaceGenerique = "Applications\\".$nomApplication."\\Modules\\";
+        $chaine = str_replace($nameSpaceGenerique,"",$classeControleur);
         
+        // la chaine est de type NomModule\ControleurNomModule
+        $chaine = str_replace ("\\Controleur","",$chaine);
+        
+        // A ce stade la chaine comporte 2 fois le NomModule
+        $count = strlen($chaine);
+        $cesure = -$count/2;
+        $controleur =substr($chaine,0,$cesure);
+       
         // generer la vue associée 
         $vue = new Vue($this->_action,$controleur);
         $vue->generer($donneesVue);

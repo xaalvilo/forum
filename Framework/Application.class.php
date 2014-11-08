@@ -3,7 +3,7 @@
  * 
  * @author Frédéric Tarreau
  *
- * 3 oct. 2014 - file_name
+ * 3 oct. 2014 - Application.class.php
  * 
  * Classe abstraite représentant une application. Elle a pour rôle de s'exécuter et d'instancier la requête et 
  * la réponse au client. Elle se caractérise par le nom de l'application

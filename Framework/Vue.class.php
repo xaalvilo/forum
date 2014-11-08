@@ -22,15 +22,25 @@ class Vue extends ApplicationComponent
     */
      public function __construct($action, $controleur ="")
      {
-         $fichier = "Vue/";
-         if ($controleur != "")
+         if ($action != 'erreur')
          {
-            $fichier = $fichier . $controleur . "/";
+            $fichier = Configuration::get("repertoireVues");
+            if ($controleur != "")
+            {
+                $fichier = $fichier.$controleur. "/";
+            }            
          }
-         $this->_fichier = $fichier. $action.".php" ;
+         else 
+         {
+             $fichier = Configuration::get("repertoireErreurs");
+         }      
+         $this->_fichier = $fichier.$action.".php";
      }
      
     /**
+    * 
+    * Méthode generer
+    * 
     * cette m�thode permet de g�n�rer et d'afficher une vue 
     *
     * @param array $donnees Donn�es n�cessaires � la g�n�ration de la vue
@@ -44,8 +54,15 @@ class Vue extends ApplicationComponent
         // Il s'agit du chemin vers le site sur le serveur Web. c'est nécessaire pour les URL de type controleur/action/id
         $racineWeb = Configuration::get("racineWeb","/");
   
+        // spécification de la langue utilisée pour l'affichage de la date et heure
+        // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
+        $langueDate = Configuration::get("langueDate","fra_fra");
+        setlocale(LC_TIME, $langueDate);
+        
          // génération du gabarit commun incluant la partie spécifique 
-         $vue = $this->genererFichier('Vue/gabarit.php',array('titre'=>$this->_titre,'contenu'=>$contenu,'racineWeb'=> $racineWeb));
+         $repertoireTemplates = Configuration::get("repertoireTemplates","/");
+         $fichierGabarit = $repertoireTemplates.'/gabarit.php';
+         $vue = $this->genererFichier($fichierGabarit,array('titre'=>$this->_titre,'contenu'=>$contenu,'racineWeb'=> $racineWeb));
          
          //renvoie la vue au navigateur web 
          echo $vue;

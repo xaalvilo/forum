@@ -1,0 +1,202 @@
+/* Pour pouvoir utiliser une hauteur (height) ou une hauteur minimale
+(min-height) sur un bloc, il faut que son parent direct ait lui-même une
+hauteur déterminée (donc toute valeur de height sauf "auto": hauteur en
+pixels, em, autres unités...).
+Si la hauteur du parent est en pourcentage, elle se réfère alors à la
+hauteur du «grand-père», et ainsi de suite.
+Pour pouvoir utiliser un "min-height: 100%" sur div#global, il nous faut:
+- un parent (body) en "height: 100%";
+- le parent de body également en "height: 100%". */
+html, body {
+    height: 100%;
+}
+
+html { 
+  margin:0;
+  padding:0;
+  background: url(/Forum/Contenu/woodlay.jpeg) no-repeat center fixed; 
+  -webkit-background-size: cover; /* pour Chrome et Safari */
+  -moz-background-size: cover; /* pour Firefox */
+  -o-background-size: cover; /* pour Opera */
+  background-size: cover; /* version standardisée */
+}
+
+article {
+	margin: auto;
+	padding-left: 50px;
+	padding-right: 50px;
+	
+}
+
+.resume {
+	/* permet de mettre de stopper le flottant photo miniature */
+	clear:both;
+	padding-top : 20px;
+}
+
+nav {
+	margin-bottom: 20px;
+	margin-top: 10px;
+}
+h1 {
+    font-size: 20px;
+ }
+
+h2{
+	font-size: 18px;
+}
+
+p{
+	font-size: 18px;
+}
+
+.resume p {
+	/*display:inline-block;*/
+	
+}
+
+.resume time {
+	
+}
+
+.article_blog p {		
+	width : 85%;
+	/* provoquer la césure des mots longs pour tenir dans la largeur */
+	word-wrap: break-word;
+	/* ajout des barres de défilement */
+	overflow: auto;	/* forcer une largeur minimale */
+	min-width: 200px;
+}
+
+time {
+	font-size: 14px;
+	font-family : "Trebuchet MS",Trebuchet,Verdana,sans-serif;    
+	color: black;
+	text-align: left;
+}
+
+a{
+	color: #7F7C70;
+}
+
+.resume a{
+	margin-left: 20px;
+	font-size: 30px;
+}
+
+a:hover {color: black;}
+a:active {color: red;}
+
+table{
+	border-collapse: collapse;
+	min-width: 100%;
+	max-width: 100px;
+}
+
+caption {
+	text-align: center;	
+}
+
+td{
+	border: 1px solid black;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+button{
+	 background: white;
+	 font-family : 'Dancing Script';
+     color: #7F7C70;
+     font-size: 20px;
+     border-radius: 20px;
+}
+
+.titreArticle {
+	margin-top: 5px;
+	margin-bottom : 0px;
+	font-size : 30px ;	
+}
+
+.titreBillet {
+	margin-top: 5px;
+    margin-bottom : 0px;
+    font-size : 30px ;
+}
+ 
+#global {
+    min-height: 100%; /* Voir commentaire sur html et body plus haut */
+    background: white;
+    width: 70%;
+    margin: auto;	/* Permet de centrer la div */
+    text-align: justify;
+    padding: 5px 20px;
+    font-family : 'Dancing Script';
+    color: #7F7C70;
+}
+
+#contenu {
+    margin-bottom : 30px;
+}
+
+
+#banniere
+{
+	display: block;
+	width:80%;
+	height:auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#photo
+{
+	display: block;
+	width:25%;
+	height:auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.photo_miniature
+{
+	display: block;
+	width:10%;
+	height:auto;
+	/*margin-left: auto;
+	margin-right: auto;*/
+	/* image flottante à gauche */
+	float: left;
+}
+
+#titrePage{
+    /*width: 30%;*/
+    padding-left: 20px;
+    padding-right: 20px;
+    display: inline-block;    
+}
+
+#menu{
+	text-align: center;
+	font-size: 30px;
+	padding-left: 0;
+	width: 80%; /* il est indispensable de spécifier une largeur pour centrer ensuite */
+	margin:auto;
+}
+
+#piedPage{
+	 text-align: center;
+}
+
+#titreReponses {
+    font-size : 100%;
+}
+
+#txtCommentaire {
+    width: 50%;
+}
+
+/*pseudos format pour le style des elements required, invalid et focus*/
+:required
+{
+	background:#b6d991;
+}
