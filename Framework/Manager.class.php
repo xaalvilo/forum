@@ -9,6 +9,8 @@ require_once './Framework/autoload.php';
 
 abstract class Manager
 {
+	use Affichage;
+	
     /**
     * objet PDO d'acc�s � la BDD 
     * attribut de classe statique donc partag�e par toutes les instances des classes d�riv�es de Modele

@@ -32,8 +32,7 @@ class ManagerBillet extends \Framework\Manager
         
         // spécification de la langue utilisée pour l'affichage de la date et heure
         // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
-        $langueDate = \Framework\Configuration::get("langueDate","fra_fra");
-        setlocale(LC_TIME, $langueDate);
+    	$this->setHeureDateLocale();
         
         foreach ($billets as $billet)
         {

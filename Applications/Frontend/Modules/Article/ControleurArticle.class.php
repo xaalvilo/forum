@@ -53,7 +53,7 @@ class ControleurArticle extends \Framework\Controleur
         $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_ARTICLE;
         
         //récupération des paramètres de la requête
-        $idArticle=$this->requete->getParametre("id") ;
+        $idArticle=$this->_requete->getParametre("id") ;
         
         // extraction de l'article de la BDD
         $article=$this->_managerArticle->getArticle($idArticle); 
@@ -93,14 +93,14 @@ class ControleurArticle extends \Framework\Controleur
         
         // récupération des paramètres de la requête
         $idArticle = $this->requete->getParametre("id");
-        $auteur = $this->requete->getParametre("auteur");
-        $contenu = $this->requete->getParametre("contenu");
+        $auteur = $this->_requete->getParametre("auteur");
+        $contenu = $this->_requete->getParametre("contenu");
         
         // création du formulaire d'ajout de commentaire en l'hydratant avec les valeurs de la requête
         $form=$this->initForm('Commentaire',array('idReference'=>$idArticle,'auteur'=>$auteur,'contenu'=>$contenu,'methode'=>'post','action'=>'article/commenter'));
         
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
-        if (($this->requete->getMethode() =='POST')) 
+        if (($this->_requete->getMethode() =='POST')) 
         {   
             $options=array();
             

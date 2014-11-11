@@ -53,7 +53,7 @@ class ControleurBillet extends \Framework\Controleur
         $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_BILLET;
         
         // récupération des paramètres de la requête
-        $idBillet=$this->requete->getParametre("id") ;
+        $idBillet=$this->_requete->getParametre("id") ;
         
         // extraction du billet concerné dans la BDD
         $billet=$this->_managerBillet->getBillet($idBillet); 
@@ -92,15 +92,15 @@ class ControleurBillet extends \Framework\Controleur
         $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_BILLET;
         
         // récupération des paramètres de la requête
-        $idBillet = $this->requete->getParametre("id");
-        $auteur = $this->requete->getParametre("auteur");
-        $contenu = $this->requete->getParametre("contenu");
+        $idBillet = $this->_requete->getParametre("id");
+        $auteur = $this->_requete->getParametre("auteur");
+        $contenu = $this->_requete->getParametre("contenu");
         
         // création du formulaire d'ajout de commentaire en l'hydratant avec les valeurs de la requête
         $form=$this->initForm('Commentaire',array('idReference'=>$idBillet,'auteur'=>$auteur,'contenu'=>$contenu,'methode'=>'post','action'=>'billet/commenter'));
         
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
-        if (($this->requete->getMethode() =='POST')) 
+        if (($this->_requete->getMethode() =='POST')) 
         {   
             $options=array();
             

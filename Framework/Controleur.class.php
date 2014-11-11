@@ -12,19 +12,41 @@ abstract class Controleur extends ApplicationComponent
     private $_action;
      
     /** requ�te entrante (utilisable par les classes d�riv�es) */
-    protected $requete;
+    protected $_requete;
+    
+    /** reponse HTTP sortante */
+    protected $_reponse;
 
     /**
-    * cette méthode définit la requête entrante
+    * 
+    * Méthode setRequete
+    * 
+    * cette méthode définit la requête entrante reçue par le serveur en provenance du client
     *
     * @param Requete $requete Requête entrante
+    * 
     */
      public function setRequete(Requete $requete)
      {
-         $this->requete=$requete;
+         $this->_requete=$requete;
      }
      
    /**
+    * 
+    * Méthode setReponse
+    * 
+    * cette méthode définit la réponse HTTP sortant envoyée au client
+    * 
+    * @param Reponse $reponse Reponse sortante
+    * 
+    */
+    public function setReponse(Reponse $reponse)
+    {
+    	$this->_reponse=$reponse;
+    }
+    
+   /**
+    * 
     * Méthode executerAction
     * 
     * cette m�thode execute l'action � r�aliser si la m�thode existe bien dans l'objet controleur associ� � cette action 
@@ -33,6 +55,7 @@ abstract class Controleur extends ApplicationComponent
     *
     * @param array $options tableau d'options à passer éventuellement en paramètre
     * @trows Exception si l'action n'existe pas dans la classe controleur courante
+    * 
     */
      public function executerAction($action, array $options = array())
      {
@@ -47,7 +70,7 @@ abstract class Controleur extends ApplicationComponent
         {
             //récupère la classe du Controleur correspondant à la méthode ayant pour nom l'action à réaliser 
             $classeControleur = get_class($this);
-            throw new \Exception ("Action '$action' non définie dans la classeControleur"); 
+            throw new \Exception ("Action $action non définie dans la classeControleur"); 
         }             
     }
     
@@ -58,6 +81,8 @@ abstract class Controleur extends ApplicationComponent
     * cette méthode est abstraite, et oblige les classes dérivées à implémenter la méthode correspondant à l'index par défaut 
     * (quand le parametre action n'est pas défini dans la requete)
     * 
+    * @param array $donnees tableau de donnees en option
+    * 
     */
     public abstract function index(array $donnees = array());
     
@@ -67,10 +92,10 @@ abstract class Controleur extends ApplicationComponent
      *
      * Cette méthode permet de créer l'objet entite et le formulaire associe en faisant appel au FormBuilder correspondant
      *
-     * return_type Form $form objet formulaire
-     *
      * @param string $nomEntite nom de l'objet entite à instancié, issu du répertoire "Modèle" : commentaire, billet ...etc
-     * @param array $donnees tableau de données permettant d'hydrater l'objet entité créé
+     * @param array $donnees tableau de données permettant d'hydrater l'objet entité créé 
+     * @return Form $form objet formulaire
+     * 
      */
     public function initForm($nomEntite,array $donnees = array())
     {
@@ -132,7 +157,7 @@ abstract class Controleur extends ApplicationComponent
         $controleur =substr($chaine,0,$cesure);
        
         // generer la vue associée 
-        $vue = new Vue($this->_action,$controleur);
-        $vue->generer($donneesVue);
-    }      
+        $page = new Page($this->_app,$this->_action,$controleur);
+        $page->generer($donneesVue);
+    }     
 }

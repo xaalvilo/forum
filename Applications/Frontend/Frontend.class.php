@@ -12,8 +12,8 @@ class Frontend extends \Framework\Application
 	
 	public function run()
 	{
-		//instanciation d'un Routeur - controleur frontal
-		$routeur = new \Framework\Routeur();
+		//recupération du routeur instancié lors la construction de l'application
+		$routeur = $this->_routeur;
 		
 		// routage de la requ�te entrante par le routeur
 		$routeur->routerRequete($this);

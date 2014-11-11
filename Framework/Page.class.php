@@ -4,17 +4,19 @@
  * 
  * @author Frédéric Tarreau
  *
- * 10 nov. 2014 - Vue.class.php
+ * 10 nov. 2014 - Page.class.php
  * 
- *  la classe Vue h�rite de ApplicationComponent, elle aura le r�le de g�rer la g�n�ration des diff�rentes Vues
+ *  la classe Page h�rite de ApplicationComponent, elle aura le r�le de g�rer la g�n�ration des diff�rentes Vues
  *
  */
 
 namespace Framework;
 require_once './Framework/autoload.php';
 
-class Vue extends ApplicationComponent
+class Page extends ApplicationComponent
 {
+    use Affichage;
+    
     /** @type string nom du fichier associé à la vue */
     private $_fichier;
  
@@ -22,15 +24,20 @@ class Vue extends ApplicationComponent
     private $_titre;
     
     /**
+    * 
+    * Constructeur
+    * 
     * cette méthode permet de construire le nom du fichier "vue", dans le répertoire "Vue" à partir de l'action de l'utilisateur et du controleur associé
-    * chaque vue doit résider dans le sous répertoire Vue/, dans ce répertoire, chaque vue est stockée dans un sous-répertoire portant le nom du controleur 
+    * chaque vue doit résider dans le sous répertoire définit dans dev.ini ou prod.ini, dans ce répertoire, chaque vue est stockée dans un sous-répertoire portant le nom du controleur 
     * associé à la vue. Chaque fichier Vue ne contient plus le terme "vue" mais porte directement le nom de l'action aboutissant à l'affichage de la vue
     *
-    * @param string $action est un nom d'action à laquelle la vue est associée
+    * @param string $action est un nom d'action à laquelle la page est associée
     * @param string $controleur est le nom du contrôleur auquel la vue est associée 
     */
-     public function __construct($action, $controleur ="")
+     public function __construct(Application $app, $action, $controleur ="")
      {
+     	parent::__construct($app);
+     	
          if ($action != 'erreur')
          {
             $fichier = Configuration::get("repertoireVues");
@@ -65,9 +72,8 @@ class Vue extends ApplicationComponent
         $racineWeb = Configuration::get("racineWeb","/");
   
         // spécification de la langue utilisée pour l'affichage de la date et heure
-        // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
-        $langueDate = Configuration::get("langueDate","fra_fra");
-        setlocale(LC_TIME, $langueDate);
+        // grâce au trait horodatage utilisé par la classe mère
+    	$this->setHeureDateLocale();
         
          // génération du gabarit commun incluant la partie spécifique 
          $repertoireTemplates = Configuration::get("repertoireTemplates","/");
@@ -75,7 +81,8 @@ class Vue extends ApplicationComponent
          $vue = $this->genererFichier($fichierGabarit,array('titre'=>$this->_titre,'contenu'=>$contenu,'racineWeb'=> $racineWeb));
          
          //renvoie la vue au navigateur web 
-         echo $vue;
+         $app = $this->app();
+         $app->httpReponse()->send($vue);
      }
      
     /**

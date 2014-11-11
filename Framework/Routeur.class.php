@@ -3,11 +3,11 @@ namespace Framework;
 require_once './Framework/autoload.php';
 
 /**
- *  la classe Routeur a pour rôle d'analyser une requête entrante afin d'en déduire le contrôleur à utiliser ainsi que 
+ *  la classe Routeur hérite de la classe ApplicationComponent et a pour rôle d'analyser une requête entrante afin d'en déduire le contrôleur à utiliser ainsi que 
  *  l'action (methode) à exécuter. Il s'agit d'un contrôleur frontal
  */
 
-class Routeur
+class Routeur extends ApplicationComponent
 {     
     /* constante de classe déterminant la page d'accueil */
     const PAGE_ACCUEIL = "Accueil"; 
@@ -98,7 +98,10 @@ class Routeur
     }
     
     /** 
-    *  Méthode permettant de déterminer l'action à exécuter  en fonction de la requete entrante
+    *  
+    *  Méthode creerAction
+    *  
+    *  Méthode permettant de déterminer l'action à exécuter en fonction de la requete entrante
     * 
     * @param Requete $requete Requête reçue
     * @return string $action Action à exécuter
@@ -112,7 +115,7 @@ class Routeur
         if ($requete->existeParametre('action'))
         {
             //récupération de l'action de la requete reçue
-            $action = $requete->getParametre('action') ; 
+            $action = $requete->getParametre('action');
         }
         
         //envoi de l'action récupérée ou de celle par défaut */
@@ -120,14 +123,19 @@ class Routeur
     }
         
     /** 
+    *  
+    *  Méthode gererErreur
+    *  
     *  Méthode permettant de gérer les erreurs d'exécution et d'afficher les messages dans une vue dédiée aux erreurs
     *
     * @param Exception $exception Exception interceptée
+    * 
     */   
     private function gererErreur (\Exception $exception)
     {
-        $vue = new Vue('erreur');
-        $vue->generer(array('msgErreur'=>$exception->getMessage()));
+    	//$this->_app->httpReponse()
+       // $page = new Page('erreur');
+        $page->generer(array('msgErreur'=>$exception->getMessage()));
     }  
 }  
     

@@ -1,7 +1,7 @@
 <!-- Portion de Vue spécifique à l'affichage du Blog -->
 
 <?php $this->_titre = "Blog AtelierBlancNordOuest"; ?>
-
+<!-- Affichage du dernier article -->
      <section> 
         <article class="article_blog"> 
             <time><?= strftime('%A %d %B %Y, %H:%M',$this->nettoyer($dernierArticle['date']->getTimestamp()))  ?></time>

@@ -38,9 +38,8 @@ class ManagerArticle extends \Framework\Manager
         $articles = $requete->fetchAll();
         
         // spécification de la langue utilisée pour l'affichage de la date et heure
-        // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
-        $langueDate = \Framework\Configuration::get("langueDate","fra_fra");
-        setlocale(LC_TIME, $langueDate);
+        // en utilisant un trait
+        $this->setHeureDateLocale();
         
         // conversion  du format BBD Mysql en format Php
         foreach ($articles as $article)
@@ -112,9 +111,8 @@ class ManagerArticle extends \Framework\Manager
         $requete =$this->executerRequete($sql,NULL,'\Framework\Entites\Article');
     
         // spécification de la langue utilisée pour l'affichage de la date et heure
-        // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
-        $langueDate = \Framework\Configuration::get("langueDate","fra_fra");
-        setlocale(LC_TIME, $langueDate);
+        // grâce au trait Affichage utilisé par la classe mère
+    	$this->setHeureDateLocale();
         
         //si un article correspond (row_count() retourne le nombre de lignes affectées par la dernière requête) , renvoyer ses informations
         //(fetch() renvoie la première ligne d'une requête )

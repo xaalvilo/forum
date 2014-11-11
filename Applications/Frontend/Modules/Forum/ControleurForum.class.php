@@ -73,9 +73,9 @@ class ControleurForum extends \Framework\Controleur
      */
     public function editer()
     {
-        $titre = $this->requete->getParametre("titre");
-        $auteur = $this->requete->getParametre("auteur");
-        $contenu = $this->requete->getParametre("contenu");
+        $titre = $this->_requete->getParametre("titre");
+        $auteur = $this->_requete->getParametre("auteur");
+        $contenu = $this->_requete->getParametre("contenu");
         
         // prise en compte de la date courante
         $date = new \DateTime();
@@ -89,7 +89,7 @@ class ControleurForum extends \Framework\Controleur
                                              'action'=>'forum/editer'));
         
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
-        if (($this->requete->getMethode() =='POST'))
+        if (($this->_requete->getMethode() =='POST'))
         {
             $options=array();
         

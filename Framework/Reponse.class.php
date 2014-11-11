@@ -15,9 +15,9 @@ require_once './Framework/autoload.php';
 class Reponse extends ApplicationComponent
 {
 	/*
-	 * page retournée à l'utilisateur avec l'objet réponse
+	 * objet page retournée à l'utilisateur avec l'objet réponse
 	 */
-    protected $_vue;
+    protected $_page;
 	
 	/**
 	 * 
@@ -46,40 +46,45 @@ class Reponse extends ApplicationComponent
 	 */
 	public function redirect404()
 	{
-		
+		$this->_page = new Page($this->_app,'erreur');
+        $this->_page->generer(array('msgErreur'=>$exception->getMessage()));
+		//$this->page->setContentFile(__DIR__.'/../Errors/404.html');
+		//$this->addHeader('HTTP/1.0 404 Not Found');
+		//$this->send();			
 	}
 	
 	/**
 	 * 
 	 * Méthode send
 	 * 
-	 * cette méthode permet d'envoyer la réponse en générant la page
+	 * cette méthode permet d'envoyer la réponse notamment avec la vue 
 	 * 
 	 */
-	public function send()
+	public function send($vue)
 	{
-		
+		//exit($this->page->getGeneratedPage());
+		echo $vue;
 	}
 	
 	/**
 	 * 
-	 * Méthode setVue
+	 * Méthode setPage
 	 * 
 	 * Setter de l'attribut $_vue
 	 *
 	 * return_type
 	 * 
-	 * @param Vue $vue
+	 * @param Page $page
 	 * 
 	 */
-	public function setVue(Vue $vue)
+	public function setPage(Page $page)
 	{
-		$this->_vue = $vue;		
+		$this->_page = $page;		
 	}
 	
 	/**
 	 * 
-	 * Méthode setcookie
+	 * Méthode setCookie
 	 * 
 	 * Cette méthode permet d'ajouter un cookie.
 	 * setcookie() d�finit un cookie qui sera envoy� avec le reste des en-t�tes. Comme pour les autres en-t�tes, 
@@ -113,5 +118,5 @@ class Reponse extends ApplicationComponent
 	 public function addHeader($header)
 	 {
 	     redirect($header);	    
-	}
+	 }
 }

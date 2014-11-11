@@ -14,7 +14,7 @@ html, body {
 html { 
   margin:0;
   padding:0;
-  background: url(/Forum/Contenu/woodlay.jpeg) no-repeat center fixed; 
+  background: url(/lo/Contenu/Images/woodlay.jpeg) no-repeat center fixed; 
   -webkit-background-size: cover; /* pour Chrome et Safari */
   -moz-background-size: cover; /* pour Firefox */
   -o-background-size: cover; /* pour Opera */

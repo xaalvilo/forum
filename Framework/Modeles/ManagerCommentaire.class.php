@@ -60,9 +60,8 @@ class ManagerCommentaire extends \Framework\Manager
         $commentaires = $requete->fetchAll();
 
         // spécification de la langue utilisée pour l'affichage de la date et heure
-        // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
-        $langueDate = \Framework\Configuration::get("langueDate","fra_fra");
-        setlocale(LC_TIME, $langueDate);
+        // grâce au trait Affichage utilisé par la classe mère
+    	$this->setHeureDateLocale();
         
         foreach ($commentaires as $commentaire)
         {

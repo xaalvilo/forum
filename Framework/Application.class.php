@@ -16,11 +16,13 @@ abstract class Application
 {
 	protected $_httpRequete;
 	protected $_httpReponse;
+	protected $_routeur;
 	protected $_nom;
 	
 	public function __construct()
 	{
-		//$this->_httpRequete = new Requete($parametres);
+		// Instanciation de l'objet reponse, l'objet requete est instancié par le Routeur = controleur frontal
+		$this->_routeur = new Routeur($this);
 		$this->_httpReponse = new Reponse($this);
 		$this->_nom = '';		
 	}
@@ -45,13 +47,36 @@ abstract class Application
 		return $this->_httpRequete;
 	}
 	
+	/**
+	 *
+	 * Méthode routeur
+	 *
+	 *
+	 */
+	public function routeur()
+	{
+		return $this->_routeur;
+	}
+	
+	/**
+	 *
+	 * Méthode httpReponse
+	 *
+	 *
+	 */
 	public function httpReponse()
 	{
 		return $this->_httpReponse;
 	}
 	
-	public function nom()
-	{
+	/**
+	 * 
+	 * Méthode nom
+	 * 
+	 * 
+	 */
+	 public function nom()
+	 {
 		return $this->_nom;
-	}
+	 }
 }

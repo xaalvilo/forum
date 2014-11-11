@@ -75,9 +75,9 @@ class ControleurBlog extends \Framework\Controleur
      */
     public function editer()
     {
-        $titre = $this->requete->getParametre("titre");
-        $contenu = $this->requete->getParametre("contenu");
-        $image = $this->requete->getParametre("image");
+        $titre = $this->_requete->getParametre("titre");
+        $contenu = $this->_requete->getParametre("contenu");
+        $image = $this->_requete->getParametre("image");
         
         // prise en compte de la date courante
         $date = new \DateTime();
@@ -91,7 +91,7 @@ class ControleurBlog extends \Framework\Controleur
                                              'action'=>'blog/editer'));
         
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
-        if (($this->requete->getMethode() =='POST'))
+        if (($this->_requete->getMethode() =='POST'))
         {
             $options=array();
         
