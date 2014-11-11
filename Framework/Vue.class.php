@@ -1,9 +1,18 @@
 <?php
+
+/**
+ * 
+ * @author Frédéric Tarreau
+ *
+ * 10 nov. 2014 - Vue.class.php
+ * 
+ *  la classe Vue h�rite de ApplicationComponent, elle aura le r�le de g�rer la g�n�ration des diff�rentes Vues
+ *
+ */
+
 namespace Framework;
 require_once './Framework/autoload.php';
-/**
- *  la classe Vue h�rite de ApplicationComponent, elle aura le r�le de g�rer la g�n�ration des diff�rentes Vues
- */
+
 class Vue extends ApplicationComponent
 {
     /** @type string nom du fichier associé à la vue */
@@ -44,6 +53,7 @@ class Vue extends ApplicationComponent
     * cette m�thode permet de g�n�rer et d'afficher une vue 
     *
     * @param array $donnees Donn�es n�cessaires � la g�n�ration de la vue
+    * 
     */
      public function generer($donnees)
      {
@@ -69,6 +79,9 @@ class Vue extends ApplicationComponent
      }
      
     /**
+    * 
+    * Méthode genererFichier
+    * 
     * cette méthode permet de générer un fichier "vue" et de renvoyer le résultat produit dans le tampon de sortie 
     *
     * @param string $fichier Chemin du fichier vue à générer
@@ -76,6 +89,7 @@ class Vue extends ApplicationComponent
     *
     * @return string Résultat de la génération de la vue
     * @throws Exception Si le fichier vue est introuvable
+    * 
     */
     private function genererFichier($fichier,$donnees)
     {
@@ -97,7 +111,7 @@ class Vue extends ApplicationComponent
         }
         else 
         {
-            throw new \Exception ("Fichier '$fichier' introuvable");
+            throw new \Exception ("Fichier $fichier introuvable");
         }             
     }
     

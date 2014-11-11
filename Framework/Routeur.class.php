@@ -77,9 +77,7 @@ class Routeur
         $repertoireControleur = "Applications/".$nomApplication."/Modules/".$controleur."/";
                 
         $fichierControleur =  $repertoireControleur.$classeControleur.".class.php" ;
-        
-        
-        
+                
         // si ce fichier existe, instanciation de l'objet controleur associé à l'action 
         if (file_exists($fichierControleur))
         {            
@@ -105,7 +103,6 @@ class Routeur
     * @param Requete $requete Requête reçue
     * @return string $action Action à exécuter
     */   
-    
     private function creerAction (Requete $requete)
     {
         //index est toujours l'action par defaut 
@@ -127,7 +124,6 @@ class Routeur
     *
     * @param Exception $exception Exception interceptée
     */   
-    
     private function gererErreur (\Exception $exception)
     {
         $vue = new Vue('erreur');

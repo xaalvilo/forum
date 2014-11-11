@@ -2,8 +2,14 @@
 namespace Framework;
 
 /**
-*  la classe Requête aura le rôle de modéliser une requête HTTP entrante
-*/
+ * 
+ * @author Frédéric Tarreau
+ *
+ * 10 nov. 2014 - Requete.class.php
+ * 
+ * la classe Requête aura le rôle de modéliser une requête HTTP entrante
+ *
+ */
 
 class Requete extends ApplicationComponent
 {
