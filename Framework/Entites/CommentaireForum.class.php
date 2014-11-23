@@ -14,21 +14,31 @@ require_once './Framework/autoload.php';
 
 class CommentaireForum extends \Framework\Commentaire
 {
-  protected $idBillet;
-     
-    /**
-    * méthodes "setters" des attributs privés
+    protected $idBillet;
+        
+   /**
+    * 
+    * Méthode setIdBillet
+    *
+    * cette méthode est le setter de idBillet
+    * 
+    * @param int $idBillet
     */
    public function setIdBillet($idBillet)
    {
       $this->idBillet= (int) $idBillet ;
    }
-   
         
-    /**
-     * @return int $idBillet
-     */
-   public function idBillet()
+   /**
+    * 
+    * Méthode getIdBillet
+    *
+    * cette méthode est le getter de idBillet
+    * 
+    * @return number $idBillet
+    * 
+    */
+   public function getIdBillet()
    {
         return $this->idBillet;
    }

@@ -14,10 +14,11 @@ require_once './Framework/autoload.php';
 
 class Reponse extends ApplicationComponent
 {
-	/*
-	 * objet page retournée à l'utilisateur avec l'objet réponse
-	 */
+	/* objet page retournée à l'utilisateur avec l'objet réponse */
     protected $_page;
+    
+    /* nom du cookie */
+    protected $_nomCookie;    
 	
 	/**
 	 * 
@@ -46,7 +47,9 @@ class Reponse extends ApplicationComponent
 	 */
 	public function redirect404()
 	{
-		$this->_page = new Page($this->_app,'erreur');
+		// cette erreur arrive avant qu'un objet Page ne soit instancié par le controleur (dans la méthode genererVue()
+		// il faut donc le faire ... moins que cela ne génére uen exception dans le try/catch du controleur frontal
+	    $this->_page = new Page($this->_app,'erreur');
         $this->_page->generer(array('msgErreur'=>$exception->getMessage()));
 		//$this->page->setContentFile(__DIR__.'/../Errors/404.html');
 		//$this->addHeader('HTTP/1.0 404 Not Found');
@@ -57,13 +60,13 @@ class Reponse extends ApplicationComponent
 	 * 
 	 * Méthode send
 	 * 
-	 * cette méthode permet d'envoyer la réponse notamment avec la vue 
+	 * cette méthode appelée par le controleur permet d'envoyer la page de réponse 
 	 * 
 	 */
 	public function send($vue)
 	{
-		//exit($this->page->getGeneratedPage());
 		echo $vue;
+		
 	}
 	
 	/**

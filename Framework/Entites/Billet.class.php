@@ -35,7 +35,8 @@ class Billet extends \Framework\Entite
     public function setTitre($titre)
     {
         // $titre doit �tre une cha”ne de caract�re infŽrieure ˆ 30
-    	if (!is_string($titre) || empty($titre) || strlen($titre) > 30)
+        $longMaxTitre = \Framework\Configuration::get("longMaxTitre", 30);
+    	if (!is_string($titre) || empty($titre) || strlen($titre) > $longMaxTitre)
         {
         	$this->erreurs[]=self::TITRE_INVALIDE;
         }
@@ -59,7 +60,7 @@ class Billet extends \Framework\Entite
     }
     
     /**
-     * @param unknown $contenu
+     * @param string $contenu
      */
     public function setContenu($contenu)
     {

@@ -6,9 +6,9 @@ require_once './Framework/autoload.php';
  * 
  * @author Frédéric Tarreau
  *
- * 26 oct. 2014 - CommentaireForum.class.php
+ * 26 oct. 2014 - CommentaireBlog.class.php
  * 
- * cette classe hérite de la classe Commentaire et  représente un commentaire du Blog
+ * cette classe hérite de la classe Commentaire et représente un commentaire du Blog
  *
  */
 
@@ -21,14 +21,14 @@ class CommentaireBlog extends \Framework\Commentaire
     */
    public function setIdArticle($idArticle)
    {
-  $this->idArticle= (int) $idArticle ;
+        $this->idArticle= (int) $idArticle ;
    }
    
         
     /**
      * @return int $idArticle
      */
-   public function idArticle()
+   public function getIdArticle()
    {
         return $this->idArticle;
    }

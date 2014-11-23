@@ -3,9 +3,11 @@
  * 
  * @author Frédéric Tarreau
  *
- * 3 oct. 2014 - file_name
+ * 3 oct. 2014 - ControleurBillet.class.php
  * 
- *  La classe ControleurBillet h�rite de la classe abstraite Controleur du framework. Il s'agit du contrôleur des actions liées aux billets
+ *  La classe ControleurBillet h�rite de la classe abstraite Controleur du framework.
+ *  
+ *  Il s'agit du contrôleur des actions liées aux billets
  *  Elle utilise les services de la classe Requete pour accéder aux parametres de la requete. 
  *  elle utilise également la methode executerAction de sa superclasse afin d'actualiser les détails sur le billet, et genererVue pour 
  *  générer la vue associée à l'action

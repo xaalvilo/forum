@@ -54,7 +54,7 @@ abstract class Controleur extends ApplicationComponent
     * Si un tableau d'options est donné, elle le prendra en compte
     *
     * @param array $options tableau d'options à passer éventuellement en paramètre
-    * @trows Exception si l'action n'existe pas dans la classe controleur courante
+    * @throws Exception si l'action n'existe pas dans la classe controleur courante
     * 
     */
      public function executerAction($action, array $options = array())
@@ -132,6 +132,7 @@ abstract class Controleur extends ApplicationComponent
     * et le nom du contrôleur est de type : ControleurNomModule également dans ces répertoires
     *
     * @param array $donneesVue Données nécessaires pour la génération de la vue
+    * 
     */
     protected function genererVue($donneesVue=array())
     {
@@ -155,9 +156,28 @@ abstract class Controleur extends ApplicationComponent
         $count = strlen($chaine);
         $cesure = -$count/2;
         $controleur =substr($chaine,0,$cesure);
-       
-        // generer la vue associée 
+        
+        // generation de la page avec la vue associée 
         $page = new Page($this->_app,$this->_action,$controleur);
         $page->generer($donneesVue);
     }     
+    
+    
+   /**
+    * 
+    * Méthode genererCookie
+    * 
+    * Cette méthode permet de générer le cookie s'il n'existe pas
+    * 
+    * 
+    *
+    */
+    public function genererCookie()
+    {
+        // si cookie n'existe pas
+        $reponse = $this->_app->httpReponse();
+        $reponse->setCookie($nom);
+   
+ 
+    }
 }

@@ -7,7 +7,8 @@ namespace Framework;
  *
  * 10 nov. 2014 - Requete.class.php
  * 
- * la classe Requête aura le rôle de modéliser une requête HTTP entrante
+ * la classe Requête aura le rôle de modéliser une requête HTTP entrante, elle permet de récupérer les données transmises
+ * dans la requête du client
  *
  */
 
@@ -103,12 +104,26 @@ class Requete extends ApplicationComponent
     * cette m�thode renvoie le Cookie
     * 
     * @param string $key nom du cookie
-    * @return mixed valeur du cookie
+    * @return mixed valeur du cookie ou null
     */
     public function cookieData($key)
     {
     	// operateur ternaire 
     	return isset($_COOKIE[$key]) ? $_COOKIE[$key]:null;
+    }
+    
+    /**
+     * 
+     * Methode urlClient
+     * 
+     * cette méthode permet d'obtenir l'url envoyée par le client
+     * 
+     * @return string une url
+     * 
+     */
+     public function urlClient()
+    {
+        return $_SERVER['REQUEST_URI'];
     }
 }
      

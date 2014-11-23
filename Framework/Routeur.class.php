@@ -13,7 +13,14 @@ class Routeur extends ApplicationComponent
     const PAGE_ACCUEIL = "Accueil"; 
     
     /** 
-    * Méthode principale appelée par le contrôleur frontal. Elle examine la requête et exécute l'action appropriée
+    * 
+    *  Méthode routerRequête
+    *  
+    *  cette méthode principale appelée par le contrôleur frontal examine la requête et exécute l'action appropriée
+    *  elle génére une erreur si une exception est levée au cours des principales étapes de construction de la réponse à la requête
+    *  
+    *  @param Application $app
+    *  
     */
     public function routerRequete(Application $app)
     {      
@@ -133,9 +140,19 @@ class Routeur extends ApplicationComponent
     */   
     private function gererErreur (\Exception $exception)
     {
-    	//$this->_app->httpReponse()
-       // $page = new Page('erreur');
-        $page->generer(array('msgErreur'=>$exception->getMessage()));
+
+        // si l'erreur intervient après que l'objet Page associé à l'application ait été instancié par le controleur
+        // il faut le détruire
+       // if ($this->_page instanceof Page)
+       // {
+            //il faut détruire l'objet page et le remplacer
+       // }
+               
+        // creation de la page de réponse
+        $page = new Page($this->_app,'erreur');
+        
+        // génération de la vue spécifique avec les données propres à l'erreur
+        $page->generer(array('msgErreur'=>$exception->getMessage()));                    
     }  
 }  
     

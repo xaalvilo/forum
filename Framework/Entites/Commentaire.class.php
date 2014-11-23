@@ -20,7 +20,7 @@ class Commentaire extends \Framework\Entite
   protected $auteur;
   
   const AUTEUR_INVALIDE=1;
-  const CONTENU_INVALIDE=2;
+  const CONTENU_INVALIDE=3;
   
     /**
     * méthode testant si l'objet Commentaire est valide
