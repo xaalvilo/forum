@@ -5,7 +5,8 @@
  * 28 sept. 2014 - Button.class.php
  * 
  * Classe dont le rôle est de représenter un bouton de validation d'un formulaire. Elle prend en compte les champs cachés des données
- * "hidden" à envoyer sans saisie de l'utilisateur. *
+ * "hidden" à envoyer sans saisie de l'utilisateur. 
+ * 
  */
 namespace Framework\Formulaire;
 

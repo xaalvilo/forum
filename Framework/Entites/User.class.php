@@ -23,6 +23,15 @@ class User extends \Framework\Entite
     /* pseudo */
     protected $_userPseudo;
     
+    /* nom */
+    protected $_userNom;
+    
+    /* prenom */
+    protected $_userPrenom;
+    
+    /* date de naissance */
+    protected $_userNaissance;
+    
     /* mail */
     protected $_userMail;
     
@@ -57,18 +66,15 @@ class User extends \Framework\Entite
     protected $_nbreCommentairesBlog;
     
     /* constante correspondant au statut possible des visiteurs du site (notamment pour le forum) permettant de donner + ou - de droits */
-    const ADMIN=1;
-    const MODERATEUR=2;
-    const VIP=3;
-    const VISITEUR=4;
     const MAX_STATUT=4;
     
     /* constante permettant de reporter le type d'erreur */
-    const PSEUDO_INVALIDE = 4;
+    const CHAINE_INVALIDE = 4;
     const STATUT_USER_INVALIDE = 5;
     const TELEPHONE_INVALIDE = 6;
     const MAIL_INVALIDE = 7;
     const NOM_FICHIER_AVATAR_INVALIDE = 8;
+    const FORME_HASH_INVALIDE = 9;
     
     /**
      * 
@@ -112,9 +118,9 @@ class User extends \Framework\Entite
     public function setUserPseudo($userPseudo)
     {
         $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo", 30);
-        if(!is_string($userPseudo) || empty($_userPseudo) || strlen($userPseudo) > $longMaxPseudo)
+        if(!is_string($userPseudo) || empty($userPseudo) || strlen($userPseudo) > $longMaxPseudo)
         {
-            $this->erreurs[]= self::PSEUDO_INVALIDE;
+            $this->erreurs[]= self::CHAINE_INVALIDE;
         }
         else 
         {    
@@ -133,6 +139,109 @@ class User extends \Framework\Entite
     public function userPseudo()
     {
         return $this->_userPseudo;
+    }
+    
+    /**
+     *
+     * Méthode setUserNom
+     *
+     * Cette méthode est le setter de userNom
+     *
+     * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur
+     * à la longueur spécifiée en configuration
+     *
+     * @param string $userNom
+     *
+     */
+    public function setUserNom($userNom)
+    {
+        $longMaxNom = \Framework\Configuration::get("longMaxNom", 30);
+        if(!is_string($userNom) || empty($userNom) || strlen($userNom) > $longMaxNom)
+        {
+            $this->erreurs[]= self::CHAINE_INVALIDE;
+        }
+        else
+        {
+            $this->_userNom = $userNom;
+        }
+    }
+    
+    /**
+     *
+     * Méthode userNom
+     *
+     * Cette méthode est le getter de userNom
+     *
+     * @return string $_userNom
+     */
+    public function userNom()
+    {
+        return $this->_userNom;
+    }
+    
+    /**
+     *
+     * Méthode setUserPrenom
+     *
+     * Cette méthode est le setter de userPrenom
+     *
+     * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur
+     * à la longueur spécifiée en configuration
+     *
+     * @param string $userPrenom
+     *
+     */
+    public function setUserPrenom($userPrenom)
+    {
+        $longMaxPrenom = \Framework\Configuration::get("longMaxNom", 30);
+        if(!is_string($userPrenom) || empty($userPrenom) || strlen($userPrenom) > $longMaxPrenom)
+        {
+            $this->erreurs[]= self::CHAINE_INVALIDE;
+        }
+        else
+        {
+            $this->_userPrenom = $userPrenom;
+        }
+    }
+    
+    /**
+     *
+     * Méthode userPrenom
+     *
+     * Cette méthode est le getter de userPrenom
+     *
+     * @return string $_userPrenom
+     */
+    public function userPrenom()
+    {
+        return $this->_userPrenom;
+    }
+    
+    /**
+     *
+     * Méthode setUserNaissance
+     *
+     * Cette méthode est le setter de userNaissance
+     *
+     * @param \DateTime $userNaissance
+     *
+     */
+    public function setUserNaissance(\DateTime $userNaissance)
+    {
+        $this->_userNaissance = $userNaissance;
+    }
+    
+    /**
+     *
+     * Méthode userNaissance
+     *
+     * Cette méthode est le getter de userNaissance
+     *
+     * @return \DateTime $_userNaissance
+     */
+    public function userNaissance()
+    {
+        return $this->_userNaissance;
     }
     
     /**
@@ -247,7 +356,7 @@ class User extends \Framework\Entite
     public function setUserStatut($userStatut)
     {
         
-        if ($userStatut <= self::MAX_STATUT)
+        if ((!empty($userStatut)) && (is_in($userStatut)) && ($userStatut <= self::MAX_STATUT))
         {
             $this->_userStatut = $userStatut;
         }
@@ -327,6 +436,40 @@ class User extends \Framework\Entite
     public function avatar()
     {
         return $this->_avatar;
+    }
+    
+    /**
+     *
+     * Méthode setHash
+     *
+     * Cette méthode est le setter de Hash
+     *
+     * @param string $hash correspondant au hash du mot de passe
+     *
+     */
+    public function setHash($hash)
+    {
+        if(!is_string($hash))
+        {
+            $this->erreurs[]=self::FORME_HASH_INVALIDE;
+        }
+        else
+        {
+            $this->_hash = $hash;
+        }
+    }
+    
+    /**
+     *
+     * Méthode hash
+     *
+     * Cette méthode est le getter de Hash
+     *
+     * @return string $_hash
+     */
+    public function hash()
+    {
+        return $this->_hash;
     }
     
     /**

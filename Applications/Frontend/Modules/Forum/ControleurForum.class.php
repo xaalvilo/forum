@@ -96,7 +96,7 @@ class ControleurForum extends \Framework\Controleur
             if ($form->isValid())
             {
                 // appelle de la m�thode permettant d'enregistrer un billet en BDD
-                $this->_managerBillet->ajouterBillet($titre, $auteur, $contenu);
+                $this->_managerBillet->ajouterBillet($titre,$auteur,$contenu);
             }
             else
             {

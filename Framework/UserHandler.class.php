@@ -9,11 +9,14 @@
 *
 * cette classe a pour r�le d'enregistrer les informations
 * temporaires concernant l'utilisateur (classe User) sur le serveur et de g�rer sa session:
+*             - initialiser la session avec session_start()
 *             - assigner un attribut
 *             - obtenir la valeur d'un attribut
 *             - authentifier l'utilisateur
 *             - assigner un message informatif
 *             - récupérer ce message
+*             - définir un statut
+*             - obtenir son adresse IP
 *
 * Rappel sur les sessions : PHP envoie au navigateur un identifiant de session et stocke des données du client
 * dans un fichier correspondant à l'identifiant
@@ -126,5 +129,33 @@ class UserHandler extends ApplicationComponent
     {
         
     }
+    
+    /**
+     * 
+     * Méthode defineStatut
+     * 
+     * Cette méthode permet de définir le statut de l'utilisateur, ouvrant des droits sur l'espace privé du site
+     *
+     * return_type
+     *
+     */
+    public function defineStatut()
+    {
+    
+    } 
+    
+    /**
+     * 
+     * Méthode getUserIp
+     * 
+     * Cette méthode permet de récupérer l'adresse Ip de l'utilisateur
+     *
+     * @return string IpAdress
+     *
+     */
+    public function getUserIp()
+    {
+        
     }
+    
 }

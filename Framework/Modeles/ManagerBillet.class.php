@@ -97,6 +97,7 @@ class ManagerBillet extends \Framework\Manager
         //requ�te avec insertion du commentaire
         $sql = 'insert into T_BILLET(BIL_DATE, BIL_TITRE, BIL_AUTEUR, BIL_CONTENU)'
                 . ' values(?, ?, ?, ?)';
+        
         // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
         $odate = new \DateTime();
     

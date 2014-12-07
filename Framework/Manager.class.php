@@ -24,6 +24,7 @@ abstract class Manager
     *
     * @param string $sql requete sql
     * @param array $params paramètres de la requete
+    * @param \Framework\Entite $entite
     * @return PDOstatement r�sultat de la requete
     */
     protected function executerRequete($sql,$params = null,$entite)
