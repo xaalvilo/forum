@@ -155,7 +155,8 @@ class UserHandler extends ApplicationComponent
      */
     public function getUserIp()
     {
-        
+        $ip = '192.168.1.2';
+        return $ip;
     }
     
 }

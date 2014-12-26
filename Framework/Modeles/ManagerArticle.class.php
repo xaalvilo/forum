@@ -33,7 +33,7 @@ class ManagerArticle extends \Framework\Manager
         // instanciation d'objets "Modele\Article" dont les attributs prennent pour valeur les donn�es de la BDD
         $requete = $this->executerRequete($sql,NULL,'\Framework\Entites\Article');
         
-        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'enregistrements , les colonnes sont li�s aux attributs de la
+        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions , les colonnes sont li�s aux attributs de la
         //la classe
         $articles = $requete->fetchAll();
         
@@ -146,6 +146,7 @@ class ManagerArticle extends \Framework\Manager
         //requ�te avec insertion de l'article
         $sql = 'insert into T_ARTICLE( ART_TITRE, ART_DATE, ART_CONTENU, ART_IMAGE)'
                 . ' values(?, ?, ?, ?)';
+        
         // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
         $odate = new \DateTime();
     

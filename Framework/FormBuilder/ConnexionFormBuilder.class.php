@@ -42,7 +42,7 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a 15', 15),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
- 		 			// ajout du champ de password, attention, il faut bien reprendre le nom de l'attribut "mdp" de l'objet login
+ 		 			// ajout du champ de password, attention, il faut bien reprendre le nom de l'attribut "mdp" de l'objet Connexion
  	                  ->add(new \Framework\Formulaire\PasswordField(array(
  	                                                         'label'=>'Password  ',
  	                                                         'name'=>'mdp',
@@ -55,11 +55,11 @@ require_once './Framework/autoload.php';
  	                                                                             new \Framework\Formulaire\NotNullValidator('Merci de donner un mot de passe'),
  	                                                                             new \Framework\Formulaire\MinLengthValidator('le nombre minimal de caract�re est fix� à'.$minLength, $minLength),
  	                                                                             new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fix� à'.$maxLength, $maxLength),
- 	                                                                             new \Framework\Formulaire\PasswordValidator('le mot de passe doit comporter ')
+ 	                                                                             new \Framework\Formulaire\PasswordValidator('le mot de passe doit comporter xxx')
  		 					)))); 		 			
  		
  		 // ajout du bouton de validation du formulaire, il n'y a pas de valeur cachée hiddenvalue
- 		 $this->form->addButton(new \Framework\Formulaire\Button('submit','Connecter','id'));
+ 		 $this->form->addButton(new \Framework\Formulaire\Button('submit','Connecter'));
  	}
  }
  

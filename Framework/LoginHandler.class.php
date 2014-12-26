@@ -37,25 +37,34 @@ class LoginHandler extends ApplicationComponent
      * Méthode verifierHash
      * 
      * cette méthode utilise les fonctions natives de php 5 pour vérifier qu'un mot de passe 
-     * correspond à une table de hachage
+     * correspond à une table de hachage 
      *
-     *
+     * @return array $resultat tableau comportant : 
+     *                                   un boolean (FALSE si non valide, TRUE si valide), 
+     *                                   un boolean précisant si le hash est regénéré,
+     *                                   un string correspondant au hash regénéré
      */
-    public function verfierHash($mdp,$hash)
+    public function verifierHash($mdp,$hash)
     {
-        if (password_verify($mdp, $hash))
+        $resultat=array('valide'=> FALSE,'nouveauHash'=> FALSE,'hash'=>'');
+         
+        if (is_string($mdp) && is_string($hash))
         {
-            /* Valid */
-            if (password_needs_rehash($hash, PASSWORD_DEFAULT)) 
-            {
-                $hash = password_hash($mdp, PASSWORD_DEFAULT);
-            /* Store new hash in db */
+            if (password_verify($mdp, $hash))
+            {      
+                $resultat['valide']=TRUE;    
+              
+                // vérification de la pertinence du hash par rapport à l'algorithme par défaut en vigueur
+                if (password_needs_rehash($hash, PASSWORD_DEFAULT)) 
+                {
+                    // génération d'un nouveau hash qu'il faudra faire stocker en BDD par le contrôleur
+                    $hash = password_hash($mdp, PASSWORD_DEFAULT);   
+                    $resultat['nouveauHash']=TRUE;
+                    $resultat['hash']= $hash; 
+                }
             }
-        }
-        else 
-        {
-            /* Invalid */
-        }
+       }
+       return $resultat ;
     }
   
     

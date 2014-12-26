@@ -55,7 +55,7 @@ class ManagerCommentaire extends \Framework\Manager
         //instanciation d'objets "Modele\Commentaire" dont les attributs publics prennent pour valeur les donn�es de la BDD
         $requete = $this->executerRequete($sql,array($idReference),'\Framework\Entites\Commentaire');
         
-        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'enregistrements, les colonnes sont li�s aux attributs de la
+        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions, les colonnes sont li�s aux attributs de la
         //la classe
         $commentaires = $requete->fetchAll();
 

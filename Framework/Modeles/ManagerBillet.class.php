@@ -26,7 +26,7 @@ class ManagerBillet extends \Framework\Manager
         // instanciation d'objets "Modele\Billet" dont les attributs publics prennent pour valeur les donn�es de la BDD
         $requete = $this->executerRequete($sql,NULL,'\Framework\Entites\Billet');
         
-        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'enregistrements , les colonnes sont li�s aux attributs de la
+        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions , les colonnes sont li�s aux attributs de la
         //la classe
         $billets = $requete->fetchAll();
         

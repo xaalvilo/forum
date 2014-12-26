@@ -25,6 +25,8 @@
                     <li id="titrePage"><a href="Accueil">Accueil</a></li>
                     <li id="titrePage"><a href="Forum">Forum</a></li>
                     <li id="titrePage"><a href="Blog">Blog</a></li>  
+                    <li id="titrePage"><a href="Connexion">Connexion</a></li>
+                    <li id="titrePage"><a href="Inscription">Inscription</a></li>
                 </ul>               
             </nav>
             

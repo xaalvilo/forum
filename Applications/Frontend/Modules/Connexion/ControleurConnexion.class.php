@@ -37,7 +37,7 @@ class ControleurConnexion extends \Framework\Controleur
     * Méthode index
     * 
     * cette m�thode est l'action par d�faut consistant � afficher le formulaire de login
-    * la vue associée donne un lien vers le module d'enregistrement d'un nouvel utilisateur (module User)
+    * la vue associée donne un lien vers le module d'Inscription d'un nouvel utilisateur (module User)
     * 
     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
     * requête précédente 
@@ -56,10 +56,10 @@ class ControleurConnexion extends \Framework\Controleur
             $tableauValeur=array_merge($tableauValeur,$donnees);
         }
         
-        // création du formulaire de login et instanciation d'un objet login
+        // création du formulaire de connexion et instanciation d'un objet connexion
         $form=$this->initForm('Connexion',$tableauValeur);
          
-        // génération de la vue avec le formulaire de login
+        // génération de la vue avec le formulaire de connexion
         $this->genererVue(array('formulaire'=>$form->createView()));
     }
     
@@ -87,11 +87,11 @@ class ControleurConnexion extends \Framework\Controleur
                                              'methode'=>'post',
                                              'action'=>'connexion/connecter'));
         
+        $options = array();
+        
         // si la methode est bien POST et que le formulaire est valide, recherche du login correspondant en BDD 
         if (($this->_requete->getMethode() =='POST'))
-        {
-            $options=array();
-        
+        {                      
             // le formulaire est valide
             if ($form->isValid())
             {
@@ -103,42 +103,83 @@ class ControleurConnexion extends \Framework\Controleur
                     // récupération du hash de l'utilisateur
                     $hash = $user->hash();
                     
-                    // vérification du hash avec le mot de passe
+                    // vérification du hash avec le mot de passe, resultat sous forme de tableau associatif
                     $resultat = $this->_loginHandler->verfierHash($mdp, $hash);
                     
-                    // si la vérification à réussi
-                    if ($resultat)
+                    // si la vérification a réussi et que le hash a été regénéré
+                    if ($resultat['valide']) 
                     {
+                        $idUser = $user->id();
+                        
                         // actualisation de la date de connexion "now"
                         $dateConnexion = new \DateTime();
                         $user->setDateConnexion($dateConnexion);
                         
+                        //preparation de l'Inscription en BDD
+                        $donnees['dateConnexion']= $user->dateConnexion();
+                                
+                        // actualisation au besoin du hash
+                        if ($resultat['nouveauHash'])
+                        {
+                            // attribution du nouveau hash
+                            $user->setHash($resultat['hash']);
+                            
+                            // preparation de l'Inscription en BDD
+                            $donnees['hash']=$user->hash();
+                        }
+                        
+                        // Inscription des données actualisées en BB                       
+                        $this->_managerUser->actualiserUser($idUser, $donnees);
+                        
                         //TODO envoyer un flash de connexion à l'utilisateur
                         echo "connexion réussie";
                         
+                        //TODO quelle action de redirection mener ?                        
                     }
+                    // le hash ne correspond pas au mdp
                     else
-                    {
+                    { 
+                        // recuperation des nom/valeur des champs afin de générer ultérieurement l'affichage du formulaire
+                        // pré rempli des champs valides s'il y a échec à l'inscription
+                        $options=$form->validField();
+                         
                         //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
                         $this->executerAction("index",$options);
+                        
+                        //TODO envoyer un flash de tentative de connexion invalide à l'utilisateur
+                        echo "connexion a échoué";
                     }
                 }
                 // la requête en BDD User n'a pas permis de trouver ce pseudo ou a échoué
                 else 
-                {                    
+                {      
+                    // recuperation des nom/valeur des champs afin de générer ultérieurement l'affichage du formulaire
+                    // pré rempli des champs valides s'il y a échec à l'inscription
+                    $options=$form->validField();
+                     
                     //il s'agit  ensuite d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
                     $this->executerAction("index",$options);
+                    
+                    //TODO envoyer un flash de tentative de connexion invalide à l'utilisateur
+                    echo "connexion a échoué";
                 }
             }
             // le formulaire est invalide
             else
-            {
-                // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
+            {                    
+                // recuperation des nom/valeur des champs afin de générer ultérieurement l'affichage du formulaire
+                // pré rempli des champs valides s'il y a échec à l'inscription
                 $options=$form->validField();
-                
+                 
                 //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
                 $this->executerAction("index",$options);
             }
+         }
+         // pas de méthode POST
+         else 
+         {
+             //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
+             $this->executerAction("index",$options);
          }         
     }
 }    

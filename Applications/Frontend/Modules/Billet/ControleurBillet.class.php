@@ -49,7 +49,7 @@ class ControleurBillet extends \Framework\Controleur
     * requête précédente
     * 
     */
-    public function index(array $donnees = array())
+    public function index(array $donnees = array()) 
     {
         // spécification de la table concernée dans la BDD
         $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_BILLET;
@@ -101,24 +101,22 @@ class ControleurBillet extends \Framework\Controleur
         // création du formulaire d'ajout de commentaire en l'hydratant avec les valeurs de la requête
         $form=$this->initForm('Commentaire',array('idReference'=>$idBillet,'auteur'=>$auteur,'contenu'=>$contenu,'methode'=>'post','action'=>'billet/commenter'));
         
+        $options = array();
+        
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
         if (($this->_requete->getMethode() =='POST')) 
-        {   
-            $options=array();
-            
+        {                          
             if ($form->isValid())
             {
                 // appelle de la m�thode permettant d'enregistrer un commentaire en BDD 
                 $this->_managerCommentaire->ajouterCommentaire($table, $idBillet, $auteur, $contenu);
             }
-            else 
-            {
-                // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
-                // pour le cas d'un commentaire
-                $options=$form->validField();
-            }
         }
         
+         // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
+         // pour le cas d'un commentaire
+         $options=$form->validField();
+         
         //il s'agit sinon ou ensuite d'executer l'action par d�faut permettant d'afficher la liste des commentaires 
         $this->executerAction("index",$options);
     }

@@ -21,40 +21,40 @@ class User extends \Framework\Entite
     protected $_sessionId;
     
     /* pseudo */
-    protected $_userPseudo;
+    protected $_pseudo;
     
     /* nom */
-    protected $_userNom;
+    protected $_nom;
     
     /* prenom */
-    protected $_userPrenom;
+    protected $_prenom;
     
     /* date de naissance */
-    protected $_userNaissance;
+    protected $_naissance;
     
     /* mail */
-    protected $_userMail;
+    protected $_mail;
     
-    /* adresse sous forme de tableau associatif */
-    protected $_userAdresse;
+    /* pays sous forme de tableau associatif */
+    protected $_pays;
     
     /* telephone */
-    protected $_userTelephone;
+    protected $_telephone;
     
     /* hash du password */
     protected $_hash;
     
     /* statut du visiteur */
-    protected $_userStatut;
+    protected $_statut;
     
     /* adresse IP utilisée */
-    protected $_userIP;
+    protected $_ip;
     
     /* fichier avatar */
     protected $_avatar;
     
-    /* date enregistrement */
-    protected $_dateEnregistrement;
+    /* date Inscription */
+    protected $_dateInscription;
     
     /* dernière date connexion */
     protected $_dateConnexion;
@@ -64,6 +64,9 @@ class User extends \Framework\Entite
     
     /* nombre de commentaires sur le Blog */
     protected $_nbreCommentairesBlog;
+    
+    /* mot de passe de l'utilisateur , il ne sera jamais stocké en BDD */
+    protected $_mdp;
     
     /* constante correspondant au statut possible des visiteurs du site (notamment pour le forum) permettant de donner + ou - de droits */
     const MAX_STATUT=4;
@@ -75,6 +78,7 @@ class User extends \Framework\Entite
     const MAIL_INVALIDE = 7;
     const NOM_FICHIER_AVATAR_INVALIDE = 8;
     const FORME_HASH_INVALIDE = 9;
+    const FORME_MDP_INVALIDE = 10;
     
     /**
      * 
@@ -105,260 +109,298 @@ class User extends \Framework\Entite
 		
     /**
      *
-     * Méthode setUserPseudo
+     * Méthode setPseudo
      *
-     * Cette méthode est le setter de userPseudo
+     * Cette méthode est le setter de pseudo
      * 
      * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur 
      * à la longueur spécifiée en configuration 
      *
-     * @param string $userPseudo
+     * @param string $pseudo
      *
      */
-    public function setUserPseudo($userPseudo)
+    public function setpseudo($pseudo)
     {
         $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo", 30);
-        if(!is_string($userPseudo) || empty($userPseudo) || strlen($userPseudo) > $longMaxPseudo)
+        if(!is_string($pseudo) || empty($pseudo) || strlen($pseudo) > $longMaxPseudo)
         {
             $this->erreurs[]= self::CHAINE_INVALIDE;
         }
         else 
         {    
-            $this->_userPseudo = $userPseudo;
+            $this->_pseudo = $pseudo;
         }
     }
     
     /**
      *
-     * Méthode userPseudo
+     * Méthode pseudo
      *
-     * Cette méthode est le getter de userPseudo
+     * Cette méthode est le getter de pseudo
      *
-     * @return string $_userPseudo
+     * @return string $_pseudo
      */
-    public function userPseudo()
+    public function pseudo()
     {
-        return $this->_userPseudo;
+        return $this->_pseudo;
     }
     
     /**
      *
-     * Méthode setUserNom
+     * Méthode setMdp
      *
-     * Cette méthode est le setter de userNom
+     * Cette méthode est le setter de Mdp
      *
      * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur
      * à la longueur spécifiée en configuration
      *
-     * @param string $userNom
+     * @param string $mdp
      *
      */
-    public function setUserNom($userNom)
+    public function setMdp($mdp)
+    {
+        $longMinMdp = \Framework\Configuration::get("longMinMdp", 8);
+        $longMaxMdp = \Framework\Configuration::get("longMaxMdp", 12);
+        if(!is_string($mdp) || empty($pseudo) || $longMinMdp > strlen($pseudo) || srlen($pseudo) > $longMaxPseudo)
+        {
+            $this->erreurs[]= self::FORME_MDP_INVALIDE;
+        }
+        else
+        {
+            $this->_mdp = $mdp;
+        }
+    }
+    
+    /**
+     *
+     * Méthode mdp
+     *
+     * Cette méthode est le getter de mdp
+     *
+     * @return string $_mdp
+     */
+    public function mdp()
+    {
+        return $this->_mdp;
+    }
+    
+    /**
+     *
+     * Méthode setNom
+     *
+     * Cette méthode est le setter de nom
+     *
+     * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur
+     * à la longueur spécifiée en configuration
+     *
+     * @param string $nom
+     *
+     */
+    public function setNom($nom)
     {
         $longMaxNom = \Framework\Configuration::get("longMaxNom", 30);
-        if(!is_string($userNom) || empty($userNom) || strlen($userNom) > $longMaxNom)
+        if(!is_string($nom) || empty($nom) || strlen($nom) > $longMaxNom)
         {
             $this->erreurs[]= self::CHAINE_INVALIDE;
         }
         else
         {
-            $this->_userNom = $userNom;
+            $this->_nom = $nom;
         }
     }
     
     /**
      *
-     * Méthode userNom
+     * Méthode nom
      *
-     * Cette méthode est le getter de userNom
+     * Cette méthode est le getter de nom
      *
-     * @return string $_userNom
+     * @return string $_nom
      */
-    public function userNom()
+    public function nom()
     {
-        return $this->_userNom;
+        return $this->_nom;
     }
     
     /**
      *
-     * Méthode setUserPrenom
+     * Méthode setPrenom
      *
-     * Cette méthode est le setter de userPrenom
+     * Cette méthode est le setter de Prenom
      *
      * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur
      * à la longueur spécifiée en configuration
      *
-     * @param string $userPrenom
+     * @param string $prenom
      *
      */
-    public function setUserPrenom($userPrenom)
+    public function setPrenom($prenom)
     {
         $longMaxPrenom = \Framework\Configuration::get("longMaxNom", 30);
-        if(!is_string($userPrenom) || empty($userPrenom) || strlen($userPrenom) > $longMaxPrenom)
+        if(!is_string($prenom) || empty($prenom) || strlen($prenom) > $longMaxPrenom)
         {
             $this->erreurs[]= self::CHAINE_INVALIDE;
         }
         else
         {
-            $this->_userPrenom = $userPrenom;
+            $this->_prenom = $prenom;
         }
     }
     
     /**
      *
-     * Méthode userPrenom
+     * Méthode prenom
      *
-     * Cette méthode est le getter de userPrenom
+     * Cette méthode est le getter de prenom
      *
-     * @return string $_userPrenom
+     * @return string $_prenom
      */
-    public function userPrenom()
+    public function prenom()
     {
-        return $this->_userPrenom;
+        return $this->_prenom;
     }
     
     /**
      *
-     * Méthode setUserNaissance
+     * Méthode setNaissance
      *
-     * Cette méthode est le setter de userNaissance
+     * Cette méthode est le setter de naissance
      *
-     * @param \DateTime $userNaissance
+     * @param int $naissance
      *
      */
-    public function setUserNaissance(\DateTime $userNaissance)
+    public function setNaissance($naissance)
     {
-        $this->_userNaissance = $userNaissance;
+        $this->_naissance = $naissance;
     }
     
     /**
      *
-     * Méthode userNaissance
+     * Méthode naissance
      *
-     * Cette méthode est le getter de userNaissance
+     * Cette méthode est le getter de naissance
      *
-     * @return \DateTime $_userNaissance
+     * @return int $_naissance
      */
-    public function userNaissance()
+    public function naissance()
     {
-        return $this->_userNaissance;
+        return $this->_naissance;
     }
     
     /**
      *
-     * Méthode setUserMail
+     * Méthode setMail
      *
-     * Cette méthode est le setter de userMail
+     * Cette méthode est le setter de mail
      * il vérifie que l'argument correspond bien à une chaîne de caractère
      *
-     * @param string $userMail
+     * @param string $mail
      *
      */
-    public function setUserMail($userMail = '')
+    public function setMail($mail = '')
     {
-        if (!is_string($userMail))
+        if (!is_string($mail))
         {
             $this->erreurs[]=self::MAIL_INVALIDE;
         }
         else 
         {
-            $this->_userMail = $userMail;
+            $this->_mail = $mail;
         }
     }
     
     /**
      *
-     * Méthode userMail
+     * Méthode mail
      *
-     * Cette méthode est le getter de userMail
+     * Cette méthode est le getter de mail
      *
-     * @return string $_userMail
+     * @return string $_mail
      */
-    public function userMail()
+    public function mail()
     {
-        return $this->_userMail;
+        return $this->_mail;
     }
     
     /**
      *
-     * Méthode setUserAdresse
+     * Méthode setPays
      *
-     * Cette méthode est le setter de userAdresse
-     * l'argument par défaut est NULL
-     *
-     * @param array $userAdresse
+     * Cette méthode est le setter de pays
+     * 
+     * @param string $pays
      *
      */
-    public function setUserAdresse($userAdresse = array())
+    public function setPays($pays)
     {
-        $this->_userAdresse = $_userAdresse;
+        $this->_pays = $pays;
     }
     
     /**
      *
-     * Méthode userAdresse
+     * Méthode pays
      *
-     * Cette méthode est le getter de userAdresse
+     * Cette méthode est le getter de pays
      *
-     * @return array $_userAdresse
+     * @return string $_pays
      */
-    public function userAdresse()
+    public function pays()
     {
-        return $this->_userAdresse;
+        return $this->_pays;
     }    
     
     /**
      *
-     * Méthode setUserTelephone
+     * Méthode setTelephone
      *
-     * Cette méthode est le setter de userTelephone
+     * Cette méthode est le setter de Telephone
      * 
      * il vérifie que l'argument correspond bien à une chaîne de caractère d'une longueur = 10
      * cet argument peut être NULL
      *
-     * @param string $userTelephone
+     * @param string $telephone
      *
      */
-    public function setUserTelephone($userTelephone ='')
+    public function setTelephone($telephone ='')
     {
-        if(!is_string($userTelephone) || strlen($userTelephone) != 10)
+        if(!is_string($telephone) || strlen($telephone) != 10)
         {
             $this->erreurs[]= self::TELEPHONE_INVALIDE;
         }
         else 
         {
-            $this->_userTelephone = $userTelephone;
+            $this->_telephone = $telephone;
         }
     }
     
     /**
      *
-     * Méthode userTelephone
+     * Méthode telephone
      *
-     * Cette méthode est le getter de userTelephone
+     * Cette méthode est le getter de telephone
      *
-     * @return string $_userTelephone
+     * @return string $_telephone
      */
-    public function userTelephone()
+    public function telephone()
     {
-        return $this->_userTelephone;
+        return $this->_telephone;
     }
     
     /**
      *
-     * Méthode setUserStatut
+     * Méthode setStatut
      *
-     * Cette méthode est le setter de userStatut
+     * Cette méthode est le setter de statut
      *
-     * @param int $userStatut
+     * @param int $statut
      *
      */
-    public function setUserStatut($userStatut)
+    public function setStatut($statut)
     {
         
-        if ((!empty($userStatut)) && (is_in($userStatut)) && ($userStatut <= self::MAX_STATUT))
+        if ((!empty($statut)) && (is_in($statut)) && ($statut <= self::MAX_STATUT))
         {
-            $this->_userStatut = $userStatut;
+            $this->_statut = $statut;
         }
         else
         {
@@ -367,41 +409,41 @@ class User extends \Framework\Entite
     }
     /**
      *
-     * Méthode userStatut
+     * Méthode statut
      *
-     * Cette méthode est le getter de userStatut
+     * Cette méthode est le getter de statut
      *
-     * @return int $_userStatut
+     * @return int $_statut
      */
-    public function userStatut()
+    public function statut()
     {
-        return $this->_userStatut;
+        return $this->_statut;
     }
 
     /**
      *
-     * Méthode setUserIP
+     * Méthode setIp
      *
-     * Cette méthode est le setter de userIP
+     * Cette méthode est le setter de IP
      *
-     * @param string $userIP
+     * @param string $ip
      *
      */
-    public function setUserIP($userIP)
+    public function setIp($ip)
     {
-       $this->_userIP = $userIP;
+       $this->_ip = $ip;
     }
     /**
      *
-     * Méthode userIP
+     * Méthode Ip
      *
-     * Cette méthode est le getter de userIP
+     * Cette méthode est le getter de ip
      *
-     * @return string $_userIP
+     * @return string $_ip
      */
-    public function userIP()
+    public function ip()
     {
-        return $this->_userIP;
+        return $this->_ip;
     }
     
     /**
@@ -501,29 +543,29 @@ class User extends \Framework\Entite
     
     /**
      *
-     * Méthode setDateEnregistrement
+     * Méthode setDateInscription
      *
-     * Cette méthode est le setter de dateEnregistrement
+     * Cette méthode est le setter de dateInscription
      *
-     * @param \DateTime $dateEnregistrement
+     * @param \DateTime $dateInscription
      *
      */
-    public function setDateEnregistrement(\DateTime $dateEnregistrement)
+    public function setDateInscription(\DateTime $dateInscription)
     {
-        $this->_dateEnregistrement = $dateEnregistrement;
+        $this->_dateInscription = $dateInscription;
     }
     
     /**
      *
-     * Méthode dateEnregistrement
+     * Méthode dateInscription
      *
-     * Cette méthode est le getter de dateEnregistrement
+     * Cette méthode est le getter de dateInscription
      *
-     * @return \DateTime $_dateEnregistrement
+     * @return \DateTime $_dateInscription
      */
-    public function dateEnregistrement()
+    public function dateInscription()
     {
-        return $this->_dateEnregistrement;
+        return $this->_dateInscription;
     }
     
     /**

@@ -1,5 +1,6 @@
 <?php
 namespace Framework\Modeles ;
+use Framework\Configuration;
 require_once './Framework/autoload.php';
 
 /**
@@ -20,21 +21,23 @@ class ManagerUser extends \Framework\Manager
     * méthode renvoyant la liste de l'ensemble des users de la BDD
     *
     * @return PDOStatement la liste des Users
+    * 
     */
     public function getUsers()
     {
         //requête avec classement des Users dans l'ordre décroissant 
-        $sql = 'select USER_ID as id, USER_DATE_ENREG as dateEnregistrement,'
-                . ' USER_STATUT as userStatut, USER_PSEUDO as userPseudo, USER_MAIL as userMail,'
-                . ' USER_TELEPHONE as userTelephone, USER_AVATAR as userAvatar, USER_DATE_CONNEXION as dateConnexion,'
-                . ' USER_NBRE_COMMENTAIRES_BLOG as nbreCommentairesBlog, USER_NBRE_COMMENTAIRES_FORUM as nbreCommentairesForum,'        
-                . ' USER_NOM as userNom, USER_PRENOM as userPrenom, USER_naissance as userNaissance from T_User'
+        $sql = 'select USER_ID as id,'
+                . ' USER_STATUT as statut, USER_PSEUDO as pseudo, USER_MAIL as mail,'
+                . ' USER_TELEPHONE as telephone, USER_AVATAR as avatar,'
+                . ' USER_NBRECOMMENTAIRESBLOG as nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as nbreCommentairesForum,'        
+                . ' USER_NOM as nom, USER_PRENOM as prenom, USER_NAISSANCE as naissance, USER_IP as ip, USER_HASH as hash,'
+                . ' USER_PAYS as pays,USER_DATEINSCRIPTION as dateInscription,USER_DATECONNEXION as dateConnexion from T_User'
                 . ' order by USER_ID desc';
         
         // instanciation d'objets "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
         $requete = $this->executerRequete($sql,NULL,'\Framework\Entites\User');
         
-        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'enregistrements , les colonnes sont li�s aux attributs de la
+        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions , les colonnes sont li�s aux attributs de la
         //la classe
         $users = $requete->fetchAll();
         
@@ -45,7 +48,8 @@ class ManagerUser extends \Framework\Manager
         foreach ($users as $user)
         {
         		$user->setDateConnexion(new \DateTime($user->dateConnexion()));
-        		$user->setDateEnregistrement(new \DateTime($user->dateEnregistrement()));
+        		$user->setDateInscription(new \DateTime($user->dateInscription()));
+        		//$user->setNaissance(new \DateTime($user->Naissance()));
         }
         
         //permettre � la requ�te d'�tre de nouveau ex�cut�e
@@ -65,26 +69,26 @@ class ManagerUser extends \Framework\Manager
     */
     public function getUser($idUser)
     {      
-        $sql =  $sql = 'select USER_ID as id, USER_DATE_ENREG as dateEnregistrement,'
-                . ' USER_STATUT as userStatut, USER_PSEUDO as userPseudo, USER_MAIL as userMail,'
-                . ' USER_TELEPHONE as userTelephone, USER_AVATAR as userAvatar, USER_DATE_CONNEXION as dateConnexion,'
-                . ' USER_NBRE_COMMENTAIRES_BLOG as nbreCommentairesBlog, USER_NBRE_COMMENTAIRES_FORUM as nbreCommentairesForum,'        
-                . ' USER_NOM as userNom, USER_PRENOM as userPrenom, USER_naissance as userNaissance from T_User'
+        $sql = 'select USER_ID as id,'
+                . ' USER_STATUT as statut, USER_PSEUDO as pseudo, USER_MAIL as mail,'
+                . ' USER_TELEPHONE as telephone, USER_AVATAR as avatar,'
+                . ' USER_NBRECOMMENTAIRESBLOG as nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as nbreCommentairesForum,'        
+                . ' USER_NOM as nom, USER_PRENOM as prenom, USER_NAISSANCE as naissance, USER_IP as ip, USER_HASH as hash,'
+                . ' USER_PAYS as pays, USER_DATEINSCRIPTION as dateInscription, USER_DATECONNEXION as dateConnexion  from T_User' 
                 . ' where USER_ID=?';
-  		
+        		
   		// instanciation d'objet "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
         $requete = $this->executerRequete($sql, array($idUser),'\Framework\Entites\User');
-        
-        
+                
         //si un User correspond (row_count() retourne le nombre de lignes affectées par la dernière requête) , renvoyer ses informations 
         //(fetch() renvoie la première ligne d'une requête )
-        
         if ($requete->rowcount()==1)
         {
             $user = $requete->fetch();
                                     
         	$user->setDateConnexion(new \DateTime($User->dateConnexion()));
-        	$user->setDateEnregistrement(new \DateTime($User->dateEnregistrement()));
+        	$user->setDateInscription(new \DateTime($User->dateInscription()));
+        	//$user->setNaissance(new \DateTime($user->Naissance()));
         	return $user;
         }
         else
@@ -97,46 +101,34 @@ class ManagerUser extends \Framework\Manager
      * 
      * Méthode ajouterUser
      *
-     * Cette méthode insère un nouveau User en BDD après son enregistrement
+     * Cette méthode insère un nouveau User en BDD après son Inscription
      * 
      * rappel : la valeur user_statut est par défaut = 4 (visiteur) dans la BDD
      *     *       
      * @param array $donnees tableau comprenant l'ensemble des données propres à un utilisateur
      *
      */
-    public function ajouterUser(array $donnees)
+    public function ajouterUser(array $param)
     {
         //requ�te avec insertion de l'utilisateur
-        $sql = 'insert into T_USER (USER_DATE_ENREG, USER_STATUT, USER_PSEUDO,'
-                . ' USER_MAIL, USER_TELEPHONE, USER_AVATAR , USER_DATE_CONNEXION,'
-                . ' USER_NBRE_COMMENTAIRES_BLOG, USER_NBRE_COMMENTAIRES_FORUM,'        
-                . ' USER_NOM, USER_PRENOM, USER_NAISSANCE)'
-                . ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $sql = 'insert into T_USER (USER_STATUT, USER_PSEUDO,'
+                . ' USER_MAIL, USER_TELEPHONE, USER_AVATAR, USER_NBRECOMMENTAIRESBLOG,'
+                . ' USER_NBRECOMMENTAIRESFORUM, USER_NOM, USER_PRENOM, USER_NAISSANCE,'
+                . 'USER_IP, USER_HASH, USER_PAYS,USER_DATEINSCRIPTION, USER_DATECONNEXION)'
+                . ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         
         // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
         $odate = new \DateTime();
-    
-        // il faut formater les dates en cha�ne de caract�re
-        $dateEnregistrement = $odate->format('Y-m-d H:i:s');
+            
+        // il faut formater les dates en cha�ne de caract�re , les dates sont identiques
+        $param[] = $odate->format('Y-m-d H:i:s');
+        $param[]=  $odate->format('Y-m-d H:i:s');      
+       // $param['naissance']= $odat
+           
+        var_dump($param);
+        $requete = $this->executerRequete($sql,$param,'\Framework\Entites\User');
         
-        // Il s'agit de la première connexion de l'utilisateur, les 2 dates sont égales
-        $dateConnexion = $dateEnregistrement;
-        
-        $donnees['USER_DATE_CONNEXION']= $dateConnexion;
-        $donnees['USER_DATE_ENREG']= $dateEnregistrement;
-        
-        // l'utilisateur a un statut par defaut correspondant à celui d'un visiteur avec des droits limités
-       // $userStatut = \Framework\Configuration::get('visiteur');
-       
-        
-        
-      //  $nbreCommentairesBlog = 0;
-       // $nbreCommentairesForum = 0;
-       // il peut être préférable de passer un tableau
-    
-        $requete = $this->executerRequete($sql,$donnees,'\Framework\Entites\User');
-        
-        // msg flash destiné à l'utilisateur pour l'informer du succès de son enregistrement à faire par le controleur
+        // msg flash destiné à l'utilisateur pour l'informer du succès de son Inscription à faire par le controleur
     }
     
     /**
@@ -163,15 +155,63 @@ class ManagerUser extends \Framework\Manager
              $user = $requete->fetch();
              
              $user->setDateConnexion(new \DateTime($user->dateConnexion()));
-             $user->setDateEnregistrement(new \DateTime($user->dateEnregistrement()));         
+             $user->setDateInscription(new \DateTime($user->dateInscription()));         
              return $user;             
         }
         else
         {
-            //TODO il faut dire au controleur que la pseudo n'exsite pas en BDD
+            //TODO il faut dire au controleur que la pseudo n'existe pas en BDD
             return FALSE;
+        }       
+    }
+        
+    /**
+     * 
+     * Méthode actualiserUser
+     *
+     * Cette méthode permet d'actualiser les données d'un utilisateur dans la BDD
+     * 
+     * @param int $idUser
+     * @param array $donnees tableau des donnees utilisateur à actualiser
+     */
+    public function actualiserUser($idUser, array $donnees)
+    {
+        $user = $this->getUser($idUser);
+        
+        // actualisation des attributs de l'utilisateur avec les nouvelles données 
+        $user->hydrate($donnees);
+        
+        $nbreModifications=count($donnees);        
+        
+        // création de la chaîne de caractère pour la requête SQL
+        $modification ='';
+        $i=0;
+        
+        foreach ($donnees as $attribut=>$valeur)
+        {
+            $i++;
+            $modification.='USER_'.strtoupper($attribut).'=\''.$valeur.'\'';
+            if ($i<$nbreModifications)
+            {
+                $modification.=',';
+            }
         }
-       
+      
+        // préparation de la requête SQL UPDATE
+        $sql = 'update T_USER set'.$modification.'where USER_ID=?';
+        
+         $requete = $this->executerRequete($sql,$idUser,'\Framework\Entites\User');
+         
+         // une requête SQL UPDATE renvoie le nombre d'entrées modifiées
+         if ($requete==$nbreModifications)
+         {
+             //TODO msg Flash OK
+         }             
+         else
+         {
+             //TODO msg Flash non OK
+             throw new \Exception("Données de l'utilisateur '$idUser' non mises à jour");
+         }
     }
 }
 

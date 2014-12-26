@@ -12,7 +12,7 @@ abstract class Field
 	protected $label;
 	
 	// Nom HTML du champ. Il est rappelé que ce nom apparaît dans les superglobales sous forme de tableau 
-	// $GET, $POST,$REQUEST, il est donc important de ne pas choisir ce nom au hasard par rapport aux objets à hydrater
+	// $GET, $POST, $REQUEST, il est donc important de ne pas choisir ce nom au hasard par rapport aux objets à hydrater
 	// avec les valeurs des INPUT
 	protected $name;
 	

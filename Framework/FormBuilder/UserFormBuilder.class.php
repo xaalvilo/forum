@@ -6,50 +6,130 @@ require_once './Framework/autoload.php';
   * 
   * @author Fr�d�ric Tarreau
   * 
-  * Classe fille de FormBuilder dont le r�le est de cr�er le formulaire associ� aux commentaires
+  * Classe fille de FormBuilder dont le r�le est de cr�er le formulaire associ� à l'utilisateur (inscription)
   *
   */
- class CommentaireFormBuilder extends \Framework\Formulaire\FormBuilder
+ class UserFormBuilder extends \Framework\Formulaire\FormBuilder
  {
  	/**
- 	* Méthode permettant de construire le formulaire d'ajout de commentaire
+ 	* Méthode permettant de construire le formulaire d'ajout d'un utilisateur
  	* 
  	* @see \Framework\FormBuilder::build()
  	* 
  	*/
  	public function build()
  	{
- 	    // ajout du champ de nom auteur, attention, il faut bien reprendre le nom de l'attribut "auteur" de l'objet commentaire
+  	    $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo");
+ 	    $longMaxNom = \Framework\Configuration::get("longMaxNom");
+ 	    $longMinMdp = \Framework\Configuration::get("longMinMdp"); 
+ 	    $longMaxMdp = \Framework\Configuration::get("longMaxMdp");
+ 	    
+ 	    // ajout du champ du nom , attention, il faut bien reprendre le nom de l'attribut "nom" de l'objet User, idem pour les autres champs
  	    $this->form->add(new \Framework\Formulaire\StringField(array(
- 		 													'label'=>'Auteur  ',
- 		 													'name'=>'auteur',
+ 		 													'label'=>'Nom  ',
+ 		 													'name'=>'nom',
+ 		 													'maxLength'=>$longMaxNom,
+ 		 													'id'=>'nom',
+ 		 													'size'=>$longMaxNom,
+ 		 													'required'=>true,
+ 		 													'placeholder'=> 'votre nom',
+ 		 													'validators'=>array(
+ 		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier le nom de l\'utilisateur'),
+ 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxNom, $longMaxNom),
+ 		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
+ 		 			       ))))
+ 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 													'label'=>'Prénom  ',
+ 		 													'name'=>'prenom',
  		 													'maxLength'=>15,
- 		 													'id'=>'auteur',
+ 		 													'id'=>'prenom',
  		 													'size'=>20,
+ 		 													'required'=>true,
+ 		 													'placeholder'=> 'votre prenom',
+ 		 													'validators'=>array(
+ 		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier le prenom de l\'utilisateur'),
+ 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxNom, $longMaxNom),
+ 		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
+ 		 			       ))))
+ 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 													'label'=>'Pays  ',
+ 		 													'name'=>'pays',
+ 		 													'id'=>'pays',
+ 		 													'size'=>30,
+ 		 													'required'=>false,
+ 		 													'placeholder'=> 'votre pays',
+ 		 													'validators'=>array(new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique'))   
+ 		 			        )))
+ 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 													'label'=>'Mail  ',
+ 		 													'name'=>'mail',
+ 		 													'maxLength'=>25,
+ 		 													'id'=>'mail',
+ 		 													'size'=>30,
+ 		 													'required'=>true,
+ 		 													'placeholder'=> 'votre email',
+ 		 													'validators'=>array(
+ 		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier l\'adresse email de l\'utilisateur'),
+ 		 																		new \Framework\Formulaire\MailValidator('Merci d\'entrer le bon format d\'un email')
+ 		 			       ))))
+ 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 													'label'=>'Téléphone  ',
+ 		 													'name'=>'telephone',
+ 		 													'maxLength'=>10,
+ 		 													'id'=>'telephone',
+ 		 													'size'=>16,
+ 		 													'required'=>false,
+ 		 													'placeholder'=> 'votre telephone',
+ 		 													'validators'=>array(new \Framework\Formulaire\TphValidator('Merci d\'entrer un numero de telephone à 10 chiffres')
+ 		 			       ))))
+ 		 			       ->add(new \Framework\Formulaire\StringField(array(
+ 		 			                                         'label'=>'Année de naissance  ',
+ 		 			                                         'name'=>'naissance',
+ 		 			                                         'maxLength'=>11,
+ 		 			                                         'id'=>'naissance',
+ 		 			                                         'size'=>12,
+ 		 			                                         'required'=>false,
+ 		 			                                         'placeholder'=> '19XX ou 20YY',
+ 		 			                                         'validators'=>array(new \Framework\Formulaire\DateNaissanceValidator('Merci d\'entrer une année de la forme 19XX ou 20YY')
+ 		 			        ))))
+ 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 													'label'=>'Avatar  ',
+ 		 													'name'=>'avatar',
+ 		 													'maxLength'=>15,
+ 		 													'id'=>'avatar',
+ 		 													'size'=>20,
+ 		 													'required'=>false,
+ 		 													'placeholder'=> 'votre avatar',
+ 		 													'validators'=>array(
+ 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a 15', 15),
+ 		 													                   
+ 		 			       ))))
+ 		 			 ->add(new \Framework\Formulaire\StringField(array(
+ 		 													'label'=>'Pseudo  ',
+ 		 													'name'=>'pseudo',
+ 		 													'maxLength'=>$longMaxPseudo,
+ 		 													'id'=>'prenom',
+ 		 													'size'=>$longMaxPseudo ,
  		 													'required'=>true,
  		 													'placeholder'=> 'votre pseudo',
  		 													'validators'=>array(
- 		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier l\'auteur du commentaire'),
- 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a 15', 15),
+ 		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier le pseudo de l\'utilisateur'),
+ 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxPseudo, $longMaxPseudo),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
- 		 			// ajout du champ de texte, attention, il faut bien reprendre le nom de l'attribut "contenu" de l'objet commentaire
- 		 			->add(new \Framework\Formulaire\TextField(array(
- 		 													'label'=>'Commentaire',
- 		 													'name'=>'contenu',
- 		 													'id'=>'contenu',
- 		 													'cols'=>75,
- 		 													'rows'=>3,
+ 		 			  ->add(new \Framework\Formulaire\PasswordField(array(
+ 		 													'label'=>'Mot de passe  ',
+ 		 													'name'=>'mdp',
+ 		 													'pattern' => '{'.$longMinMdp.','.$longMaxMdp.'}',
+ 		 													'id'=>'mdp',
+ 		 													'size'=>18 ,
  		 													'required'=>true,
- 		 													'placeholder'=>'votre commentaire',
- 		 													'validators'=>array(new \Framework\Formulaire\NotNullValidator('Merci d\'ecrire un commentaire')
- 		 					))));
- 		 			
- 		 // prise en compte de la valeur cachée à transmettre
- 		 $hiddenValue=$this->form->entite()->idReference();
+ 		 													'placeholder'=> 'votre mot de passe',
+ 		 													'validators'=>array(new \Framework\Formulaire\PasswordValidator('Merci d\'entrer une chaine de' .$longMinMdp .'à' .$longMaxMdp .'caracteres alphanumeriques')
+ 		 			       ))));
  		 
  		 // ajout du bouton de validation du formulaire
- 		 $this->form->addButton(new \Framework\Formulaire\Button('submit','Commenter','id',$hiddenValue));
+ 		 $this->form->addButton(new \Framework\Formulaire\Button('submit','Valider'));
  	}
  }
  
