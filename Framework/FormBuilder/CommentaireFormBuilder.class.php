@@ -20,7 +20,8 @@ require_once './Framework/autoload.php';
  	public function build()
  	{
  	    // ajout du champ de nom auteur, attention, il faut bien reprendre le nom de l'attribut "auteur" de l'objet commentaire
- 	    $this->form->add(new \Framework\Formulaire\StringField(array(
+ 	    $this->form->add(new \Framework\Formulaire\InputField(array(
+ 	                                                        'type'=>'text',
  		 													'label'=>'Auteur  ',
  		 													'name'=>'auteur',
  		 													'maxLength'=>15,

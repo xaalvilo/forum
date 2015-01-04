@@ -14,6 +14,7 @@
  */
  
 Namespace Framework\Entites;
+require_once './Framework/autoload.php';
 
 class User extends \Framework\Entite
 {
@@ -534,7 +535,7 @@ class User extends \Framework\Entite
      *
      * Cette méthode est le getter de dateConnexion
      *
-     * @return \DateTime $_dateConnexion
+     * @return string $_dateConnexion
      */
     public function dateConnexion()
     {
@@ -561,7 +562,7 @@ class User extends \Framework\Entite
      *
      * Cette méthode est le getter de dateInscription
      *
-     * @return \DateTime $_dateInscription
+     * @return string $_dateInscription
      */
     public function dateInscription()
     {

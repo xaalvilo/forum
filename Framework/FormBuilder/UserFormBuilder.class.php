@@ -25,7 +25,8 @@ require_once './Framework/autoload.php';
  	    $longMaxMdp = \Framework\Configuration::get("longMaxMdp");
  	    
  	    // ajout du champ du nom , attention, il faut bien reprendre le nom de l'attribut "nom" de l'objet User, idem pour les autres champs
- 	    $this->form->add(new \Framework\Formulaire\StringField(array(
+ 	    $this->form->add(new \Framework\Formulaire\InputField(array(
+ 	                                                        'type'=>'text',
  		 													'label'=>'Nom  ',
  		 													'name'=>'nom',
  		 													'maxLength'=>$longMaxNom,
@@ -38,7 +39,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxNom, $longMaxNom),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
- 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'text',
  		 													'label'=>'Prénom  ',
  		 													'name'=>'prenom',
  		 													'maxLength'=>15,
@@ -51,7 +53,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxNom, $longMaxNom),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
- 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'text',
  		 													'label'=>'Pays  ',
  		 													'name'=>'pays',
  		 													'id'=>'pays',
@@ -60,7 +63,8 @@ require_once './Framework/autoload.php';
  		 													'placeholder'=> 'votre pays',
  		 													'validators'=>array(new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique'))   
  		 			        )))
- 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'email',
  		 													'label'=>'Mail  ',
  		 													'name'=>'mail',
  		 													'maxLength'=>25,
@@ -72,7 +76,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier l\'adresse email de l\'utilisateur'),
  		 																		new \Framework\Formulaire\MailValidator('Merci d\'entrer le bon format d\'un email')
  		 			       ))))
- 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'tel',
  		 													'label'=>'Téléphone  ',
  		 													'name'=>'telephone',
  		 													'maxLength'=>10,
@@ -82,7 +87,8 @@ require_once './Framework/autoload.php';
  		 													'placeholder'=> 'votre telephone',
  		 													'validators'=>array(new \Framework\Formulaire\TphValidator('Merci d\'entrer un numero de telephone à 10 chiffres')
  		 			       ))))
- 		 			       ->add(new \Framework\Formulaire\StringField(array(
+ 		 			       ->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                         'type'=>'date',
  		 			                                         'label'=>'Année de naissance  ',
  		 			                                         'name'=>'naissance',
  		 			                                         'maxLength'=>11,
@@ -92,7 +98,8 @@ require_once './Framework/autoload.php';
  		 			                                         'placeholder'=> '19XX ou 20YY',
  		 			                                         'validators'=>array(new \Framework\Formulaire\DateNaissanceValidator('Merci d\'entrer une année de la forme 19XX ou 20YY')
  		 			        ))))
- 		 			->add(new \Framework\Formulaire\StringField(array(
+ 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'text',
  		 													'label'=>'Avatar  ',
  		 													'name'=>'avatar',
  		 													'maxLength'=>15,
@@ -104,7 +111,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a 15', 15),
  		 													                   
  		 			       ))))
- 		 			 ->add(new \Framework\Formulaire\StringField(array(
+ 		 			 ->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'text',
  		 													'label'=>'Pseudo  ',
  		 													'name'=>'pseudo',
  		 													'maxLength'=>$longMaxPseudo,
@@ -117,7 +125,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxPseudo, $longMaxPseudo),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
- 		 			  ->add(new \Framework\Formulaire\PasswordField(array(
+ 		 			  ->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'password',
  		 													'label'=>'Mot de passe  ',
  		 													'name'=>'mdp',
  		 													'pattern' => '{'.$longMinMdp.','.$longMaxMdp.'}',

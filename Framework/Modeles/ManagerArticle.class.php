@@ -44,6 +44,7 @@ class ManagerArticle extends \Framework\Manager
         // conversion  du format BBD Mysql en format Php
         foreach ($articles as $article)
         {
+                // il faut transformer l'attribut Date et DateModif en objet DateTime
         		$article->setDate(new \DateTime($article->date()));
         		$article->setDateModif(new \DateTime($article->dateModif()));
         }

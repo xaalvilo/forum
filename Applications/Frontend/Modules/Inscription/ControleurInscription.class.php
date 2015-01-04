@@ -132,13 +132,30 @@ class ControleurInscription extends \Framework\Controleur
                 $param = array ($statut,$pseudo,$mail,$telephone,$avatar,$nbreCommentairesBlog,
                         $nbreCommentairesForum,$nom,$prenom,$naissance,$ip,$hash,$pays);
                 
-                // enregistrer le nouvel utilisateur en BDD
-                $user = $this->_managerUser->ajouterUser($param);
+                // vérifier si l'utilisateur n'existe pas déjà en BDD en regardant si l'une des entrées
+                // mail, pseudo, nom  n'existe pas déjà en BDD
+                if (!$this->_managerUser->userExists())
+                {    
+                    // enregistrer le nouvel utilisateur en BDD
+                    $this->_managerUser->ajouterUser($param);
                         
-                //TODO envoyer un flash de succès de l'inscription à l'utilisateur
-                echo "inscription réussie";
+                    //TODO envoyer un flash de succès de l'inscription à l'utilisateur
+                    echo "inscription réussie";
                         
-                        //TODO quelle action de redirection mener ?                        
+                        //TODO quelle action de redirection mener ?  
+                }
+                // si existe déjà en BDD
+                else 
+                {
+                    //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire d'inscription
+                    // pré rempli avec les champs valides
+                    $options=$form->validField();
+                    $this->executerAction("index",$options);
+                    
+                    //TODO envoyer un flash de tentative d'inscription invalide à l'utilisateur
+                    echo "L'inscription a échoué, l'utilisateur existe déjà";
+                    
+                }                      
              }
              // le formulaire est invalide
              else
@@ -148,7 +165,7 @@ class ControleurInscription extends \Framework\Controleur
                  $options=$form->validField();
                  $this->executerAction("index",$options);
 
-                 //TODO envoyer un flash de tentative de connexion invalide à l'utilisateur
+                 //TODO envoyer un flash de tentative d'inscription invalide à l'utilisateur
                  echo "L'inscription a échoué";
              }               
          }

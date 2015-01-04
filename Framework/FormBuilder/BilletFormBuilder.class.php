@@ -23,7 +23,8 @@ require_once './Framework/autoload.php';
  	 */
  	public function build()
  	{
- 		 $this->form->add(new \Framework\Formulaire\StringField(array(
+ 		 $this->form->add(new \Framework\Formulaire\InputField(array(
+ 		                                                     'type'=>'text',
  		 													'label'=>'Auteur  ',
  		 													'name'=>'auteur',
  		 													'maxLength'=>15,
@@ -36,7 +37,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fix� � 15', 15),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
- 		 			->add(new \Framework\Formulaire\StringField (array(
+ 		 			->add(new \Framework\Formulaire\InputField (array(
+ 		 			                                        'type'=>'text',
  		 													'label'=>'Titre  ',
  		 													'name'=>'titre',
  		 													'maxLength'=>15,

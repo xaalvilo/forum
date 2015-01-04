@@ -29,7 +29,8 @@ require_once './Framework/autoload.php';
  	    $maxLength = \Framework\Configuration::get('longMaxMdp');
  	    
  	    // ajout du champ de pseudo, attention, il faut bien reprendre le nom de l'attribut "pseudo" de l'objet connexion
- 	    $this->form->add(new \Framework\Formulaire\StringField(array(
+ 	    $this->form->add(new \Framework\Formulaire\InputField(array(
+ 	                                                        'type'=>'text',
  		 													'label'=>'Identifiant  ',
  		 													'name'=>'pseudo',
  		 													'maxLength'=>15,
@@ -43,10 +44,11 @@ require_once './Framework/autoload.php';
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
  		 			       ))))
  		 			// ajout du champ de password, attention, il faut bien reprendre le nom de l'attribut "mdp" de l'objet Connexion
- 	                  ->add(new \Framework\Formulaire\PasswordField(array(
+ 	                  ->add(new \Framework\Formulaire\InputField(array(
+ 	                                                         'type'=>'password',
  	                                                         'label'=>'Password  ',
  	                                                         'name'=>'mdp',
- 	                                                         'pattern'=>'.{'.$minLength.','.$maxLength.'}',
+ 	                                                         'pattern'=>'{'.$minLength.','.$maxLength.'}',
  	                                                         'id'=>'mdp',
  	                                                         'size'=>20,
  	                                                         'required'=>true,

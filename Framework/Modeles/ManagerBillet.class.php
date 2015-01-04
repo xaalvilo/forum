@@ -34,6 +34,7 @@ class ManagerBillet extends \Framework\Manager
         // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
     	$this->setHeureDateLocale();
         
+    	// il faut transformer l'attribut Date et DateModif en objet DateTime
         foreach ($billets as $billet)
         {
         		$billet->setDate(new \DateTime($billet->date()));
@@ -71,9 +72,11 @@ class ManagerBillet extends \Framework\Manager
         if ($requete->rowcount()==1)
         {
             $billet = $requete->fetch();
-                                    
+
+            // il faut transformer l'attribut Date et DateModif en objet DateTime
         	$billet->setDate(new \DateTime($billet->date()));
         	$billet->setDateModif(new \DateTime($billet->dateModif()));
+        	
         	return $billet;
         }
         else

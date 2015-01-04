@@ -1,7 +1,4 @@
 <?php
-namespace Framework\Entites;
-require_once './Framework/autoload.php';
-
 /**
  * 
  * @author Frédéric Tarreau
@@ -11,6 +8,9 @@ require_once './Framework/autoload.php';
  * cette classe représente le couple login / mot de passe
  *
  */
+namespace Framework\Entites;
+require_once './Framework/autoload.php';
+
 class Connexion extends \Framework\Entite
 {
     /* reférence de l'utilisateur */

@@ -27,11 +27,11 @@ class ManagerUser extends \Framework\Manager
     {
         //requête avec classement des Users dans l'ordre décroissant 
         $sql = 'select USER_ID as id,'
-                . ' USER_STATUT as statut, USER_PSEUDO as pseudo, USER_MAIL as mail,'
-                . ' USER_TELEPHONE as telephone, USER_AVATAR as avatar,'
-                . ' USER_NBRECOMMENTAIRESBLOG as nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as nbreCommentairesForum,'        
-                . ' USER_NOM as nom, USER_PRENOM as prenom, USER_NAISSANCE as naissance, USER_IP as ip, USER_HASH as hash,'
-                . ' USER_PAYS as pays,USER_DATEINSCRIPTION as dateInscription,USER_DATECONNEXION as dateConnexion from T_User'
+                . ' USER_STATUT as _statut, USER_PSEUDO as _pseudo, USER_MAIL as _mail,'
+                . ' USER_TELEPHONE as _telephone, USER_AVATAR as _avatar,'
+                . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum,'        
+                . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance, USER_IP as _ip, USER_HASH as _hash,'
+                . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion from T_User'
                 . ' order by USER_ID desc';
         
         // instanciation d'objets "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
@@ -47,9 +47,9 @@ class ManagerUser extends \Framework\Manager
         
         foreach ($users as $user)
         {
-        		$user->setDateConnexion(new \DateTime($user->dateConnexion()));
-        		$user->setDateInscription(new \DateTime($user->dateInscription()));
-        		//$user->setNaissance(new \DateTime($user->Naissance()));
+            // il faut transformer l'attribut Date en objet DateTime
+        	$user->setDateConnexion(new \DateTime($user->dateConnexion()));
+        	$user->setDateInscription(new \DateTime($user->dateInscription()));
         }
         
         //permettre � la requ�te d'�tre de nouveau ex�cut�e
@@ -70,13 +70,13 @@ class ManagerUser extends \Framework\Manager
     public function getUser($idUser)
     {      
         $sql = 'select USER_ID as id,'
-                . ' USER_STATUT as statut, USER_PSEUDO as pseudo, USER_MAIL as mail,'
-                . ' USER_TELEPHONE as telephone, USER_AVATAR as avatar,'
-                . ' USER_NBRECOMMENTAIRESBLOG as nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as nbreCommentairesForum,'        
-                . ' USER_NOM as nom, USER_PRENOM as prenom, USER_NAISSANCE as naissance, USER_IP as ip, USER_HASH as hash,'
-                . ' USER_PAYS as pays, USER_DATEINSCRIPTION as dateInscription, USER_DATECONNEXION as dateConnexion  from T_User' 
+                . ' USER_STATUT as _statut, USER_PSEUDO as _pseudo, USER_MAIL as _mail,'
+                . ' USER_TELEPHONE as _telephone, USER_AVATAR as _avatar,'
+                . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum,'        
+                . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance, USER_IP as _ip, USER_HASH as _hash,'
+                . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion  from T_User' 
                 . ' where USER_ID=?';
-        		
+        	 
   		// instanciation d'objet "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
         $requete = $this->executerRequete($sql, array($idUser),'\Framework\Entites\User');
                 
@@ -85,10 +85,10 @@ class ManagerUser extends \Framework\Manager
         if ($requete->rowcount()==1)
         {
             $user = $requete->fetch();
-                                    
-        	$user->setDateConnexion(new \DateTime($User->dateConnexion()));
-        	$user->setDateInscription(new \DateTime($User->dateInscription()));
-        	//$user->setNaissance(new \DateTime($user->Naissance()));
+            
+            // il faut transformer l'attribut Date en objet DateTime
+        	$user->setDateConnexion(new \DateTime($user->dateConnexion()));
+        	$user->setDateInscription(new \DateTime($user->dateInscription()));
         	return $user;
         }
         else
@@ -114,7 +114,7 @@ class ManagerUser extends \Framework\Manager
         $sql = 'insert into T_USER (USER_STATUT, USER_PSEUDO,'
                 . ' USER_MAIL, USER_TELEPHONE, USER_AVATAR, USER_NBRECOMMENTAIRESBLOG,'
                 . ' USER_NBRECOMMENTAIRESFORUM, USER_NOM, USER_PRENOM, USER_NAISSANCE,'
-                . 'USER_IP, USER_HASH, USER_PAYS,USER_DATEINSCRIPTION, USER_DATECONNEXION)'
+                . 'USER_IP, USER_HASH, USER_PAYS, USER_DATEINSCRIPTION, USER_DATECONNEXION)'
                 . ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         
         // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
@@ -123,9 +123,7 @@ class ManagerUser extends \Framework\Manager
         // il faut formater les dates en cha�ne de caract�re , les dates sont identiques
         $param[] = $odate->format('Y-m-d H:i:s');
         $param[]=  $odate->format('Y-m-d H:i:s');      
-       // $param['naissance']= $odat
-           
-        var_dump($param);
+                 
         $requete = $this->executerRequete($sql,$param,'\Framework\Entites\User');
         
         // msg flash destiné à l'utilisateur pour l'informer du succès de son Inscription à faire par le controleur
@@ -136,30 +134,26 @@ class ManagerUser extends \Framework\Manager
      * Méthode recherchePseudo
      *
      * cette méthode permet de rechercher si un pseudo est dans la BDD des USER
-     * 
+     *      * 
      * @param string $pseudo
-     * @return \Framework\Entites\User $user objet utilisateur si succès de la requête
+     * @return array $tableauResultat objet tableau associatif avec les résultats de la requête
      * @return boolean FALSE sinon
      */
     public function recherchePseudo($pseudo)
     {
-     /// TDDO voir si en paramètre il n'est pas préférable de mettre un objet login
-
-        $sql = 'select USER_ID as id, USER_HASH as hash, USER_PSEUDO as pseudo from T_USER'
-                .'where USER_PSEUDO=?';
+        $sql = 'select USER_ID as id, USER_HASH as _hash from T_USER'
+                . ' where USER_PSEUDO=?';
                 
-        $requete = $this->executerRequete($sql,$pseudo,'\Framework\Entites\User');
+        $requete = $this->executerRequete($sql,array($pseudo),'\Framework\Entites\User');
         
         if ($requete->rowcount()==1)
-        {
-             $user = $requete->fetch();
-             
-             $user->setDateConnexion(new \DateTime($user->dateConnexion()));
-             $user->setDateInscription(new \DateTime($user->dateInscription()));         
-             return $user;             
+        {           
+            // modification du type de récupération des données de la BDD, ici sous forme de tableau
+             $tableauResultat = $requete->fetch(\PDO::FETCH_ASSOC);
+             return $tableauResultat;             
         }
         else
-        {
+        {           
             //TODO il faut dire au controleur que la pseudo n'existe pas en BDD
             return FALSE;
         }       
@@ -173,16 +167,14 @@ class ManagerUser extends \Framework\Manager
      * 
      * @param int $idUser
      * @param array $donnees tableau des donnees utilisateur à actualiser
+     * @throws \Exception en cas d'erreur de requête
      */
     public function actualiserUser($idUser, array $donnees)
-    {
-        $user = $this->getUser($idUser);
-        
-        // actualisation des attributs de l'utilisateur avec les nouvelles données 
-        $user->hydrate($donnees);
-        
-        $nbreModifications=count($donnees);        
-        
+    {         
+        $donnees['dateConnexion']= $donnees['dateConnexion']->format('Y-m-d H:i:s');
+              
+        $nbreModifications=count($donnees);  
+            
         // création de la chaîne de caractère pour la requête SQL
         $modification ='';
         $i=0;
@@ -190,28 +182,49 @@ class ManagerUser extends \Framework\Manager
         foreach ($donnees as $attribut=>$valeur)
         {
             $i++;
-            $modification.='USER_'.strtoupper($attribut).'=\''.$valeur.'\'';
+            $modification.='USER_'.strtoupper($attribut).'=?';
             if ($i<$nbreModifications)
             {
-                $modification.=',';
+                $modification.=', ';               
             }
         }
       
-        // préparation de la requête SQL UPDATE
-        $sql = 'update T_USER set'.$modification.'where USER_ID=?';
-        
-         $requete = $this->executerRequete($sql,$idUser,'\Framework\Entites\User');
+         // préparation de la requête SQL UPDATE
+        $sql = 'update T_USER set '.$modification.' where USER_ID=?';
+      
+         // ajout de l'identifiant pour l'exécution de la requête
+         $donnees['id']= $idUser;
          
-         // une requête SQL UPDATE renvoie le nombre d'entrées modifiées
-         if ($requete==$nbreModifications)
+         // transformation du tableau en tableau indexé
+         $donnees = array_values($donnees);
+         
+         $requete = $this->executerRequete($sql,$donnees,'\Framework\Entites\User');
+        
+         if ($requete===FALSE)
          {
-             //TODO msg Flash OK
+             //TODO msg Flash non OK
+             throw new \Exception("Données de l'utilisateur '$idUser' non mises à jour");             
          }             
          else
          {
-             //TODO msg Flash non OK
-             throw new \Exception("Données de l'utilisateur '$idUser' non mises à jour");
+             //TODO msg Flash OK
          }
+    }
+    
+    /**
+     * 
+     * Méthode userExists
+     *
+     * cette méthode regarde si un utilisateur qui cherche à s'inscrire n'exsite pas déjà en 
+     * BDD
+     * 
+     * @return bool TRUE s'il existe déjà, FALSE sinon
+     *
+     */
+    public function userExists()
+    {
+        //
+        return FALSE;
     }
 }
 

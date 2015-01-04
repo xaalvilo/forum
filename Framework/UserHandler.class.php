@@ -136,10 +136,10 @@ class UserHandler extends ApplicationComponent
      * 
      * Cette méthode permet de définir le statut de l'utilisateur, ouvrant des droits sur l'espace privé du site
      *
-     * return_type
+     * @param int $statut de l'utilisateur 
      *
      */
-    public function defineStatut()
+    public function defineStatut($statut)
     {
     
     } 
@@ -150,7 +150,7 @@ class UserHandler extends ApplicationComponent
      * 
      * Cette méthode permet de récupérer l'adresse Ip de l'utilisateur
      *
-     * @return string IpAdress
+     * @return string $ip
      *
      */
     public function getUserIp()
@@ -159,4 +159,21 @@ class UserHandler extends ApplicationComponent
         return $ip;
     }
     
+    /**
+     * 
+     * Méthode getUserCountry
+     * 
+     * Cette méthode permet de récupérer le pays de connexion de l'utilisateur
+     * en fonction de son adresse Ip
+     *
+     * return_type
+     * 
+     * @param string $ip
+     * @return string $country
+     */
+    public function getUserCountry($ip)
+    {
+        $country = '';
+        return $country;
+    }
 }

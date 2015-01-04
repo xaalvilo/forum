@@ -96,39 +96,42 @@ class ControleurConnexion extends \Framework\Controleur
             if ($form->isValid())
             {
                 // vérification de la validité du login
-                $user = $this->_managerUser->recherchePseudo($pseudo);
-                 
-                if ($user instanceof \Framework\Entites\User)
+                $tableauDonnees = $this->_managerUser->recherchePseudo($pseudo);            
+                                                     
+                if (array_key_exists('id',$tableauDonnees) && array_key_exists('_hash',$tableauDonnees))
                 {
-                    // récupération du hash de l'utilisateur
-                    $hash = $user->hash();
+                    $hash = $tableauDonnees['_hash'];
                     
                     // vérification du hash avec le mot de passe, resultat sous forme de tableau associatif
-                    $resultat = $this->_loginHandler->verfierHash($mdp, $hash);
+                    $resultat = $this->_loginHandler->verifierHash($mdp, $hash);
                     
-                    // si la vérification a réussi et que le hash a été regénéré
+                    // si la vérification a réussi 
                     if ($resultat['valide']) 
                     {
-                        $idUser = $user->id();
+                        $idUser = $tableauDonnees['id'];
                         
-                        // actualisation de la date de connexion "now"
-                        $dateConnexion = new \DateTime();
-                        $user->setDateConnexion($dateConnexion);
-                        
-                        //preparation de l'Inscription en BDD
-                        $donnees['dateConnexion']= $user->dateConnexion();
-                                
+                        // Instanciation de l'objet User correspondant
+                        $user = $this->_managerUser->getUser($idUser);
+                                                
                         // actualisation au besoin du hash
-                        if ($resultat['nouveauHash'])
+                        if (!empty($resultat['hash']))
                         {
                             // attribution du nouveau hash
-                            $user->setHash($resultat['hash']);
+                            //$user->setHash($resultat['hash']);
                             
                             // preparation de l'Inscription en BDD
-                            $donnees['hash']=$user->hash();
+                            //$donnees['hash']=$user->hash();
+                            $donnees['hash']=$resultat['hash'];
                         }
-                        
-                        // Inscription des données actualisées en BB                       
+                                                
+                        // actualisation de la date de connexion "now"
+                        $odateConnexion = new \DateTime();
+                        $donnees['dateConnexion']= $odateConnexion;
+                                                
+                        // actualisation des attributs de l'utilisateur avec les nouvelles données
+                        $user->hydrate($donnees);
+
+                        // Inscription des données actualisées en BB 
                         $this->_managerUser->actualiserUser($idUser, $donnees);
                         
                         //TODO envoyer un flash de connexion à l'utilisateur

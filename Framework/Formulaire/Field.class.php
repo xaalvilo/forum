@@ -72,7 +72,7 @@ abstract class Field
 	}
 	
 	/**
-	* Méthode permettant d'acter que la valeur d'un champ est valide
+	* Méthode permettant d'acter que la valeur d'un champ est valide                                                                             
 	*
 	*@return boolean Vrai si le champ est valide
 	*/

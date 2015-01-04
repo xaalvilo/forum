@@ -87,12 +87,11 @@ class ControleurForum extends \Framework\Controleur
                                              'date'=>$date,
                                              'methode'=>'post',
                                              'action'=>'forum/editer'));
-        
+         $options=array();
+         
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
         if (($this->_requete->getMethode() =='POST'))
-        {
-            $options=array();
-        
+        {    
             if ($form->isValid())
             {
                 // appelle de la m�thode permettant d'enregistrer un billet en BDD

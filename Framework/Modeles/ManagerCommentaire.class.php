@@ -65,7 +65,8 @@ class ManagerCommentaire extends \Framework\Manager
         
         foreach ($commentaires as $commentaire)
         {
-        	$commentaire->setDate(new \DateTime($commentaire->date()));
+            // il faut transformer l'attribut Date en objet DateTime
+            $commentaire->setDate(new \DateTime($commentaire->date()));
         }
         
         //permettre � la requ�te d'�tre de nouveau ex�cut�e

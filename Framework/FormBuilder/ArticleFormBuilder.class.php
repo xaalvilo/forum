@@ -18,7 +18,8 @@ require_once './Framework/autoload.php';
  	 */
  	public function build()
  	{
- 		 $this->form->add(new \Framework\Formulaire\StringField(array(
+ 		 $this->form->add(new \Framework\Formulaire\InputField(array(
+ 		                                                    'type'=>'text',
  		 													'label'=>'Titre   ',
  		 													'name'=>'titre',
  		 													'maxLength'=>15,
@@ -39,7 +40,8 @@ require_once './Framework/autoload.php';
  		 							                     'placeholder'=>'votre article',
  		 			                                     'validators'=>array(new \Framework\Formulaire\NotNullValidator('Merci d\'ecrire le texte de l\'article')
  		 					))))
- 		 			->add(new \Framework\Formulaire\StringField(array (
+ 		 			->add(new \Framework\Formulaire\InputField(array (
+ 		 			                                         'type'=>'text',
  		 			                                        'label'=>'Image  ',
  		 			                                         'name'=>'image',
  		 			                                         'id'=>'image',

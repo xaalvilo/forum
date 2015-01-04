@@ -46,21 +46,19 @@ class LoginHandler extends ApplicationComponent
      */
     public function verifierHash($mdp,$hash)
     {
-        $resultat=array('valide'=> FALSE,'nouveauHash'=> FALSE,'hash'=>'');
+        $resultat=array('valide'=> FALSE);
          
         if (is_string($mdp) && is_string($hash))
         {
             if (password_verify($mdp, $hash))
             {      
-                $resultat['valide']=TRUE;    
+                $resultat['valide']=TRUE;   
               
                 // vérification de la pertinence du hash par rapport à l'algorithme par défaut en vigueur
                 if (password_needs_rehash($hash, PASSWORD_DEFAULT)) 
                 {
                     // génération d'un nouveau hash qu'il faudra faire stocker en BDD par le contrôleur
-                    $hash = password_hash($mdp, PASSWORD_DEFAULT);   
-                    $resultat['nouveauHash']=TRUE;
-                    $resultat['hash']= $hash; 
+                    $resultat['hash']= password_hash($mdp, PASSWORD_DEFAULT); 
                 }
             }
        }

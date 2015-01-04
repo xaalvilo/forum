@@ -27,7 +27,7 @@ abstract class Manager
     * @param \Framework\Entite $entite
     * @return PDOstatement r�sultat de la requete
     */
-    protected function executerRequete($sql,$params = null,$entite)
+    protected function executerRequete($sql,$params = null, $entite)
     {
         if($params == null)
         {
