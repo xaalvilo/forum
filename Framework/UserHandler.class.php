@@ -7,7 +7,7 @@
 *
 * Classe héritée de ApplicationComponent
 *
-* cette classe a pour r�le d'enregistrer les informations
+* cette classe a pour r�le d'enregistrer les informations 
 * temporaires concernant l'utilisateur (classe User) sur le serveur et de g�rer sa session:
 *             - initialiser la session avec session_start()
 *             - assigner un attribut
@@ -23,28 +23,74 @@
 */
 
 Namespace Framework;
-
-// Dès l'inclusion du fichier par l'auto_load, la session se créée
-// PHP essaie de lire l'identifiant fourni par l'utilisateur (cookie nommé par défaut PHPSESSID, s'il n'en existe pas ,
-// il en créé un aléatoirement, l'envoie au client et créé des entrées dans le tableau $_SESSION[]
-session_start();
+require_once './Framework/autoload.php';
 
 class UserHandler extends ApplicationComponent
 {
+
+    /* objet session */
+    protected $_session;
+    
+    /* objet User */
+    protected $_user;
+    
+    /**
+     *
+     * Méthode __construct
+     *
+     * constructeur avec injection de dépendances, la classe UserHandler ayant besoin de la classe Session
+     *
+     * @param Session $_session
+     * @param array $donnees
+     */
+    public function __construct(Application $app,\Framework\Entites\Session $session, \Framework\Entites\User $user)
+    {
+        parent::__construct($app);
+        $this->_session = $session;
+        $this->_user = $user;
+        var_dump($this->_session->identifiant());
+        var_dump($this->_session->name());
+    }
+
+    /**
+     * 
+     * Méthode session
+     *
+     * getter de l'atttribut session (objet \Framework\Entites\Session)
+     * 
+     * @return \Framework\Entites\Session
+     */    
+    public function session()
+    {
+        return $this->_session;
+    }
+    
+    /**
+     * 
+     * Méthode user
+     *
+     * getter de l'attribut user (objet \framework\Entites\User)
+     * 
+     * @return \Framework\Entites\User
+     */
+    public function user()
+    {
+        return $this->_user;
+    }
+    
     /**
      *
      * Méthode setAttribute
      *
-     * cette m�thode permet d'assigner un attribut associ� � l'utilisateur dans le tableau superglobale
-     * $_SESSION
+     * cette m�thode permet d'assigner un attribut associ� � l'utilisateur à l'objet Session
      *
-     * @param mixed &attribut attribut
+     * @param string $cle 
      * @param mixed $valeur valeur de l'attribut
      *
      */
-    public function setAttribute($attribut,$valeur)
+    public function setAttribute($cle,$valeur)
     {
-        $_SESSION[$attribut] = $valeur;
+        $this->_session->set($cle, $valeur) ;
     }
 
     /**
@@ -54,13 +100,13 @@ class UserHandler extends ApplicationComponent
      * cette m�thode permet d'obtenir la valeur de l'attribut associ� � l'utilisateur dans le tableau super globale
      * $_SESSION
      *
-     * @param mixed $attribut
+     * @param string $cle
      * @return mixed valeur de la variable ou NULL
      *
      */
-    public function getAttribute($attribut)
+    public function getAttribute($cle)
     {
-        return isset($_SESSION[$attribut])? $_SESSION[$attribut]: NULL;
+        return $this->_session->get($cle);
     }
 
     /**
@@ -79,7 +125,7 @@ class UserHandler extends ApplicationComponent
         {
             throw new \Exception ('la valeur sp�cifi�e � User�::authenticated doit �tre un bool�en');
         }
-        $_SESSION['auth'] = $authenticated;
+        $this->_session->set('authenticated',$authenticated);
     }
    
     /**
@@ -118,16 +164,24 @@ class UserHandler extends ApplicationComponent
 
     /**
      *
-     * Méthode detroySession
+     * Méthode detruireSession
      *
-     * Cette méthode permet de mettre fin à une session, elle utilise la fonction de PHP
-     * 
-     * @param int $idSession
-     * 
+     * Cette méthode permet de mettre fin à une session, de supprimer les donnees en BBD
+     * ainsi que les données dans la superglobale $_SESSION et de détruire le cookie de session
+     * id session ??????????? 
      */
-    public function destroySession($idSession)
+    public function detruireSession()
     {
+        $this->_session->detruireVariableSession();  
         
+        // Destruction du cookie de session
+        if(ini_get("session.use_cookies"))
+        {
+            $param = $this->_session->paramCookieSession();
+            $expire = time() - 10;
+            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);
+        }
+        $this->_session->__destruct();
     }
     
     /**
@@ -161,17 +215,15 @@ class UserHandler extends ApplicationComponent
     
     /**
      * 
-     * Méthode getUserCountry
+     * Méthode VerifierUserCountry
      * 
      * Cette méthode permet de récupérer le pays de connexion de l'utilisateur
      * en fonction de son adresse Ip
-     *
-     * return_type
      * 
      * @param string $ip
      * @return string $country
      */
-    public function getUserCountry($ip)
+    public function VerifierUserCountry($ip)
     {
         $country = '';
         return $country;

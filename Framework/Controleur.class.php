@@ -8,13 +8,13 @@ require_once './Framework/autoload.php';
 
 abstract class Controleur extends ApplicationComponent
 {
-    /**  action � r�aliser par le controleur */
+    /* action � r�aliser par le controleur */
     private $_action;
      
-    /** requ�te entrante (utilisable par les classes d�riv�es) */
+    /* requ�te entrante (utilisable par les classes d�riv�es) */
     protected $_requete;
     
-    /** reponse HTTP sortante */
+    /* reponse HTTP sortante */
     protected $_reponse;
 
     /**
@@ -50,7 +50,7 @@ abstract class Controleur extends ApplicationComponent
     * Méthode executerAction
     * 
     * cette m�thode execute l'action � r�aliser si la m�thode existe bien dans l'objet controleur associ� � cette action 
-    * sinon envoie une exception (utilisation du concept de r�flexion par emploi des methode metho_exists() et get_class()
+    * sinon envoie une exception (utilisation du concept de r�flexion par emploi des methode method_exists() et get_class()
     * Si un tableau d'options est donné, elle le prendra en compte
     *
     * @param array $options tableau d'options à passer éventuellement en paramètre

@@ -9,7 +9,7 @@
  * 
  * cette classe repr�sente un visiteur du site. Elle permet notamment de :
  *             - savoir si l'utilisateur est authentifié
- *             - savoir si l'utilisateur a un message informatif *               
+ *             - savoir si l'utilisateur a un message informatif             
  * 
  */
  
@@ -18,8 +18,8 @@ require_once './Framework/autoload.php';
 
 class User extends \Framework\Entite
 {
-    /* identifiant de la session */
-    protected $_sessionId;
+    /* identifiant de session */
+    protected $_idSession;
     
     /* pseudo */
     protected $_pseudo;
@@ -80,33 +80,6 @@ class User extends \Framework\Entite
     const NOM_FICHIER_AVATAR_INVALIDE = 8;
     const FORME_HASH_INVALIDE = 9;
     const FORME_MDP_INVALIDE = 10;
-    
-    /**
-     * 
-     * Méthode setSessionId
-     *
-     * Cette méthode est le setter de sessionId
-     * 
-     * @param int $sessionId
-     * 
-     */
-    public function setSessionId($sessionId)
-    {
-        $this->_sessionId = $sessionId;
-    }
-    
-    /**
-     *
-     * Méthode sessionId
-     *
-     * Cette méthode est le getter de sessionId
-     *
-     * @return int $_sessionId
-     */
-    public function sessionId()
-    {
-        return $this->_sessionId;
-    }
 		
     /**
      *
@@ -397,11 +370,10 @@ class User extends \Framework\Entite
      *
      */
     public function setStatut($statut)
-    {
-        
-        if ((!empty($statut)) && (is_in($statut)) && ($statut <= self::MAX_STATUT))
+    {       
+        if ((!empty($statut)) && ((int)$statut <= self::MAX_STATUT))
         {
-            $this->_statut = $statut;
+            $this->_statut = (int)$statut;
         }
         else
         {

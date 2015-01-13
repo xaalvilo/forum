@@ -57,7 +57,7 @@ class Commentaire extends \Framework\Entite
     }
     
     /**
-     * @param unknown $contenu
+     * @param string $contenu
      */
     public function setContenu($contenu)
     {

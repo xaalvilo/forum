@@ -84,11 +84,12 @@ class ManagerUser extends \Framework\Manager
         //(fetch() renvoie la première ligne d'une requête )
         if ($requete->rowcount()==1)
         {
-            $user = $requete->fetch();
+            // récupération sous forme de tableau
+            $user = $requete->fetch(\PDO::FETCH_ASSOC);
             
             // il faut transformer l'attribut Date en objet DateTime
-        	$user->setDateConnexion(new \DateTime($user->dateConnexion()));
-        	$user->setDateInscription(new \DateTime($user->dateInscription()));
+            $user['_dateConnexion'] = new \DateTime($user['_dateConnexion']);
+            $user['_dateInscription'] = new \DateTime($user['_dateInscription']);
         	return $user;
         }
         else
@@ -170,19 +171,28 @@ class ManagerUser extends \Framework\Manager
      * @throws \Exception en cas d'erreur de requête
      */
     public function actualiserUser($idUser, array $donnees)
-    {         
-        $donnees['dateConnexion']= $donnees['dateConnexion']->format('Y-m-d H:i:s');
-              
-        $nbreModifications=count($donnees);  
-            
+    { 
+        if(array_key_exists('_dateConnexion', $donnees))   
+        {     
+            $donnees['_dateConnexion']= $donnees['_dateConnexion']->format('Y-m-d H:i:s');
+        }
+        
+        if(array_key_exists('_dateInscription', $donnees))
+        {
+            $donnees['_dateInscription']= $donnees['_dateInscription']->format('Y-m-d H:i:s');
+        }
+        
         // création de la chaîne de caractère pour la requête SQL
+        // retirer au préalable l'identifiant qui n'est jamais actualisé
+        unset ($donnees['id']);      
+        $nbreModifications=count($donnees);  
         $modification ='';
         $i=0;
         
         foreach ($donnees as $attribut=>$valeur)
         {
             $i++;
-            $modification.='USER_'.strtoupper($attribut).'=?';
+            $modification.='USER'.strtoupper($attribut).'=?';
             if ($i<$nbreModifications)
             {
                 $modification.=', ';               

@@ -1,6 +1,6 @@
 <?php
 namespace Framework;
-
+require_once './Framework/autoload.php';
 /**
  * 
  * @author Frédéric Tarreau
@@ -123,7 +123,7 @@ class Requete extends ApplicationComponent
      */
      public function urlClient()
     {
-        return $_SERVER['REQUEST_URI'];
+        return ($_SERVER['REQUEST_URI']);
     }
 }
      

@@ -71,16 +71,13 @@ class ManagerSession extends \Framework\Manager
         
         if ($requeteSQL->rowcount()==1)
         {
-            $session = $requeteSQL->fetch();
-            
-            // il faut transformer l'attribut Date en objet DateTime
-            $session->setMaxLifeDatetime(new \DateTime($session->_maxLifeDatetime()));
-        	
+            $session = $requeteSQL->fetch(\PDO::FETCH_ASSOC);
             return $session;
         }
         else
         {
-            throw new \Exception("Aucune session ne correspond à l'identifiant $identifiant");
+           return "";
+           // throw new \Exception("Aucune session ne correspond à l'identifiant $identifiant");
         }
     }
     
@@ -109,7 +106,7 @@ class ManagerSession extends \Framework\Manager
         else
         {
             //TODO il faut dire au gestionnaire de session que l'identifiant n'existe pas en BDD
-            return FALSE;
+            return array();
         }
     }
     
@@ -144,7 +141,7 @@ class ManagerSession extends \Framework\Manager
         }
     }
     
-    /**
+     /**
      * 
      * Méthode supprimerSession
      *
@@ -160,14 +157,7 @@ class ManagerSession extends \Framework\Manager
         
         $requeteSQL = $this->executerRequete($sql, array($identifiant),'\Framework\Entites\Session');
         
-        if($requeteSQL->rowcount()==1)
-        {
-            return TRUE;
-        }
-        else
-        {
-            return FALSE;
-        }
+        return ($requeteSQL->rowcount()==1);
     }
     
     /**
@@ -181,27 +171,33 @@ class ManagerSession extends \Framework\Manager
      * @param string $donnees de la session
      * @param string $name nom de la session si different de celui par défaut
      */
-    public function actualiserSession($identifiant, $maxLifeDatetime, $donnees = NULL, $name = NULL)
+    public function actualiserSession($identifiant, $maxLifeDatetime, $donnees = "", $name = NULL)
     {
             $donneesModifiees = array ('maxLifeDatetime'=>$maxLifeDatetime, 'data'=>$donnees, 'name'=>$name); 
-        
+           
             // création de la chaîne de caractère pour la requête SQL
+            $modification ="";
+            $i=0;
             foreach ($donneesModifiees as $attribut=>$valeur)
             {
                 if(!empty($valeur))
                 {    
-                    $modification.=' SESSION_'.strtoupper($attribut).'=?,';
+                    if ($i>0)
+                    {
+                        $modification.=', ';
+                    }
+                    $modification.=' SESSION_'.strtoupper($attribut).'=?';
+                    $parametres[$i] = $valeur;
+                    $i++;
                 }
             }
-            
-            //transformation en tableau indexé
-            $donneesModifiees = array_values($donneesModifiees);
-            $donneesModifiees[]=$identifiant;
-        
+            // ajout de l'identifiant
+            $parametres[]=$identifiant;
+           
             // préparation de la requête SQL UPDATE
-            $sql = 'update T_SESSION set'.$modification.' where SESSION_ID=?';
+            $sql = 'update T_SESSION set'.$modification.' where SESSION_IDENTIFIANT=?';
         
-            $requeteSQL = $this->executerRequete($sql, $donneesModifiees,'\Framework\Entites\User');
+            $requeteSQL = $this->executerRequete($sql, $parametres,'\Framework\Entites\Session');
         
             if ($requeteSQL===FALSE)
             {
@@ -239,7 +235,7 @@ class ManagerSession extends \Framework\Manager
         else
         {
             // modification du type de récupération des données de la BDD, ici sous forme de tableau
-            $tableauResultat = $requeteSQL->fetch(\PDO::FETCH_ASSOC);
+            $tableauResultat = $requeteSQL->fetchAll(\PDO::FETCH_COLUMN);
             return $tableauResultat;
         }
     }

@@ -83,6 +83,7 @@ abstract class Entite implements \ArrayAccess
             // définition du setter pour chaque attribut 
             // utilisation de "ucfirst()" pour remplacer le premier caractère par sa majuscule, 
             // si le premier caractère est alphabétique
+            $attribut = ltrim($attribut,'_');
             $methode = 'set'.ucfirst($attribut);
                        
             // si le setter existe bien, on appelle le setter

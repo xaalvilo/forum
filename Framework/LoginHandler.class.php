@@ -14,6 +14,7 @@
 */
 
 Namespace Framework;
+require_once './Framework/autoload.php';
 
 class LoginHandler extends ApplicationComponent
 {

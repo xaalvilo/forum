@@ -94,7 +94,7 @@ class Routeur extends ApplicationComponent
             // instanciation du controleur adapté à la requête
             $controleur = new $NamespaceClasseControleur ($app);
             
-            // le requete en paramètre est associée à ce controleur */
+            // la requete en paramètre est associée à ce controleur */
             $controleur->setRequete($requete);
             return $controleur ;
         }

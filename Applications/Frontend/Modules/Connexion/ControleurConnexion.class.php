@@ -29,7 +29,7 @@ class ControleurConnexion extends \Framework\Controleur
     {
     	parent::__construct($app);
         $this->_managerUser= new \Framework\Modeles\ManagerUser();
-        $this->_loginHandler = new \Framework\LoginHandler($app);     
+        $this->_loginHandler = new \Framework\LoginHandler($app);
     }
      
     /**
@@ -109,30 +109,35 @@ class ControleurConnexion extends \Framework\Controleur
                     if ($resultat['valide']) 
                     {
                         $idUser = $tableauDonnees['id'];
-                        
-                        // Instanciation de l'objet User correspondant
-                        $user = $this->_managerUser->getUser($idUser);
-                                                
+                                                                     
                         // actualisation au besoin du hash
                         if (!empty($resultat['hash']))
                         {
-                            // attribution du nouveau hash
-                            //$user->setHash($resultat['hash']);
-                            
-                            // preparation de l'Inscription en BDD
-                            //$donnees['hash']=$user->hash();
                             $donnees['hash']=$resultat['hash'];
                         }
                                                 
                         // actualisation de la date de connexion "now"
                         $odateConnexion = new \DateTime();
-                        $donnees['dateConnexion']= $odateConnexion;
+                        $donnees['_dateConnexion']= $odateConnexion;
                                                 
-                        // actualisation des attributs de l'utilisateur avec les nouvelles données
-                        $user->hydrate($donnees);
-
                         // Inscription des données actualisées en BB 
                         $this->_managerUser->actualiserUser($idUser, $donnees);
+                         
+                         // hydratation de l'instance User créée par le UserHandler avec l'ensemble des donnees
+                        $user = $this->_app->userHandler()->user();
+                        $valeurAttributs = $this->_managerUser->getUser($idUser);
+                        $user->hydrate($valeurAttributs);
+                        var_dump($user);
+                        // utilisateur vu  comme authentifié dans la session associée
+                        $this->_app->userHandler()->setAuthenticated();
+                        $this->_app->userHandler()->setAttribute('pseudo',$user->pseudo());
+                        $this->_app->userHandler()->setAttribute('statut',$user->statut());
+                       
+                        // redirection interne il faut coder cette fonction
+                        $_GET['controleur']='Accueil';
+                        $_GET['action']='';
+                        $_GET['id']='';
+                        $this->_app->routeur()->routerRequete($this->_app);
                         
                         //TODO envoyer un flash de connexion à l'utilisateur
                         echo "connexion réussie";

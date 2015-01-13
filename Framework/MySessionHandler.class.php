@@ -15,35 +15,21 @@ require_once './Framework/autoload.php';
 
 class MySessionHandler extends ApplicationComponent implements \SessionHandlerInterface
 {
-       
+    /* duree de vie */
+    private $_lifeTime;
+    
     /* modele d'accès à la BDD des sessions */
     private $_managerSession;
     
-    /* objet de la classe session */
-    private $_session;
-    
-    /**
-     * 
-     * Constructeur
-     *
-     * le constructeur instancie les objets des classes requises
-     * 
-     * @param Application $app
-     * 
-     */
-    public function __construct($app)
-    {
-        parent::__construct($app);
-        $this->_managerSession = new managerSession();
-    }
-   
    /**
     * 
     * @see SessionHandlerInterface::open()
     */
-   public function open()
+   public function open($save_path,$name)
    {
-       
+       $this->_lifeTime = get_cfg_var("session.gc_maxlifetime");
+       $this->_managerSession = new \Framework\Modeles\ManagerSession();
+       return TRUE;
    }
    
    /**
@@ -52,26 +38,29 @@ class MySessionHandler extends ApplicationComponent implements \SessionHandlerIn
     */
    public function close()
    {
-       $maxlifetime = ini_get('session.gc_maxlifetime');
+       $maxlifetime = $this->_lifeTime;
        $this->gc($maxlifetime);
+       return TRUE;
    }
    
    /**
     * 
     * @see SessionHandlerInterface::read()
     */
-   public function read();
-   
-   
+   public function read($identifiant)
+   {      
+       return $this->_managerSession->getSession($identifiant);
+   }
+     
    /**
     * 
     * @see SessionHandlerInterface::write()
     */
-   public function write($identifiant, $donnees)
+   public function write($identifiant,$donnees)
    {
        // calcul de la nouvelle date maximale de vie de session
        $date = new \DateTime();
-       $interval = 'PT'.ini_get('session.gc_maxlifetime').'S';
+       $interval = 'PT'.$this->_lifeTime.'S';
        $nouvelleDate = $date->add(new \DateInterval($interval));
        $maxLifeDatetime = $nouvelleDate->format('Y-m-d H:i:s');
        
@@ -93,7 +82,7 @@ class MySessionHandler extends ApplicationComponent implements \SessionHandlerIn
     */
    public function destroy($idSession)
    {
-       $this->_managerSession->supprimerSession($idSession);
+       return $this->_managerSession->supprimerSession($idSession);
    }
    
    /**

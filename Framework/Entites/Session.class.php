@@ -6,14 +6,17 @@
  * 31 déc. 2014 - Session.class.php
  * 
  * Cette classe représente une session avec les attributs tels que définit dans la BDD Session
- *
+ * 
+ * Rappel : dès l'inclusion du fichier par l'auto_load, la session se créée
+ * PHP essaie de lire l'identifiant fourni par l'utilisateur (cookie nommé par défaut PHPSESSID, s'il n'en existe pas ,
+ * il en créé un aléatoirement, l'envoie au client et créé des entrées dans le tableau $_SESSION[]
  */
 namespace Framework\Entites;
 require_once './Framework/autoload.php';
 
 class Session extends \Framework\Entite
 {
-    /* nom de la session */
+    /* nom de la session, aussi le nom du cookie de session */
     protected $_name;
     
     /* session data */
@@ -25,6 +28,120 @@ class Session extends \Framework\Entite
     /* identifiant de session alphanumerique, à ne pas confondre avec l'id de la classe Entite */
     protected $_identifiant;
     
+    /* parametres du cookie de session */
+    protected $_paramCookieSession;
+        
+    public function __construct(array $donnees = array())
+    {
+        parent::__construct($donnees);
+        $this->setParamCookieSession();
+        session_start(); 
+    }
+    
+    /**
+     * 
+     * Méthode __destruct
+     *
+     * cette méthode détruit l'objet Session et détruit les données de session (pas la superglobale)
+     *
+     */
+    public function  __destruct()
+    {
+       session_write_close();
+       // session_destroy();        
+      //  parent::__destruct();
+    }
+    
+    /**
+     * 
+     * Méthode set
+     *
+     * cette méthode permet d'assigner une entrée dans la superglobale $_SESSION[]
+     * 
+     * @param string $cle
+     * @param mixed $valeur
+     */
+    public function set($cle,$valeur)
+    {
+        if(is_string($cle))
+        { 
+            $_SESSION[$cle]=$valeur;
+        }
+    }
+    
+    /**
+     * 
+     * Méthode get
+     *
+     * cette méthode permet de récupérer une entrée dans la superglobale $_SESSION[]
+     * 
+     * @param string $cle
+     * @return mixed valeur d'une entrée $_SESSION[]
+     */
+    public function get($cle)
+    {
+        return $_SESSION[$cle];
+    }
+   
+   /**
+    * 
+    * Méthode remove
+    *
+    * méthode permettant de supprimer une entrée dans la superglobale $_SESSION[]
+    * 
+    * @param string $cle
+    */ 
+   public function remove($cle)
+   {
+       if(isset ($_SESSION[$cle]))
+        {
+            unset($_SESSION[$cle]);
+        }
+   }
+   
+   /**
+    * 
+    * Méthode setParamCookieSession
+    *
+    * Setter de l'attribut paramCookieSession
+    * 
+    * @param string $value Cette valeur est stock�e sur l'ordinateur du client 
+    * @param int $expire Le temps apr�s lequel le cookie expire.
+    * @param string $path Le chemin sur le serveur sur lequel le cookie sera disponible
+    * @param string $domain Le domaine pour lequel le cookie est disponible.
+    * @param bool $secure Indique si le cookie doit uniquement �tre transmis � travers une connexion s�curis�e HTTPS depuis le client (si TRUE)
+    * @param bool $httponly Lorsque ce param�tre vaut TRUE, le cookie ne sera accessible que par le protocole HTTP. 
+    *  
+    * @return array tableau de parametre du cookie de session
+    * 
+    */
+   public function setParamCookieSession($value='',$expire=0,$path=NULL,$domain=NULL,$secure=FALSE,$httponly=TRUE)
+   {
+       if (empty($this->_paramCookieSession))
+       {
+           // récupération des valeurs du cookie de session php
+            $this->_paramCookieSession = session_get_cookie_params();
+       }
+       else 
+       {
+            // assignation de valeurs spécifiques
+            setcookie($this->_name,$value,$expire,$path,$domain,$secure,$httponly);
+       }
+   }
+   
+   /**
+    * 
+    * Méthode paramCookieSession
+    *
+    * getter de l'attribut paramCookiesession
+    * 
+    * @return array tableau de parametres du cookie de session
+    */
+   public function paramCookieSession()
+   {
+       return $this->_paramCookieSession;
+   }
+      
     /**
      * 
      * Méthode name
@@ -43,7 +160,8 @@ class Session extends \Framework\Entite
      * 
      * Méthode setName
      *
-     * setter de l'attribut name, utilise la fonction Php session_name()
+     * setter de l'attribut name, utilise la fonction Php session_name() 
+     * Attention : doit être appelé avant session_start()
      * 
      * @param string $name
      */
@@ -63,7 +181,7 @@ class Session extends \Framework\Entite
     public function identifiant()
     {
         $this->_identifiant = session_id();
-       return $this->_identifiant;
+        return $this->_identifiant;
     }
     
     /**
@@ -71,12 +189,26 @@ class Session extends \Framework\Entite
      * Méthode setIdentifiant
      *
      * setter de Identifiant, utilise la fonction Php session_id()
+     * Attention : doit être appelée avant sesssion_start()
      * 
      * @param string $identifiant
      */
     public function setIdentifiant($identifiant=NULL)
     {
          $this->_identifiant = session_id($identifiant);
+    }
+    
+    /**
+     * 
+     * Méthode regenerateId
+     *
+     * méthode permettant de regénérer l'Id de session sans détruire les données de session associées
+     * utilise pour cela la fonction regenerate_id() de PHP avec l'option delete_old_session = FALSE 
+     *
+     */
+    public function regenerateId()
+    {
+        session_regenerate_id(FALSE);
     }
      
     /**
@@ -85,11 +217,13 @@ class Session extends \Framework\Entite
      *
      * setter de l'attribut maxLifeDatetime
      * 
-     * @param \DateTime $maxLifeDatetime
+     * @param int $maxLifetime durée de vie en secondes
      */
-    public function setMaxLifeDatetime (\DateTime $maxLifeDatetime)
+    public function setMaxLifeDatetime ($maxLifetime)
     {
-        $this->_maxLifetime = $maxLifetime;
+        ini_set('session.gc_maxlifetime', "$maxLifetime");
+        $odate = new \DateTime();
+        $this->_maxLifeDatetime =  $odate->add(new \DateInterval($maxLifetime));
     }
     
     /**
@@ -98,7 +232,7 @@ class Session extends \Framework\Entite
      *
      * getter de l'attribut maxLifeDatetime
      *
-     * @return string $_maxLifeDatetime
+     * @return \DateTime $_maxLifeDatetime
      */
     public function maxLifeDatetime()
     {
@@ -131,5 +265,17 @@ class Session extends \Framework\Entite
     {
         $this->_data=$donnees;
     }    
+    
+    /**
+     * 
+     * Méthode detruireVariableSession
+     *
+     * methode détruisant les variables de $_SESSION 
+     *
+     */
+    public function detruireVariableSession()
+    {  
+        $_SESSION = array();                
+    }
 }
 

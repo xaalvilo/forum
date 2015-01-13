@@ -22,7 +22,7 @@ class ControleurInscription extends \Framework\Controleur
     private $_loginHandler;
     
     /* gestionnaire d'utilisateur */
-    private $_userHandler;
+    //private $_userHandler;
     
     /** 
     * le constructeur instancie les classes "mod�les" requises
@@ -33,8 +33,7 @@ class ControleurInscription extends \Framework\Controleur
     {
     	parent::__construct($app);
         $this->_managerUser= new \Framework\Modeles\ManagerUser(); 
-        $this->_loginHandler = new \Framework\LoginHandler($app);
-        $this->_userHandler = new \Framework\UserHandler($app);
+        $this->_loginHandler = new \Framework\LoginHandler($app);       
     }
      
     /**
