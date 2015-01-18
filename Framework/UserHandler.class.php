@@ -9,10 +9,8 @@
 *
 * cette classe a pour r�le d'enregistrer les informations 
 * temporaires concernant l'utilisateur (classe User) sur le serveur et de g�rer sa session:
-*             - initialiser la session avec session_start()
 *             - assigner un attribut
 *             - obtenir la valeur d'un attribut
-*             - authentifier l'utilisateur
 *             - assigner un message informatif
 *             - récupérer ce message
 *             - définir un statut
@@ -27,7 +25,6 @@ require_once './Framework/autoload.php';
 
 class UserHandler extends ApplicationComponent
 {
-
     /* objet session */
     protected $_session;
     
@@ -48,8 +45,6 @@ class UserHandler extends ApplicationComponent
         parent::__construct($app);
         $this->_session = $session;
         $this->_user = $user;
-        var_dump($this->_session->identifiant());
-        var_dump($this->_session->name());
     }
 
     /**
@@ -129,6 +124,22 @@ class UserHandler extends ApplicationComponent
     }
    
     /**
+     * 
+     * Méthode peuplerSuperGlobaleSession
+     *
+     * cette méthode permet d'enregistrer des variables dans la superglobale $_SESSION
+     * 
+     * @param array $donnees 
+     */
+    public function peuplerSuperGlobaleSession(array $donnees)
+    {
+        foreach ($donnees as $cle=>$valeur)
+        {                
+            $this->setAttribute($cle, $valeur);
+        }
+    }
+    
+    /**
      *
      * Méthode setFlash
      *
@@ -164,6 +175,74 @@ class UserHandler extends ApplicationComponent
 
     /**
      *
+     * Méthode regenerIdSession
+     *
+     * méthode permettant de regénérer l'Id de session sans détruire les données de session associées
+     * utilise pour cela la fonction session_regenerate_id() de PHP avec l'option delete_old_session = FALSE
+     * par défaut. la nouvelle session PHP conserve les données de l'ancienne, l'ancienne session et son cookie
+     * ont une durée de vie de 30 secondes
+     *
+     *@param bool TRUE pour détruire également les données de session dans la BDD
+     */
+    public function regenererIdSession($delete_old_session=NULL)
+    {
+        if (!$delete_old_session)
+        {
+            // modification de la durée d'expiration de la session en cours PHP (après 30 s)
+            $this->_session->setMaxLifeDatetime(30);
+            $NewMaxLifeDatetime=$this->_session->maxLifeDatetime()->format('Y-m-d H:i:s');
+            $oldIdentifiant = $this->_session->identifiant();
+            $this->_app->sessionHandler()->managerSession()->actualiserSession($oldIdentifiant, $NewMaxLifeDatetime);
+            $this->detruireCookieSession(30);
+            
+            try 
+            {
+                // creation d'une session PHP sans détruire la précédente
+                session_regenerate_id($delete_old_session);
+                
+                // recupération du nouvelle identifiant dans l'objet Session
+                $newIdentifiant = session_id();
+                $this->_session->setIdentifiant($newIdentifiant);
+             
+                // fermeture des sessions pour permettre à d'autres scripts de les utiliser
+                session_write_close();
+    
+                // reprise de la nouvelle session PHP
+                session_id($newIdentifiant);
+                
+                // il faut bien spécifier que le nouveau cookie de session est valable pour tout le site Forum
+                $path = \Framework\Configuration::get('racineWeb');
+                $this->_session->setParamCookieSession('',0,$path);
+                session_start();              
+            }
+            catch (\Exception $e) 
+            {
+                $this->_app->routeur()->gererErreur($e);
+            }            
+        }
+    }
+    
+    /**
+     * 
+     * Méthode detruireCookieSession
+     * 
+     * méthode de destruction d'un cookie en lui mettant une durée de vie courte 
+     *
+     *@param int $maxLifetime durée de vie restante ne seconde
+     */
+    public function detruireCookieSession($maxLifetime)
+    {
+        // Destruction du cookie de session
+        if(ini_get("session.use_cookies"))
+        {
+            $param = $this->_session->paramCookieSession();
+            $expire = time() - $maxLifetime;
+            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);
+        }
+    }
+    
+    /**
+     *
      * Méthode detruireSession
      *
      * Cette méthode permet de mettre fin à une session, de supprimer les donnees en BBD
@@ -173,15 +252,9 @@ class UserHandler extends ApplicationComponent
     public function detruireSession()
     {
         $this->_session->detruireVariableSession();  
-        
-        // Destruction du cookie de session
-        if(ini_get("session.use_cookies"))
-        {
-            $param = $this->_session->paramCookieSession();
-            $expire = time() - 10;
-            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);
-        }
+        $this->detruireCookieSession(10);
         $this->_session->__destruct();
+        session_destroy();
     }
     
     /**

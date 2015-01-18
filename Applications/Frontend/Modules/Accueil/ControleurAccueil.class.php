@@ -24,6 +24,9 @@ class ControleurAccueil extends \Framework\Controleur
     {
     	parent::__construct($app);
         //$this->_managerArticle= new \Framework\Modeles\ManagerArticle();
+        $id = session_id();
+    	echo $id;
+        var_dump($_SESSION);
     }
      
     /**

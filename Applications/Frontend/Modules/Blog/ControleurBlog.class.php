@@ -24,6 +24,7 @@ class ControleurBlog extends \Framework\Controleur
     {
     	parent::__construct($app);
         $this->_managerArticle= new \Framework\Modeles\ManagerArticle();
+        var_dump($_SESSION);
     }
      
     /**

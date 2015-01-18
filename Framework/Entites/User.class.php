@@ -69,6 +69,9 @@ class User extends \Framework\Entite
     /* mot de passe de l'utilisateur , il ne sera jamais stocké en BDD */
     protected $_mdp;
     
+    /* propriétés du navigateur */
+    protected $_browserVersion;
+    
     /* constante correspondant au statut possible des visiteurs du site (notamment pour le forum) permettant de donner + ou - de droits */
     const MAX_STATUT=4;
     
@@ -117,6 +120,36 @@ class User extends \Framework\Entite
     public function pseudo()
     {
         return $this->_pseudo;
+    }
+    
+    /**
+     * 
+     * Méthode browserVersion
+     *
+     * getter de browserVersin
+     * 
+     * @return string version du navigateur client
+     */
+    public function browserVersion()
+    {
+        return $this->_browserVersion;        
+    }
+    
+    /**
+     *
+     * Méthode setBrowserVersion
+     *
+     * setter de setBrowserVersion
+     *
+     * @param string version du navigateur client
+     */
+    public function setBrowserVersion($browserVersion)
+    {
+        if(!isset($browserVersion))
+        {
+            $browserVersion = $_SERVER['HTTP_USER_AGENT'];
+        }
+        $this->_browserVersion = $browserVersion;
     }
     
     /**

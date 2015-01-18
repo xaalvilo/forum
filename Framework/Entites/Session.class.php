@@ -30,12 +30,18 @@ class Session extends \Framework\Entite
     
     /* parametres du cookie de session */
     protected $_paramCookieSession;
-        
+    
     public function __construct(array $donnees = array())
     {
         parent::__construct($donnees);
-        $this->setParamCookieSession();
-        session_start(); 
+                
+        // le cookie de session est valable pour tout le site Forum
+        $path = \Framework\Configuration::get('racineWeb');
+        $this->setParamCookieSession('',0,$path);
+       
+        session_start();
+        $this->_name = session_name();
+        $this->_identifiant = session_id();       
     }
     
     /**
@@ -47,9 +53,10 @@ class Session extends \Framework\Entite
      */
     public function  __destruct()
     {
-       session_write_close();
-       // session_destroy();        
-      //  parent::__destruct();
+        if(session_status()=== PHP_SESSION_ACTIVE)
+        {
+            session_write_close();
+        }
     }
     
     /**
@@ -105,28 +112,19 @@ class Session extends \Framework\Entite
     *
     * Setter de l'attribut paramCookieSession
     * 
-    * @param string $value Cette valeur est stock�e sur l'ordinateur du client 
     * @param int $expire Le temps apr�s lequel le cookie expire.
     * @param string $path Le chemin sur le serveur sur lequel le cookie sera disponible
     * @param string $domain Le domaine pour lequel le cookie est disponible.
     * @param bool $secure Indique si le cookie doit uniquement �tre transmis � travers une connexion s�curis�e HTTPS depuis le client (si TRUE)
     * @param bool $httponly Lorsque ce param�tre vaut TRUE, le cookie ne sera accessible que par le protocole HTTP. 
-    *  
-    * @return array tableau de parametre du cookie de session
     * 
     */
    public function setParamCookieSession($value='',$expire=0,$path=NULL,$domain=NULL,$secure=FALSE,$httponly=TRUE)
    {
-       if (empty($this->_paramCookieSession))
-       {
-           // récupération des valeurs du cookie de session php
-            $this->_paramCookieSession = session_get_cookie_params();
-       }
-       else 
-       {
-            // assignation de valeurs spécifiques
-            setcookie($this->_name,$value,$expire,$path,$domain,$secure,$httponly);
-       }
+       session_set_cookie_params($expire, $path, $domain, $secure, $httponly);
+              
+       // récupération des valeurs du cookie de session php
+       $this->_paramCookieSession = session_get_cookie_params();     
    }
    
    /**
@@ -141,7 +139,8 @@ class Session extends \Framework\Entite
    {
        return $this->_paramCookieSession;
    }
-      
+
+   
     /**
      * 
      * Méthode name
@@ -152,7 +151,7 @@ class Session extends \Framework\Entite
      */
     public function name()
     {
-        $this->_name = session_name();
+        
         return $this->_name;
     }
     
@@ -179,8 +178,7 @@ class Session extends \Framework\Entite
      * @return string Identifiant de session
      */
     public function identifiant()
-    {
-        $this->_identifiant = session_id();
+    {       
         return $this->_identifiant;
     }
     
@@ -193,39 +191,33 @@ class Session extends \Framework\Entite
      * 
      * @param string $identifiant
      */
-    public function setIdentifiant($identifiant=NULL)
+    public function setIdentifiant($identifiant)
     {
-         $this->_identifiant = session_id($identifiant);
+         $this->_identifiant = $identifiant;
     }
     
-    /**
-     * 
-     * Méthode regenerateId
-     *
-     * méthode permettant de regénérer l'Id de session sans détruire les données de session associées
-     * utilise pour cela la fonction regenerate_id() de PHP avec l'option delete_old_session = FALSE 
-     *
-     */
-    public function regenerateId()
-    {
-        session_regenerate_id(FALSE);
-    }
-     
     /**
      * 
      * Méthode setMaxLifeDatetime
      *
      * setter de l'attribut maxLifeDatetime
      * 
-     * @param int $maxLifetime durée de vie en secondes
+     * @param int $maxLifetime délai d'expiration de la session en secondes
      */
-    public function setMaxLifeDatetime ($maxLifetime)
+    public function setMaxLifeDatetime($maxLifetime)
     {
-        ini_set('session.gc_maxlifetime', "$maxLifetime");
+        if($maxLifetime != get_cfg_var('session.gc_maxlifetime'))
+        {
+            // modification de la valeur de configuration juste le temps d'exécution du script
+            ini_set('session.gc_maxlifetime', "$maxLifetime");
+        }
         $odate = new \DateTime();
-        $this->_maxLifeDatetime =  $odate->add(new \DateInterval($maxLifetime));
+        $interval='PT'.$maxLifetime.'S';
+        $odate->add(new \DateInterval($interval));
+        
+        $this->_maxLifeDatetime = $odate;
     }
-    
+  
     /**
      * 
      * Méthode maxLifeDatetime

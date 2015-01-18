@@ -1,7 +1,6 @@
 <?php
 namespace Framework\Modeles ;
 require_once './Framework/autoload.php';
-
 /**
  * 
  * @author Frédéric Tarreau
@@ -51,10 +50,10 @@ class ManagerSession extends \Framework\Manager
     * 
     * Méthode getSession
     * 
-    * méthode renvoyant l'ensemble des informations sur la session sélectionnée
+    * méthode renvoyant l'objet session sélectionnée
     *
     * @param int $identifiant de la session
-    * @return array la session sélectionnée
+    * @return \Framework\Entites\Session
     * @throws Exception si l'identifiant de session est inconnu
     */
     public function getSession($identifiant)
@@ -71,16 +70,48 @@ class ManagerSession extends \Framework\Manager
         
         if ($requeteSQL->rowcount()==1)
         {
-            $session = $requeteSQL->fetch(\PDO::FETCH_ASSOC);
+            $session = $requeteSQL->fetch();
             return $session;
         }
         else
         {
-           return "";
-           // throw new \Exception("Aucune session ne correspond à l'identifiant $identifiant");
+           throw new \Exception("Aucune session ne correspond à l'identifiant $identifiant");
         }
     }
     
+    /**
+     *
+     * Méthode getSessionData
+     *
+     * méthode renvoyant les informations de l'attribut session_data de la session sélectionnée
+     *
+     * @param int $identifiant de la session
+     * @return array la session sélectionnée
+     * @throws Exception si l'identifiant de session est inconnu
+     */
+    public function getSessionData($identifiant)
+    {
+        $sql = 'select SESSION_DATA as data from T_SESSION where SESSION_IDENTIFIANT=?';
+    
+      		// instanciation d'objet "Entites\Session" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
+        $requeteSQL =$this->executerRequete($sql, array($identifiant),'\Framework\Entites\Session');
+    
+        //si une session correspond (row_count() retourne le nombre de lignes affectées par la dernière requête) , renvoyer ses informations
+        //(fetch() renvoie la première ligne d'une requête )
+    
+        if ($requeteSQL->rowcount()==1)
+        {
+            // rappel : PDO::FETCH_ASSOC: retourne un tableau indexé par le nom de la colonne comme retourné 
+            // dans le jeu de résultats. il faut retourner la valeur et non le tableau
+            $session = $requeteSQL->fetch(\PDO::FETCH_ASSOC);
+            return $session['data'];
+        }
+        else
+        {
+            return "";
+            // throw new \Exception("Aucune session ne correspond à l'identifiant $identifiant");
+        }
+    }
     /**
      * 
      * Méthode rechercheIdentifiant

@@ -119,7 +119,7 @@ class ControleurInscription extends \Framework\Controleur
                 // initialisation de certaines données
                 $nbreCommentairesBlog = 0;
                 $nbreCommentairesForum = 0;
-                $statut = \Framework\ Configuration::get('visiteur');
+                $statut = \Framework\Configuration::get('visiteur');
                 
                 // génération du hash à partir du mot de passe en passant par le loginHandler
                 $hash = $this->_loginHandler->creerHash($mdp);               

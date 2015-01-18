@@ -39,10 +39,10 @@ abstract class Application
 		$this->_routeur = new Routeur($this);
 		$this->_httpReponse = new Reponse($this);
 		$this->_sessionHandler = new MySessionHandler($this);
-		session_set_save_handler($this->_sessionHandler,true);
+		session_set_save_handler($this->_sessionHandler,true); 
 		$session = new \Framework\Entites\Session(); 
 		$user = new \Framework\Entites\User();
-		$this->_userHandler = new UserHandler($this,$session,$user);
+		$this->_userHandler = new UserHandler($this, $session, $user);
 		$this->_nom ='';
 	}
 	
@@ -90,7 +90,7 @@ abstract class Application
 	
 	/**
 	 * 
-	 * Méthode
+	 * Méthode userHandler
 	 *
 	 * \Framework\UserHandler
 	 * 
@@ -99,6 +99,19 @@ abstract class Application
 	public function userHandler()
 	{
 	    return $this->_userHandler;
+	}
+	
+	/**
+	 * 
+	 * Méthode sessionHandler
+	 *
+	 * \Framework\MySessionHandler
+	 * 
+	 * @return \Framework\MySessionHandler
+	 */
+	public function sessionHandler()
+	{
+	    return $this->_sessionHandler;
 	}
 	
 	/**

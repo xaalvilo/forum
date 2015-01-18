@@ -28,7 +28,10 @@ class MySessionHandler extends ApplicationComponent implements \SessionHandlerIn
    public function open($save_path,$name)
    {
        $this->_lifeTime = get_cfg_var("session.gc_maxlifetime");
-       $this->_managerSession = new \Framework\Modeles\ManagerSession();
+       if(!isset($this->_managerSession))
+       {
+            $this->_managerSession = new \Framework\Modeles\ManagerSession();
+       }
        return TRUE;
    }
    
@@ -49,7 +52,8 @@ class MySessionHandler extends ApplicationComponent implements \SessionHandlerIn
     */
    public function read($identifiant)
    {      
-       return $this->_managerSession->getSession($identifiant);
+       $data =$this->_managerSession->getSessionData($identifiant);
+       return $data;
    }
      
    /**
@@ -63,7 +67,7 @@ class MySessionHandler extends ApplicationComponent implements \SessionHandlerIn
        $interval = 'PT'.$this->_lifeTime.'S';
        $nouvelleDate = $date->add(new \DateInterval($interval));
        $maxLifeDatetime = $nouvelleDate->format('Y-m-d H:i:s');
-       
+     ;
        $tableauResultat = $this->_managerSession->rechercheIdentifiant($identifiant);
        
        if(array_key_exists('identifiant', $tableauResultat))
@@ -111,5 +115,18 @@ class MySessionHandler extends ApplicationComponent implements \SessionHandlerIn
        {
             return FALSE;
        }
+   }
+   
+   /**
+    * 
+    * Méthode managerSession
+    *
+    * \Framework\Modeles\ManagerSession
+    * 
+    * @return \Framework\Modeles\ManagerSession
+    */
+   public function managerSession()
+   {
+       return $this->_managerSession;
    }
  }

@@ -126,19 +126,27 @@ class ControleurConnexion extends \Framework\Controleur
                          // hydratation de l'instance User créée par le UserHandler avec l'ensemble des donnees
                         $user = $this->_app->userHandler()->user();
                         $valeurAttributs = $this->_managerUser->getUser($idUser);
-                        $user->hydrate($valeurAttributs);
-                        var_dump($user);
+                        
+                        // ajout de données non stockées en BBD
+                        $valeurAttributs['browserVersion']=NULL;
+                        $user->hydrate($valeurAttributs);     
+                        
+                        // regeneration de l'Id de la session en conservant les données
+                        $this->_app->userHandler()->regenererIdSession();
+                        
                         // utilisateur vu  comme authentifié dans la session associée
+                        // remplissage de la variable $_SESSION
                         $this->_app->userHandler()->setAuthenticated();
-                        $this->_app->userHandler()->setAttribute('pseudo',$user->pseudo());
-                        $this->_app->userHandler()->setAttribute('statut',$user->statut());
-                       
+                        $this->_app->userHandler()->peuplerSuperGlobaleSession(array('pseudo'=>$user->pseudo(),
+                                                                                     'statut'=>$user->statut(),
+                                                                                     'browserVersion'=>$user->browserVersion()));
+                      
                         // redirection interne il faut coder cette fonction
                         $_GET['controleur']='Accueil';
                         $_GET['action']='';
                         $_GET['id']='';
                         $this->_app->routeur()->routerRequete($this->_app);
-                        
+                                               
                         //TODO envoyer un flash de connexion à l'utilisateur
                         echo "connexion réussie";
                         
