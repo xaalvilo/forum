@@ -17,10 +17,10 @@ class Page extends ApplicationComponent
 {
     use Affichage;
     
-    /** @type string nom du fichier associé à la vue */
+    /* @type string nom du fichier associé à la vue */
     private $_fichier;
  
-    /** @type string titre de la vue défini dans le fichier spécifique */
+    /* @type string titre de la vue défini dans le fichier spécifique */
     private $_titre;
     
     /**
@@ -67,6 +67,13 @@ class Page extends ApplicationComponent
         //g�n�ration du contenu sp�cifique de la vue 
         $contenu = $this->genererFichier($this->_fichier,$donnees);
         
+        // génération du message flash informatif
+        $flash ='';
+        if($this->_app->userHandler()->user()->hasFlash())
+        {
+            $flash = $this->_app->userHandler()->getFlash();
+        }
+        
         // On définit une variable locale accessible par la vue pour la racine Web
         // Il s'agit du chemin vers le site sur le serveur Web. c'est nécessaire pour les URL de type controleur/action/id
         $racineWeb = Configuration::get("racineWeb","/");
@@ -78,11 +85,10 @@ class Page extends ApplicationComponent
          // génération du gabarit commun incluant la partie spécifique 
          $repertoireTemplates = Configuration::get("repertoireTemplates","/");
          $fichierGabarit = $repertoireTemplates.'/gabarit.php';
-         $vue = $this->genererFichier($fichierGabarit,array('titre'=>$this->_titre,'contenu'=>$contenu,'racineWeb'=> $racineWeb));
+         $vue = $this->genererFichier($fichierGabarit,array('titre'=>$this->_titre,'flash'=>$flash,'contenu'=>$contenu,'racineWeb'=>$racineWeb));
          
          //renvoie la vue au navigateur web 
-         $app = $this->app();
-         $app->httpReponse()->send($vue);
+         $this->app()->httpReponse()->send($vue);
      }
      
     /**

@@ -114,15 +114,30 @@ class UserHandler extends ApplicationComponent
      * @throws \Exception si le paramètre n'est pas un booléen
      *
      */
-    public function setAuthenticated($authenticated=true)
+    public function setUserAuthenticated($authenticated=true)
     {
         if(!is_bool($authenticated))
         {
             throw new \Exception ('la valeur sp�cifi�e � User�::authenticated doit �tre un bool�en');
         }
+        $this->_user->setAuthenticated($authenticated);
         $this->_session->set('authenticated',$authenticated);
     }
    
+    /**
+     *
+     * Méthode UserAuthenticated
+     *
+     * cette m�thode permet de v�rifier que l'utilisateur est bien authentifi�
+     *
+     * @return Boolean, valeur de retour TRUE si authentifié
+     *
+     */
+    public function userAuthenticated()
+    {
+        return isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true && $this->_user->authenticated()=== true;
+    }
+    
     /**
      * 
      * Méthode peuplerSuperGlobaleSession
@@ -159,19 +174,28 @@ class UserHandler extends ApplicationComponent
      * Méthode getFlash
      *
      * cette m�thode permet de r�cup�rer le message ��flash�� informatif  qui s'affichera sur
-     * la page de l'utilisateur
+     * la page de l'utilisateur sur la dernière page construite
      *
+     * @param bool $permanent - par défaut FALSE, spécifie si le message est valable pour une requete 
+     * ou pour tout ou partie de la session
+     * 
      * @return string $flash correspondant au texte du message
      *
      */
-    public function getFlash()
+    public function getFlash($permanent=FALSE)
     {
         $flash = $_SESSION['flash'];
 
-        // destruction de la variable de session
-        unset ($_SESSION['flash']);
+        if($permanent===FALSE)
+        {
+            // destruction de la variable de session
+            unset ($_SESSION['flash']);
+        }
         return $flash;
     }
+    
+    
+    
 
     /**
      *

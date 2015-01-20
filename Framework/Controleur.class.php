@@ -88,6 +88,18 @@ abstract class Controleur extends ApplicationComponent
     
     /**
      *
+     * Methode Bandeau
+     *
+     * cette méthode est abstraite, et oblige les classes dérivées à implémenter la méthode correspondant à l'action "bandeau"
+     * qui va personnaliser le bandeau du template "gabarit" en fonction de diverses informations sur l'utilisateur
+     *
+     * @param array $donnees tableau de donnees en option
+     *
+     */
+    public abstract function bandeau(array $donnees = array());
+    
+    /**
+     *
      * Méthode initForm
      *
      * Cette méthode permet de créer l'objet entite et le formulaire associe en faisant appel au FormBuilder correspondant
@@ -161,23 +173,4 @@ abstract class Controleur extends ApplicationComponent
         $page = new Page($this->_app,$this->_action,$controleur);
         $page->generer($donneesVue);
     }     
-    
-    
-   /**
-    * 
-    * Méthode genererCookie
-    * 
-    * Cette méthode permet de générer le cookie s'il n'existe pas
-    * 
-    * 
-    *
-    */
-    public function genererCookie()
-    {
-        // si cookie n'existe pas
-        $reponse = $this->_app->httpReponse();
-        $reponse->setCookie($nom);
-   
- 
-    }
 }

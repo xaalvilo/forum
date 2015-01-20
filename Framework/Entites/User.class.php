@@ -72,6 +72,9 @@ class User extends \Framework\Entite
     /* propriétés du navigateur */
     protected $_browserVersion;
     
+    /* drapeau d'authentification */
+    protected $_authenticated;
+    
     /* constante correspondant au statut possible des visiteurs du site (notamment pour le forum) permettant de donner + ou - de droits */
     const MAX_STATUT=4;
     
@@ -84,6 +87,17 @@ class User extends \Framework\Entite
     const FORME_HASH_INVALIDE = 9;
     const FORME_MDP_INVALIDE = 10;
 		
+    
+    /**
+     * constructeur qui hydratera l'objet si un tableau de valeurs lui est fourni
+     */
+    public function __construct (array $donnees = array())
+    {
+        parent::__construct();
+        $this->_authenticated = isset($_SESSION['authenticated']);
+    }
+    
+    
     /**
      *
      * Méthode setPseudo
@@ -120,6 +134,32 @@ class User extends \Framework\Entite
     public function pseudo()
     {
         return $this->_pseudo;
+    }
+    
+    /**
+     * 
+     * Méthode authenticated
+     * 
+     * getter de l'attribut protégé authenticated
+     *
+     * @return bool attribut authenticated     
+     */
+    public function authenticated()
+    {
+        return $this->_authenticated;
+    }
+    
+    /**
+     * 
+     * Méthode setAuthenticated
+     * 
+     * setter de l'attribut protégé authenticated
+     * 
+     * @param bool $authenticated
+     */
+    public function setAuthenticated($authenticated = TRUE)
+    {
+        $this->_authenticated = $authenticated;
     }
     
     /**
@@ -630,20 +670,6 @@ class User extends \Framework\Entite
         return $this->_nbreCommentairesForum;
     }
     
-	/**
-	 * 
-	 * Méthode isAuthenticated
-	 * 
-	 * cette m�thode permet de v�rifier que l'utilisateur est bien authentifi�
-	 *
-	 * @return Boolean, valeur de retour TRUE si authentifié
-	 * 
-	 */
-	public function isAuthenticated()
-	{
-		return isset($_SESSION['auth']) && $_SESSION['auth'] === true;
-	}
-
 	/**
 	 * 
 	 * Méthode hasFlash

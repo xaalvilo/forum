@@ -33,8 +33,7 @@ class ControleurAccueil extends \Framework\Controleur
     * 
     * Méthode index
     * 
-    * cette méthode est l'action par défaut consistant à afficher la liste de tous les articles du blog
-    * elle créée le formulaire d'ajout de commentaire par la méthode initForm
+    * cette méthode est l'action par défaut affichant la page d'accueil
     * 
     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
     * requête précédente 
@@ -42,24 +41,21 @@ class ControleurAccueil extends \Framework\Controleur
     */
     public function index(array $donnees = array())
     {
-        // récupération de la liste des articles
-       // $articles = $this->_managerArticle->getArticles();  
-       
-        // tableau des valeurs à prendre en compte pour le formulaire
-      //  $tableauValeur = array('methode'=>'post','action'=>'blog/editer');
-        
-        // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
-        // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (cazr est en second argument de la fonction
-        // array_merge(..)
-      //  if(!empty ($donnees))
-      //  {
-      //      $tableauValeur=array_merge($tableauValeur,$donnees);
-      //  }
-        
-        // création du formulaire d'ajout de article
-      //  $form=$this->initForm('article',$tableauValeur);
-         
-        // génération de la vue avec les données : liste des articles et formulaire d'ajout de commentaire
+        $this->genererVue();
+    }
+    
+    /**
+     *
+     * Méthode bandeau
+     *
+     * cette méthode est l'action consistant à afficher un bandeau personnalisé
+     *
+     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
+     * requête précédente
+     *
+     */
+    public function bandeau(array $donnees = array())
+    {
         $this->genererVue();
     }
     

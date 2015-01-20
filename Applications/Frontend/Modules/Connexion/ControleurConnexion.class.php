@@ -6,7 +6,11 @@
  * 30 nov. 2014 - ControleurConnexion.class.php
  * 
  * la classe ControleurConnexion hérite de la classe abstraite Controleur du framework. 
-*  elle utilise également la methode genererVue pour générer la vue associée à l'action
+ *  elle utilise également la methode genererVue pour générer la vue associée à l'action
+ *  Elle permet de :
+ *  - afficher un formulaire de login
+ *  - connecter l'utilisateur en vérifiant son login
+ *  - déconnecter l'utilisateur en supprimant la session et ses données
  *
  */
 
@@ -45,22 +49,48 @@ class ControleurConnexion extends \Framework\Controleur
     */
     public function index(array $donnees = array())
     {        
-        // tableau des valeurs à prendre en compte pour le formulaire
-        $tableauValeur = array('methode'=>'post','action'=>'connexion/connecter');
+        if(!$this->_app->userHandler()->userAuthenticated())
+        {    
+            // tableau des valeurs à prendre en compte pour le formulaire
+            $tableauValeur = array('methode'=>'post','action'=>'connexion/connecter');
         
-        // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
-        // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (car est en second argument de la fonction
-        // array_merge(..)
-        if(!empty ($donnees))
-        {
-            $tableauValeur=array_merge($tableauValeur,$donnees);
-        }
+            // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
+            // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (car est en second argument de la fonction
+            // array_merge(..)
+            if(!empty ($donnees))
+            {
+                $tableauValeur=array_merge($tableauValeur,$donnees);
+            }
         
-        // création du formulaire de connexion et instanciation d'un objet connexion
-        $form=$this->initForm('Connexion',$tableauValeur);
+            // création du formulaire de connexion et instanciation d'un objet connexion
+            $form=$this->initForm('Connexion',$tableauValeur);
          
-        // génération de la vue avec le formulaire de connexion
-        $this->genererVue(array('formulaire'=>$form->createView()));
+            // génération de la vue avec le formulaire de connexion
+            $this->genererVue(array('formulaire'=>$form->createView()));
+        }
+        else
+        {
+            //TODO redirection interne il faut coder cette fonction
+            $_GET['controleur']='Forum';
+            $_GET['action']='';
+            $_GET['id']='';
+            $this->_app->routeur()->routerRequete($this->_app);
+        }
+    }
+    
+    /**
+     *
+     * Méthode bandeau
+     *
+     * cette méthode est l'action consistant à afficher un bandeau personnalisé
+     *
+     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
+     * requête précédente
+     *
+     */
+    public function bandeau(array $donnees = array())
+    {
+        $this->genererVue();
     }
     
     /**
@@ -68,24 +98,19 @@ class ControleurConnexion extends \Framework\Controleur
      * Méthode connecter
      * 
      * cette méthode correspond à l'action "connecter" permettant de se connecter
-     * Elle ne doit être exécutée que si les données insérées dans le formulaire sont valides
-     *
-     * return_type
+     * Elle ne doit être exécutée que si les données insérées dans le formulaire sont valides 
      *
      */
     public function connecter()
     {
         $pseudo = $this->_requete->getParametre("pseudo");
         $mdp = $this->_requete->getParametre("mdp");
-               
-        // prise en compte de la date courante
-       // $date = new \DateTime();
-        
+
         // création du formulaire de connexion en l'hydratant avec les valeurs de la requête
         $form=$this->initForm('Connexion',array('pseudo'=>$pseudo,
-                                             'mdp'=>$mdp,
-                                             'methode'=>'post',
-                                             'action'=>'connexion/connecter'));
+                                                'mdp'=>$mdp,
+                                                'methode'=>'post',
+                                                'action'=>'connexion/connecter'));
         
         $options = array();
         
@@ -135,22 +160,21 @@ class ControleurConnexion extends \Framework\Controleur
                         $this->_app->userHandler()->regenererIdSession();
                         
                         // utilisateur vu  comme authentifié dans la session associée
+                        $this->_app->userHandler()->setUserAuthenticated();
+                        
                         // remplissage de la variable $_SESSION
-                        $this->_app->userHandler()->setAuthenticated();
                         $this->_app->userHandler()->peuplerSuperGlobaleSession(array('pseudo'=>$user->pseudo(),
                                                                                      'statut'=>$user->statut(),
                                                                                      'browserVersion'=>$user->browserVersion()));
-                      
-                        // redirection interne il faut coder cette fonction
-                        $_GET['controleur']='Accueil';
+                        //envoyer un flash de connexion à l'utilisateur
+                        $pseudo = $user->pseudo();
+                        $this->_app->userHandler()->setFlash("Bonjour $pseudo");
+                        
+                        //TODO redirection interne il faut coder cette fonction
+                        $_GET['controleur']='Forum';
                         $_GET['action']='';
                         $_GET['id']='';
                         $this->_app->routeur()->routerRequete($this->_app);
-                                               
-                        //TODO envoyer un flash de connexion à l'utilisateur
-                        echo "connexion réussie";
-                        
-                        //TODO quelle action de redirection mener ?                        
                     }
                     // le hash ne correspond pas au mdp
                     else
@@ -159,11 +183,11 @@ class ControleurConnexion extends \Framework\Controleur
                         // pré rempli des champs valides s'il y a échec à l'inscription
                         $options=$form->validField();
                          
+                        //envoyer un flash d'échec à l'utilisateur
+                        $this->_app->userHandler()->setFlash('Echec de la connexion');
+                        
                         //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
                         $this->executerAction("index",$options);
-                        
-                        //TODO envoyer un flash de tentative de connexion invalide à l'utilisateur
-                        echo "connexion a échoué";
                     }
                 }
                 // la requête en BDD User n'a pas permis de trouver ce pseudo ou a échoué
@@ -173,11 +197,11 @@ class ControleurConnexion extends \Framework\Controleur
                     // pré rempli des champs valides s'il y a échec à l'inscription
                     $options=$form->validField();
                      
+                    //envoyer un flash d'échec à l'utilisateur
+                    $this->_app->userHandler()->setFlash('Echec de la connexion');
+                    
                     //il s'agit  ensuite d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
                     $this->executerAction("index",$options);
-                    
-                    //TODO envoyer un flash de tentative de connexion invalide à l'utilisateur
-                    echo "connexion a échoué";
                 }
             }
             // le formulaire est invalide
@@ -187,6 +211,9 @@ class ControleurConnexion extends \Framework\Controleur
                 // pré rempli des champs valides s'il y a échec à l'inscription
                 $options=$form->validField();
                  
+                //envoyer un flash de données invalide
+                $this->_app->userHandler()->setFlash('Format des données saisies invalide');
+                
                 //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
                 $this->executerAction("index",$options);
             }
@@ -194,8 +221,24 @@ class ControleurConnexion extends \Framework\Controleur
          // pas de méthode POST
          else 
          {
+             //envoyer un flash d'échec à l'utilisateur
+             $this->_app->userHandler()->setFlash('Données non transmises');
+             
              //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire de connexion
              $this->executerAction("index",$options);
          }         
+    }
+    
+    /**
+     * 
+     * Méthode deconnecter
+     *
+     * cette méthode correspond à l'action de déconnexion de l'utilisateur.
+     * Elle ne doit pourvoir s'exécuter que si l'utilisateur est déjà connecter
+     * 
+     */
+    public function deconnecter()
+    {
+        $this->_app->userHandler()->detruireSession();
     }
 }    

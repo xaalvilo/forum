@@ -1,5 +1,5 @@
 <!-- Portion de Vue spécifique à l'affichage du formulaire de connexion -->
-
-   <?= $this->nettoyer($formulaire)?>    
+<?php $this->_titre = "Connexion AtelierBlancNordOuest"; ?>
+<?= $this->nettoyer($formulaire)?>    
     
     

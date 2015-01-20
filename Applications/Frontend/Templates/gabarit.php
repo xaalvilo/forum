@@ -18,20 +18,21 @@
         <div id="global">
             <header> 
                 <img src="Contenu/Images/automnegrise.jpg" alt="banniere d'automne" id="banniere"/>
+                <!--  id="titrePage"><a href="Connexion">Connexion</a></p> -->
+                <?= $flash ?>
             </header>
         
             <nav>      
                 <ul id="menu">          
                     <li id="titrePage"><a href="Accueil">Accueil</a></li>
-                    <li id="titrePage"><a href="Forum">Forum</a></li>
+                    <li id="titrePage"><a href="Connexion">Forum</a></li>
                     <li id="titrePage"><a href="Blog">Blog</a></li>  
-                    <li id="titrePage"><a href="Connexion">Connexion</a></li>
                     <li id="titrePage"><a href="Inscription">Inscription</a></li>
                 </ul>               
             </nav>
             
             <div id="contenu">
-                <?= $contenu?>
+                <?= $contenu ?>
             </div> 
             
             <footer id="piedPage">

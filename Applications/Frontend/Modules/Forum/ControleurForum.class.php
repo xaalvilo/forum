@@ -62,6 +62,21 @@ class ControleurForum extends \Framework\Controleur
     }
     
     /**
+     *
+     * Méthode bandeau
+     *
+     * cette méthode est l'action consistant à afficher un bandeau personnalisé
+     *
+     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
+     * requête précédente
+     *
+     */
+    public function bandeau(array $donnees = array())
+    {
+        $this->genererVue();
+    }
+    
+    /**
      * 
      * Méthode editer
      * 
