@@ -12,6 +12,22 @@ class Routeur extends ApplicationComponent
     /* constante de classe déterminant la page d'accueil */
     const PAGE_ACCUEIL = "Accueil"; 
     
+    /* controleur généré */
+    protected $_controleur;
+    
+    /**
+     * 
+     * Méthode controleur
+     *
+     * getter du controleur généré
+     * 
+     *@return \Framework\Controleur 
+     */
+    public function controleur()
+    {
+        return $this->_controleur;
+    }
+    
     /** 
     * 
     *  Méthode routerRequête
@@ -93,6 +109,7 @@ class Routeur extends ApplicationComponent
             
             // instanciation du controleur adapté à la requête
             $controleur = new $NamespaceClasseControleur ($app);
+            $this->_controleur = $controleur;
             
             // la requete en paramètre est associée à ce controleur */
             $controleur->setRequete($requete);

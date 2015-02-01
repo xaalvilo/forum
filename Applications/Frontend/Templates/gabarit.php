@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8"> <!--encodage avec  tous les caract�res courants-->
 	    <!-- [if lt IE 9]>
@@ -12,32 +12,28 @@
 	    <base href="<?= $racineWeb ?>" >
         <style type="text/css"> @import url(Contenu/CSS/style.css) </style> <!--à pr�f�rer � <link etc... lien vers le fichier CSS-->
         <link href='http://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css'> <!--  importation de google font -->
-        <title><?= $titre ?></title> 
+        <title><?= $titre ?></title>
     </head>
     <body>
         <div id="global">
-            <header> 
+            <header>
                 <img src="Contenu/Images/automnegrise.jpg" alt="banniere d'automne" id="banniere"/>
-                <!--  id="titrePage"><a href="Connexion">Connexion</a></p> -->
+                <?= $bandeau ?>
                 <?= $flash ?>
             </header>
-        
-            <nav>      
-                <ul id="menu">          
-                    <li id="titrePage"><a href="Accueil">Accueil</a></li>
-                    <li id="titrePage"><a href="Connexion">Forum</a></li>
-                    <li id="titrePage"><a href="Blog">Blog</a></li>  
-                    <li id="titrePage"><a href="Inscription">Inscription</a></li>
-                </ul>               
+
+            <nav id="menu">
+                 <a class = "lienMenu" href="Accueil">Accueil</a> <a class = "lienMenu" href="Connexion">Forum </a>
+                 <a class = "lienMenu" href="Blog">Blog</a><a class = "lienMenu" href="Connexion">Mon compte</a>
             </nav>
-            
+
             <div id="contenu">
                 <?= $contenu ?>
-            </div> 
-            
+            </div>
+
             <footer id="piedPage">
                     pied de site � définir
             </footer>
-        </div> 
+        </div>
     </body>
 </html>

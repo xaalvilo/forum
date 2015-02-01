@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 
  * @author Frédéric Tarreau
@@ -9,7 +8,6 @@
  *  la classe Page h�rite de ApplicationComponent, elle aura le r�le de g�rer la g�n�ration des diff�rentes Vues
  *
  */
-
 namespace Framework;
 require_once './Framework/autoload.php';
 
@@ -20,8 +18,14 @@ class Page extends ApplicationComponent
     /* @type string nom du fichier associé à la vue */
     private $_fichier;
  
-    /* @type string titre de la vue défini dans le fichier spécifique */
+    /* @type string titre de la page défini dans le fichier spécifique */
     private $_titre;
+    
+    /* @type array bandeau de la page */
+    private $_bandeau;
+    
+    /* @type string message informatif */
+    private $_flash;
     
     /**
     * 
@@ -51,6 +55,9 @@ class Page extends ApplicationComponent
              $fichier = Configuration::get("repertoireErreurs");
          }      
          $this->_fichier = $fichier.$action.".php";
+         
+         $this->_bandeau = array('connexion'=>'','pseudo'=>'');
+         $this->_flash ='';
      }
      
     /**
@@ -66,13 +73,22 @@ class Page extends ApplicationComponent
      {
         //g�n�ration du contenu sp�cifique de la vue 
         $contenu = $this->genererFichier($this->_fichier,$donnees);
-        
+       
         // génération du message flash informatif
-        $flash ='';
         if($this->_app->userHandler()->user()->hasFlash())
         {
-            $flash = $this->_app->userHandler()->getFlash();
+            $this->_flash = $this->_app->userHandler()->getFlash();
         }
+        
+        $repertoireTemplates = Configuration::get("repertoireTemplates","/");
+        
+        //génération du bandeau spécifique
+        if($this->_app->userHandler()->user()->hasBandeau())
+        {
+            $this->_bandeau = $this->_app->userHandler()->getBandeau();
+        }
+        $fichierBandeau=$repertoireTemplates.'bandeau.php';
+        $bandeau = $this->genererFichier($fichierBandeau,$this->_bandeau);
         
         // On définit une variable locale accessible par la vue pour la racine Web
         // Il s'agit du chemin vers le site sur le serveur Web. c'est nécessaire pour les URL de type controleur/action/id
@@ -83,9 +99,12 @@ class Page extends ApplicationComponent
     	$this->setHeureDateLocale();
         
          // génération du gabarit commun incluant la partie spécifique 
-         $repertoireTemplates = Configuration::get("repertoireTemplates","/");
          $fichierGabarit = $repertoireTemplates.'/gabarit.php';
-         $vue = $this->genererFichier($fichierGabarit,array('titre'=>$this->_titre,'flash'=>$flash,'contenu'=>$contenu,'racineWeb'=>$racineWeb));
+         $vue = $this->genererFichier($fichierGabarit,array('titre'=>$this->_titre,
+                                                            'flash'=>$this->_flash,
+                                                            'bandeau'=>$bandeau,
+                                                            'contenu'=>$contenu,
+                                                            'racineWeb'=>$racineWeb));
          
          //renvoie la vue au navigateur web 
          $this->app()->httpReponse()->send($vue);
@@ -105,14 +124,14 @@ class Page extends ApplicationComponent
     * 
     */
     private function genererFichier($fichier,$donnees)
-    {
+    {       
          //vérification de l'existence du fichier 
          if (file_exists($fichier))
         {
             //transfert des valeurs du tableau associatif $donnees dans les variables de même nom que les index
             // de ce tableau, 
             extract($donnees);
-            
+ 
             //demarrage de la temporisation de sortie 
             ob_start();
             

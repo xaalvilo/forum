@@ -20,6 +20,9 @@ class Article extends \Framework\Entite
   protected $contenu;
   protected $image;
   
+  /* libellé d'un article */
+  protected $libelle;
+  
   const TITRE_INVALIDE=2;
   const CONTENU_INVALIDE=3;
   
@@ -77,6 +80,26 @@ class Article extends \Framework\Entite
     
     /**
      * 
+     * Méthode setLibelle
+     * 
+     * setter de libelle
+     *
+     * @param string $libelle
+     */
+    public function setLibelle($libelle)
+    {
+        if (!is_string($libelle) || empty($libelle))
+        {
+            $this->erreurs[]=self::TITRE_INVALIDE;
+        }
+        else
+        {
+            $this->libelle=$libelle;
+        }
+    }
+    
+    /**
+     * 
      * Méthode setDate
      * 
      * Setter de date
@@ -125,6 +148,20 @@ class Article extends \Framework\Entite
     public function titre()
     {
     	return $this->titre;
+    }
+    
+    /**
+     * 
+     * Méthode libelle
+     *
+     * getter du libelle d'un article
+     * 
+     * @return string $libelle
+     *
+     */
+    public function libelle()
+    {
+        return $this->libelle;
     }
     
     /**

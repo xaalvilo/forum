@@ -11,9 +11,8 @@
  *             - savoir si l'utilisateur est authentifié
  *             - savoir si l'utilisateur a un message informatif             
  * 
- */
- 
-Namespace Framework\Entites;
+ */ 
+namespace Framework\Entites;
 require_once './Framework/autoload.php';
 
 class User extends \Framework\Entite
@@ -91,11 +90,11 @@ class User extends \Framework\Entite
     /**
      * constructeur qui hydratera l'objet si un tableau de valeurs lui est fourni
      */
-    public function __construct (array $donnees = array())
-    {
-        parent::__construct();
-        $this->_authenticated = isset($_SESSION['authenticated']);
-    }
+  //  public function __construct (array $donnees = array())
+    //{
+      //  parent::__construct();
+        //$this->hydrate($donnees);
+    //}
     
     
     /**
@@ -185,10 +184,6 @@ class User extends \Framework\Entite
      */
     public function setBrowserVersion($browserVersion)
     {
-        if(!isset($browserVersion))
-        {
-            $browserVersion = $_SERVER['HTTP_USER_AGENT'];
-        }
         $this->_browserVersion = $browserVersion;
     }
     
@@ -477,7 +472,7 @@ class User extends \Framework\Entite
      */
     public function setIp($ip)
     {
-       $this->_ip = $ip;
+        $this->_ip = $ip;
     }
     /**
      *
@@ -683,5 +678,20 @@ class User extends \Framework\Entite
 	public function hasFlash()
 	{
 		return isset($_SESSION['flash']);
+	}
+	
+	/**
+	 *
+	 * Méthode hasBandeau
+	 *
+	 * cette m�thode permet de savoir si un bandeau de session  est associé à
+	 * l'utilisateur
+	 *
+	 * @return boolean TRUE si il y a un bandeau
+	 *
+	 */
+	public function hasBandeau()
+	{
+	    return isset($_SESSION['bandeau']);
 	}
 }

@@ -46,8 +46,11 @@ class ControleurForum extends \Framework\Controleur
         // tableau des valeurs à prendre en compte pour le formulaire
         $tableauValeur = array('methode'=>'post','action'=>'forum/editer');
         
-         //il faut préremplir le champ avec le pseudo fourni
-        $donnees['auteur']=$this->_app->userHandler()->user()->pseudo();
+        //il faut préremplir le champ avec le pseudo fourni par S_SESSION
+        if(isset($_SESSION['user']['pseudo']))
+        {
+            $donnees['auteur']=$_SESSION['user']['pseudo'];
+        }
         
         // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
         // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (cazr est en second argument de la fonction

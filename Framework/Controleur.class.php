@@ -88,15 +88,19 @@ abstract class Controleur extends ApplicationComponent
     
     /**
      *
-     * Methode Bandeau
+     * Methode setBandeau
      *
      * cette méthode est abstraite, et oblige les classes dérivées à implémenter la méthode correspondant à l'action "bandeau"
      * qui va personnaliser le bandeau du template "gabarit" en fonction de diverses informations sur l'utilisateur
-     *
+     * 
      * @param array $donnees tableau de donnees en option
      *
      */
-    public abstract function bandeau(array $donnees = array());
+    public function setBandeau(array $donnees = array())
+    {
+        $donneesBandeau['bandeau']=$donnees;
+        $this->_app->userHandler()->peuplerSuperGlobaleSession($donneesBandeau);
+    }
     
     /**
      *
@@ -115,13 +119,13 @@ abstract class Controleur extends ApplicationComponent
         // avoir tout converti en minuscule
         $classeEntite = ucfirst(strtolower($nomEntite));
                
-        //  création du nom de la classe entite en tenant compte du namespace
+        // création du nom de la classe entite en tenant compte du namespace
         $NamespaceClasseEntite ="\\Framework\\Entites\\".$classeEntite;
                 
         // il faut hydrater l'objet $entite avec les valeurs du tableau $donnees
         $entite = new $NamespaceClasseEntite($donnees);
                 
-        //  création du nom de la classe FormBuilder du modele en tenant compte du namespace
+        // création du nom de la classe FormBuilder du modele en tenant compte du namespace
         $NamespaceClasseFormBuilder = "\\Framework\\FormBuilder\\".$classeEntite."FormBuilder";
         
         // création du constructeur de formulaire avec l'objet monEntite instancié
@@ -172,5 +176,5 @@ abstract class Controleur extends ApplicationComponent
         // generation de la page avec la vue associée 
         $page = new Page($this->_app,$this->_action,$controleur);
         $page->generer($donneesVue);
-    }     
+    }    
 }

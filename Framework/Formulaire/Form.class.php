@@ -105,7 +105,9 @@ class Form
 	}
 	
 	/**
-	* Méthode permettant de générer l'affichage de tous les champs associés au formulaire
+	* Méthode createView
+	* 
+	* permet de générer l'affichage de tous les champs associés au formulaire
 	*
 	* @return string View, portion de vue correspondant au formulaire c.a.d HTML
 	*/

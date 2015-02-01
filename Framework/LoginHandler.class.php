@@ -12,8 +12,7 @@
 *             - comparer un password et un hash
 * 
 */
-
-Namespace Framework;
+namespace Framework;
 require_once './Framework/autoload.php';
 
 class LoginHandler extends ApplicationComponent

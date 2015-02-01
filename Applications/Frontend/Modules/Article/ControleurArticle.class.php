@@ -63,6 +63,9 @@ class ControleurArticle extends \Framework\Controleur
 
         $tableauValeur = array('idReference'=>$idArticle,'methode'=>'post','action'=>'article/commenter');
         
+        //il faut préremplir le champ avec le pseudo fourni
+        $donnees['auteur']=$this->_app->userHandler()->user()->pseudo();
+       
         // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
         // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (car est en second argument de la fonction
         // array_merge(..)
@@ -79,21 +82,6 @@ class ControleurArticle extends \Framework\Controleur
     }
     
     /**
-     *
-     * Méthode bandeau
-     *
-     * cette méthode est l'action consistant à afficher un bandeau personnalisé
-     *
-     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
-     * requête précédente
-     *
-     */
-    public function bandeau(array $donnees = array())
-    {
-        $this->genererVue();
-    }
-    
-    /**
      * 
      * Méthode Commenter
      * 
@@ -107,7 +95,7 @@ class ControleurArticle extends \Framework\Controleur
         $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_ARTICLE;
         
         // récupération des paramètres de la requête
-        $idArticle = $this->requete->getParametre("id");
+        $idArticle = $this->_requete->getParametre("id");
         $auteur = $this->_requete->getParametre("auteur");
         $contenu = $this->_requete->getParametre("contenu");
         

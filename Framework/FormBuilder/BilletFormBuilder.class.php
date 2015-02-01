@@ -24,7 +24,7 @@ require_once './Framework/autoload.php';
  	public function build()
  	{
  		 $this->form->add(new \Framework\Formulaire\InputField(array(
- 		                                                     'type'=>'text',
+ 		                                                    'type'=>'text',
  		 													'label'=>'Auteur  ',
  		 													'name'=>'auteur',
  		 													'maxLength'=>15,

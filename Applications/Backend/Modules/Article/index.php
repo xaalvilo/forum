@@ -7,9 +7,9 @@
 	   <time><?= strftime('%A %d %B %Y, %H:%M',$this->nettoyer($article['date']->getTimestamp()))?></time>
 	
 	   <caption>
-		  <h1 class="titreArticle"><?= $this->nettoyer($article['titre'])?></h1>		     
+		  <h1 class="titreArticle"><?= $this->nettoyer($article['titre'])?></h1>
 	   </caption>
-	   <h2><?= $this->nettoyer($article['libelle'])?></h2>
+	 
 	   <p><img src="Contenu/Images/<?= $this->nettoyer($article['image'])?>"  alt="photo article" id="photo"/></p>
 	        
     	<p><?= $this->nettoyer($article['contenu'])?></p>

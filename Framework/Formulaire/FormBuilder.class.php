@@ -8,7 +8,6 @@
  * Classe abstraire dont le r�le est la construction d'un formulaire
  *        
  */
- 
 namespace Framework\Formulaire;
 
 abstract class FormBuilder 
@@ -19,8 +18,6 @@ abstract class FormBuilder
 	/** 
 	 * Méthode constructeur
 	 *
-	 * return_type
-	 * 
 	 * @param Entite $entity
 	 */
 	public function __construct(\Framework\Entite $entite,$method,$action)
@@ -28,6 +25,13 @@ abstract class FormBuilder
 		$this->setForm(new Form($entite,$method,$action));
 	}
 	
+	/**
+	 * 
+	 * Méthode abstraite build
+	 *
+	 * permet de construire le formulaire , ses champs et ses boutons
+	 *
+	 */
 	abstract public function build();
 	
 	/**

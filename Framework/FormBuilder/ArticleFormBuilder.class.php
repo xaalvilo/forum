@@ -22,7 +22,7 @@ require_once './Framework/autoload.php';
  		                                                    'type'=>'text',
  		 													'label'=>'Titre   ',
  		 													'name'=>'titre',
- 		 													'maxLength'=>15,
+ 		 													'maxLength'=>100,
  		 													'id'=>'titre',
  		 													'size'=>100,
  		 													'required'=>true,
@@ -31,6 +31,19 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\NotNullValidator('Merci de donner un titre à cet article'),
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fix� � 100', 100),
  		 			        ))))
+ 		 			  ->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                         'type'=>'text',
+ 		 			                                         'label'=>'Libelle   ',
+ 		 			                                         'name'=>'libelle',
+ 		 			                                         'maxLength'=>20,
+ 		 			                                         'id'=>'libelle',
+ 		 			                                         'size'=>20,
+ 		 			                                         'required'=>true,
+ 		 			                                         'placeholder'=> 'libellé de l\'article',
+ 		 			                                         'validators'=>array(
+ 		 			                                                         new \Framework\Formulaire\NotNullValidator('Merci de donner un libellé à cet article'),
+ 		 			                                                         new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fix� � 20', 20),
+ 		 			                ))))
  		 			->add(new \Framework\Formulaire\TextField(array(
  		 							                     'label'=>'Article',
  		 			                                     'name'=>'contenu',

@@ -50,7 +50,13 @@ class ControleurBillet extends \Framework\Controleur
     * 
     */
     public function index(array $donnees = array()) 
-    {   
+    {
+        //il faut préremplir le champ avec le pseudo fourni par S_SESSION
+        if(isset($_SESSION['user']['pseudo']))
+        {
+            $donnees['auteur']=$_SESSION['user']['pseudo'];
+        }
+        
         // spécification de la table concernée dans la BDD
         $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_BILLET;
         
@@ -64,9 +70,6 @@ class ControleurBillet extends \Framework\Controleur
         $commentaires=$this->_managerCommentaire->getListeCommentaires($table,$idBillet);  
 
         $tableauValeur = array('idReference'=>$idBillet,'methode'=>'post','action'=>'billet/commenter');
-        
-        //il faut préremplir le champ avec le pseudo fourni
-        $donnees['auteur']=$this->_app->userHandler()->user()->pseudo();
         
         // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
         // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (car est en second argument de la fonction

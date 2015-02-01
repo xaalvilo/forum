@@ -19,8 +19,7 @@
 * Rappel sur les sessions : PHP envoie au navigateur un identifiant de session et stocke des données du client
 * dans un fichier correspondant à l'identifiant
 */
-
-Namespace Framework;
+namespace Framework;
 require_once './Framework/autoload.php';
 
 class UserHandler extends ApplicationComponent
@@ -62,9 +61,22 @@ class UserHandler extends ApplicationComponent
     
     /**
      * 
+     * Méthode setSession
+     * 
+     * setter de l'attribut session
+     * 
+     * @param \Framework\Entites\Session $session
+     */
+    public function setSession(\Framework\Entites\Session $session)
+    {
+        $this->_session = $session;
+    }
+    
+    /**
+     * 
      * Méthode user
      *
-     * getter de l'attribut user (objet \framework\Entites\User)
+     * getter de l'attribut user 
      * 
      * @return \Framework\Entites\User
      */
@@ -81,13 +93,25 @@ class UserHandler extends ApplicationComponent
      *
      * @param string $cle 
      * @param mixed $valeur valeur de l'attribut
-     *
      */
     public function setAttribute($cle,$valeur)
     {
         $this->_session->set($cle, $valeur) ;
     }
 
+    /**
+     * 
+     * Méthode removeAttribute
+     *
+     * cette methode permet de supprimer une donnée de la superglobale $_SESSION
+     * 
+     * @param string $cle
+     */
+    public function removeAttribute($cle)
+    {
+        $this->_session->remove($cle);
+    }
+    
     /**
      *
      * Méthode getAttribute
@@ -121,21 +145,29 @@ class UserHandler extends ApplicationComponent
             throw new \Exception ('la valeur sp�cifi�e � User�::authenticated doit �tre un bool�en');
         }
         $this->_user->setAuthenticated($authenticated);
-        $this->_session->set('authenticated',$authenticated);
+        //$this->_session->set('authenticated',$authenticated);
+        $this->setAttribute('user', array('authenticated'=>true));
     }
    
     /**
      *
-     * Méthode UserAuthenticated
+     * Méthode IsUserAuthenticated
      *
      * cette m�thode permet de v�rifier que l'utilisateur est bien authentifi�
      *
      * @return Boolean, valeur de retour TRUE si authentifié
      *
      */
-    public function userAuthenticated()
+    public function IsUserAuthenticated()
     {
-        return isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true && $this->_user->authenticated()=== true;
+        // verification contre le vol de session par comparaison du couple IP, Version du navigateur
+        $ip = $this->getUserIp();
+        $browserVersion = $this->getUserBrowserVersion();
+        
+        return isset($_SESSION['user']['authenticated']) 
+                && $_SESSION['user']['authenticated'] === true 
+                && $ip === $_SESSION['user']['ip']
+                && $browserVersion === $_SESSION['user']['browserVersion'];
     }
     
     /**
@@ -147,13 +179,13 @@ class UserHandler extends ApplicationComponent
      * @param array $donnees 
      */
     public function peuplerSuperGlobaleSession(array $donnees)
-    {
+    {      
         foreach ($donnees as $cle=>$valeur)
         {                
             $this->setAttribute($cle, $valeur);
         }
     }
-    
+        
     /**
      *
      * Méthode setFlash
@@ -166,7 +198,7 @@ class UserHandler extends ApplicationComponent
      */
     public function setFlash($valeur)
     {
-        $_SESSION['flash'] = $valeur;
+        $this->setAttribute('flash', $valeur);
     }
 
     /**
@@ -176,27 +208,30 @@ class UserHandler extends ApplicationComponent
      * cette m�thode permet de r�cup�rer le message ��flash�� informatif  qui s'affichera sur
      * la page de l'utilisateur sur la dernière page construite
      *
-     * @param bool $permanent - par défaut FALSE, spécifie si le message est valable pour une requete 
-     * ou pour tout ou partie de la session
-     * 
      * @return string $flash correspondant au texte du message
      *
      */
-    public function getFlash($permanent=FALSE)
+    public function getFlash()
     {
-        $flash = $_SESSION['flash'];
-
-        if($permanent===FALSE)
-        {
-            // destruction de la variable de session
-            unset ($_SESSION['flash']);
-        }
+        $flash = $this->getAttribute('flash');
+        $this->removeAttribute('flash');
         return $flash;
     }
-    
-    
-    
 
+    /**
+     *
+     * Méthode getBandeau
+     *
+     * cette m�thode permet de r�cup�rer le bandeau permanent pour l'afficher durant la session
+     *
+     * @return array $bandeau correspondant aux donnees du bandeau
+     *
+     */
+    public function getBandeau()
+    { 
+        return (isset($_SESSION['bandeau'])) ? $_SESSION['bandeau']: NULL;
+    }
+    
     /**
      *
      * Méthode regenerIdSession
@@ -236,7 +271,7 @@ class UserHandler extends ApplicationComponent
                 
                 // il faut bien spécifier que le nouveau cookie de session est valable pour tout le site Forum
                 $path = \Framework\Configuration::get('racineWeb');
-                $this->_session->setParamCookieSession('',0,$path);
+                $this->_session->setParamCookieSession(0,$path);
                 session_start();              
             }
             catch (\Exception $e) 
@@ -261,7 +296,7 @@ class UserHandler extends ApplicationComponent
         {
             $param = $this->_session->paramCookieSession();
             $expire = time() - $maxLifetime;
-            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);
+            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);         
         }
     }
     
@@ -277,8 +312,9 @@ class UserHandler extends ApplicationComponent
     {
         $this->_session->detruireVariableSession();  
         $this->detruireCookieSession(10);
-        $this->_session->__destruct();
         session_destroy();
+        $this->_session->__destruct();
+        $this->setUserAuthenticated(FALSE);
     }
     
     /**
@@ -302,12 +338,58 @@ class UserHandler extends ApplicationComponent
      * Cette méthode permet de récupérer l'adresse Ip de l'utilisateur
      *
      * @return string $ip
-     *
      */
     public function getUserIp()
     {
-        $ip = '192.168.1.2';
-        return $ip;
+        if(isset($_SERVER))
+        {
+            if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            {
+                $ipReelle=$_SERVER['HTTP_X_FORWARDED_FOR'];
+            }
+            elseif (isset($_SERVER['HTTP_CLIENT_IP']))
+            {
+                $ipReelle=$_SERVER['HTTP_CLIENT_IP'];
+            }
+            else 
+            {
+                $ipReelle=$_SERVER['REMOTE_ADDR'];
+            }           
+        }
+        else 
+        {
+            if(getenv('HTTP_X_FORWARDER_FOR'))
+            {
+                $ipReelle=getenv('HTTP_X_FORWARDED_FOR');
+            }
+            elseif (getenv('HTTP_CLIENT_IP'))
+            {
+                $ipReellep=getenv('HTTP_CLIENT_IP');
+            }
+            else 
+            {
+                $ipReelle=getenv('REMOTE_ADDR');
+            }           
+        }
+        return $ipReelle;
+    }
+    
+    /**
+     * 
+     * Méthode getUserBrowserVersion
+     *
+     * elle permet d'obtenir la version du navigateur de l'utilisateur
+     * 
+     * @return string $browserVersion, description de la version du navigateur     *
+     */
+    public function getUserBrowserVersion()
+    {
+        $browserVersion = '';
+        if(isset($_SERVER['HTTP_USER_AGENT']))
+        {
+            $browserVersion = $_SERVER['HTTP_USER_AGENT'];
+        }  
+        return $browserVersion; 
     }
     
     /**

@@ -39,11 +39,15 @@ abstract class Application
 		$this->_routeur = new Routeur($this);
 		$this->_httpReponse = new Reponse($this);
 		
+		// instanciation d'un objet session
 		$this->_sessionHandler = new MySessionHandler($this);
 		session_set_save_handler($this->_sessionHandler,true); 
 		$session = new \Framework\Entites\Session(); 
 		
-		$user = new \Framework\Entites\User();
+		// instanciation d'un objet utilisateur
+		if(!isset($_SESSION['user']))
+		    $_SESSION['user']=array();
+		$user = new \Framework\Entites\User($_SESSION['user']);
 		
 		$this->_userHandler = new UserHandler($this, $session, $user);
 		
