@@ -3,6 +3,7 @@
 <section> 
     <article> 
         <?php $this->_titre = "Blog AtelierBlancNordOuest- ".$this->nettoyer($article['titre']);?>
+        
 
 	   <time><?= strftime('%A %d %B %Y, %H:%M',$this->nettoyer($article['date']->getTimestamp()))?></time>
 	
@@ -26,13 +27,19 @@
            	</td>
         	<td>
         		<p><?= $this->nettoyer($commentaire['contenu'])?></p>
+        		<?php if ($this->nettoyer($commentaire['auteur'])==$pseudo):?>
+        		<a href="<?= "article/supprimer/" . $this->nettoyer($commentaire['id']) ?>">
+            	<button> Supprimer </button></a>
+            	<a href="<?= "article/modifier/" . $this->nettoyer($commentaire['id']) ?>">
+            	<button> Modifier </button></a>
+            	<?php endif;?>
         	</td>
     	   </tr>
          <?php endforeach;?>
         </table>  
   
     <!-- Formulaire de création de commentaire -->
-    <?= $this->nettoyer($formulaire)?>    
+    <?= $this->nettoyer($formulaire)?>
     
     </article> 
 </section>   

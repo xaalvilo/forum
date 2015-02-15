@@ -13,7 +13,7 @@
         	<time><?= strftime('%A %d %B %Y, %H:%M',$this->nettoyer($billet['date']->getTimestamp()))  ?></time>
        	</td>
   		<td>
-    		<p><?= $this->nettoyer($billet['contenu'])?></p>
+    		<p><?= $this->nettoyer($billet['contenu'])?></p>    		
     	</td>
 	</tr>
    
@@ -28,6 +28,12 @@
           	</td>
         	<td>
         		<p><?= $this->nettoyer($commentaire['contenu'])?></p>
+        		<?php if ($this->nettoyer($commentaire['auteur'])==$pseudo):?>
+        		<a href="<?= "billet/supprimer/" . $this->nettoyer($commentaire['id']) ?>">
+            	<button> Supprimer </button></a>
+            	<a href="<?= "billet/modifier/" . $this->nettoyer($commentaire['id']) ?>">
+            	<button> Modifier </button></a>
+            	<?php endif;?>
         	</td>
     	</tr>
     <?php endforeach;?>

@@ -70,6 +70,7 @@ class ControleurInscription extends \Framework\Controleur
      * 
      * cette méthode correspond à l'action "valider" permettant de confirmer les éléments d'inscription de l'utilisateur
      * Elle ne doit être exécutée que si les données insérées dans le formulaire sont valides
+     * la vérification de l'existence d'un même utilisateur (pseudo et mail ) en BDD est laissée au manager en utilisant les index UNIQUE de MySQL
      *
      * return_type
      *
@@ -129,35 +130,65 @@ class ControleurInscription extends \Framework\Controleur
                 // préparation du tableau de paramètre pour la requête
                 $param = array ($statut,$pseudo,$mail,$telephone,$avatar,$nbreCommentairesBlog,
                         $nbreCommentairesForum,$nom,$prenom,$naissance,$ip,$hash,$pays);
-                
-                // vérifier si l'utilisateur n'existe pas déjà en BDD en regardant si l'une des entrées
-                // mail, pseudo, nom  n'existe pas déjà en BDD
-                if (!$this->_managerUser->userExists())
-                {    
-                    // enregistrer le nouvel utilisateur en BDD
-                    $this->_managerUser->ajouterUser($param);
-                        
+
+                // enregistrer le nouvel utilisateur en BDD 
+                $idUser = $this->_managerUser->ajouterUser($param);
+               
+                // s'il n'y a pas de doublon
+                if(ctype_digit($idUser))
+                {     
                     //envoyer un flash de succès de l'inscription à l'utilisateur
-                    $this->_app->userHandler()->setFlash('inscription réussie');
-                                           
-                       //TODO redirection interne il faut coder cette fonction
-                        $_GET['controleur']='Connexion';
-                        $_GET['action']='';
-                        $_GET['id']='';
-                        $this->_app->routeur()->routerRequete($this->_app);
+                    $this->_app->userHandler()->setFlash('test inscription réussie');
+                                         
+                    //TODO redirection interne il faut coder cette fonction
+               		$_GET['controleur']='Connexion';
+                 	$_GET['action']='';
+                    $_GET['id']='';
+                    $this->_app->routeur()->routerRequete($this->_app);
                 }
-                // si existe déjà en BDD
+                //TODO s'il y a un doublon ( existe déjà en BDD)
                 else 
                 {
-                    //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire d'inscription
-                    // pré rempli avec les champs valides
-                    $options=$form->validField();
-                    
-                    //envoyer un flash de tentative d'inscription invalide à l'utilisateur
-                    $this->_app->userHandler()->setFlash("L'inscription a échoué, l'utilisateur existe déjà");
-                    
-                    $this->executerAction("index",$options);
-                 }                      
+                	// préparer le pré remplissage du formulaire avec les champs valides
+                	$options=$form->validField();
+                	
+                	// Changement du nom de variable par un plus lisible
+                	$erreur =&$idUser;
+                	
+                	// On vérifie que l'erreur concerne bien un doublon - Le code d'erreur 23000 signifie "doublon" dans le standard ANSI SQL      	 
+                	if (23000 == $erreur[0]) 
+                	{                 		 
+                		// expression rationnelle appliquée sur le message d'erreur SQL pour rechercher la valeur à l'origine du doublon
+                		preg_match("`Duplicate entry '(.+)' for key`", $erreur[2], $valeur_probleme);
+                		
+                		$valeur_probleme = $valeur_probleme[1];
+                	
+                		if ($pseudo == $valeur_probleme)    
+                		{         			 
+                			$this->_app->userHandler()->setFlash("Ce pseudo est déjà utilisé.");
+                			$options['pseudo'] ='';
+                		}
+						else if ($mail == $valeur_probleme) 
+						{
+                			$this->_app->userHandler()->setFlash("Cette adresse e-mail est déjà utilisée.");
+                			$options['mail'] ='';
+						}
+ 						else 
+ 						{
+ 							$this->_app->userHandler()->setFlash("Doublon non identifié dans la base de données, reéssayez."); 
+ 							$options['pseudo'] ='';
+ 							$options['mail'] =''; 							
+ 						}
+       				}
+       				else
+       				{
+                    	$this->_app->userHandler()->setFlash("L'inscription a échoué, le pseudo ou le mail existe déjà");
+       				}               
+              
+                 //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire d'inscription
+                 // pré rempli avec les champs valides                 
+                 $this->executerAction("index",$options);
+                }
              }
              // le formulaire est invalide
              else
@@ -167,17 +198,16 @@ class ControleurInscription extends \Framework\Controleur
                  $options=$form->validField();
                  
                  //envoyer un flash de tentative d'inscription invalide à l'utilisateur
-                 $this->_app->userHandler()->setFlash("L'inscription a échoué");
+                 $this->_app->userHandler()->setFlash("L'inscription a échoué, certains champs sont invalides");
                  
                  $this->executerAction("index",$options);
              }               
          }
-         // la requet ne contenait pas de méthode POST
+         // la requete ne contenait pas de méthode POST
          else  
          {
-
              //envoyer un flash de tentative d'inscription invalide à l'utilisateur
-             $this->_app->userHandler()->setFlash("L'inscription a échoué");
+             $this->_app->userHandler()->setFlash("La requête d'inscription a échoué");
              
              //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire d'inscription
              $this->executerAction("index",$options);

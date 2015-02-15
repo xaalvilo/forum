@@ -63,15 +63,18 @@ class ManagerBillet extends \Framework\Manager
                 . ' where BIL_ID=?';
   		
   		// instanciation d'objet "Modele\Billet" dont les attributs publics prennent pour valeur les donn�es de la BDD
-        $requete =$this->executerRequete($sql, array($idBillet),'\Framework\Entites\Billet');
+        $resultat =$this->executerRequete($sql, array($idBillet),'\Framework\Entites\Billet');
         
         
         //si un billet correspond (row_count() retourne le nombre de lignes affectées par la dernière requête) , renvoyer ses informations 
         //(fetch() renvoie la première ligne d'une requête )
         
-        if ($requete->rowcount()==1)
+        if ($resultat->rowcount()==1)
         {
-            $billet = $requete->fetch();
+            $billet = $resultat->fetch();
+            
+            //liberer la connexion
+            $resultat->closeCursor();
 
             // il faut transformer l'attribut Date et DateModif en objet DateTime
         	$billet->setDate(new \DateTime($billet->date()));
@@ -108,6 +111,17 @@ class ManagerBillet extends \Framework\Manager
         $date = $odate->format('Y-m-d H:i:s');
     
         $this->executerRequete($sql,array($date,$titre,$auteur,$contenu),'\Framework\Entites\Billet');
+    }
+    
+    /**
+     * Méthode supprimerBillet
+     * 
+     * cette méthode permet de supprimer un billet
+     * @param unknown $idBillet
+     */
+    public function supprimerBillet($idBillet)
+    {
+    	
     }
 }
 

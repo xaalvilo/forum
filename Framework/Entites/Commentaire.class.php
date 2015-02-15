@@ -16,6 +16,7 @@ class Commentaire extends \Framework\Entite
 {
   protected $idReference;
   protected $date;
+  protected $dateModif;
   protected $contenu;
   protected $auteur;
   
@@ -80,6 +81,14 @@ class Commentaire extends \Framework\Entite
     }
 
     /**
+     * @param \DateTime $date
+     */
+    public function setDateModif(\DateTime $dateModif)
+    {
+    	$this->dateModif=$dateModif;
+    }
+    
+    /**
      * méthodes "getters" des attributs privés
      */
     public function auteur()
@@ -109,6 +118,14 @@ class Commentaire extends \Framework\Entite
     public function date()
     {
     	return $this->date;
+    }
+    
+    /**
+     * @return string $dateModif au format de date
+     */
+    public function dateModif()
+    {
+    	return $this->dateModif;
     }
 }
        

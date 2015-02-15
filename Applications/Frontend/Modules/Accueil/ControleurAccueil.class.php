@@ -41,6 +41,9 @@ class ControleurAccueil extends \Framework\Controleur
     */
     public function index(array $donnees = array())
     {
+    	//TODO ICI
+    	if (!$this->_app->userHandler()->isUserAUthenticated())
+    		$this->setBandeau(array('connexion'=>'connexion'));
         $this->genererVue();
     }
     

@@ -71,7 +71,6 @@ class ControleurForum extends \Framework\Controleur
      * cette méthode correspond à l'action "editer" permettant d'ajouter un billet au forum
      * Elle ne doit être exécutée que si les données insérées dans le formulaire sont valides
      *
-     * return_type
      *
      */
     public function editer()
@@ -99,6 +98,12 @@ class ControleurForum extends \Framework\Controleur
             {
                 // appelle de la m�thode permettant d'enregistrer un billet en BDD
                 $this->_managerBillet->ajouterBillet($titre,$auteur,$contenu);
+                
+                // actualiser l'utilisateur en BDD
+                $idUser = $this->_app->userHandler()->user()->id();
+                $nbreBilletsForum = $this->_app->userHandler()->user()->nbreBilletsForum();
+                $nbreBilletsForum++;
+                $this->_app->userHandler()->managerUser()->actualiserUser($idUser,array('_nbreBilletsForum'=>$nbreBilletsForum));
             }
             else
             {

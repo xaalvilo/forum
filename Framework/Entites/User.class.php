@@ -62,6 +62,9 @@ class User extends \Framework\Entite
     /* nombre de commentaires sur le Forum */
     protected $_nbreCommentairesForum;
     
+    /* nombre de Billets sur le Forum */
+    protected $_nbreBilletsForum;
+    
     /* nombre de commentaires sur le Blog */
     protected $_nbreCommentairesBlog;
     
@@ -620,7 +623,7 @@ class User extends \Framework\Entite
      */
     public function setNbreCommentairesBlog($nbreCommentairesBlog)
     {
-           $this->_nbreCommentairesBlog =(int) $nbreCommentairesBlog;
+         $this->_nbreCommentairesBlog =(int) $nbreCommentairesBlog;
     }
     
     /**
@@ -641,7 +644,7 @@ class User extends \Framework\Entite
      *
      * Méthode setNbreCommentairesForum
      *
-     * Cette méthode est le setter de NbreCommentairesForum
+     * Cette méthode est le setter de NbreCommentairesForum, si le paramètre est NULL, incrémentation de 1
      *
      * @param int $nbreCommentairesForum
      *
@@ -663,6 +666,34 @@ class User extends \Framework\Entite
     public function nbreCommentairesForum()
     {
         return $this->_nbreCommentairesForum;
+    }
+    
+    /**
+     *
+     * Méthode setNbreBilletsForum
+     *
+     * Cette méthode est le setter de NbreBilletsForum
+     *
+     * @param int $nbreBilletsForum
+     *
+     */
+    public function setNbreBilletsForum($nbreBilletsForum)
+    {
+    	$this->_nbreBilletsForum = (int) $nbreBilletsForum;
+    }
+    
+    /**
+     *
+     * Méthode nbreBilletsForum
+     *
+     * Cette méthode est le getter de NbreBilletsForum
+     *
+     * @return int $_NbreBilletsForum
+     *
+     */
+    public function nbreBilletsForum()
+    {
+    	return $this->_nbreBilletsForum;
     }
     
 	/**

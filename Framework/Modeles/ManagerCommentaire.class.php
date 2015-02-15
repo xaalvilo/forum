@@ -74,6 +74,58 @@ class ManagerCommentaire extends \Framework\Manager
         return $commentaires;
     }
     
+    /**
+     *
+     * Méthode getCommentaire
+     *
+     * méthode renvoyant la liste de l'ensemble des commentaires d'un Billet ou d'un article
+     *
+     * @param int $table identifiant de la table concernée dans la BDD
+     * @param int $idReference identifiant du commentaire de billet ou d'article
+     * @return PDOStatement le commentaire sous forme de tableau
+     * @throws \Exception en cas d'erreur
+     */
+    public function getCommentaire($table,$idReference)
+    {
+    	//requête avec classement des commentaires dans l'ordre décroissant
+    	switch ($table)
+    	{
+    		// commentaire d'un billet
+    		case 1 :
+    		$sql = 'select BIL_ID as idParent, COM_CONTENU as contenu from T_COMMENTAIRE'
+    		. ' where COM_ID=?';   				
+                    break;
+    
+            // commentaire d'un article
+            case 2 :
+    		$sql = 'select ART_ID as idParent, COM_ART_CONTENU as contenu from T_COMMENTAIRE_ARTICLE'
+    		. ' where COM_ART_ID=?';   				
+                    break;
+    
+            // message d'erreur
+            default:
+                throw new \Exception ("mauvaise selection de la table");
+    	}
+    	 
+    	//instanciation d'objets "Modele\Commentaire" dont les attributs publics prennent pour valeur les donn�es de la BDD
+    	$resultat = $this->executerRequete($sql,array($idReference),'\Framework\Entites\Commentaire');
+        	
+    	if ($resultat->rowcount()==1)
+    	{
+    		// récupération sous forme de tableau
+    		$commentaire = $resultat->fetch(\PDO::FETCH_ASSOC);
+    	
+    		// liberer la connexion
+    		$resultat->closeCursor();
+
+    		return $commentaire;
+    	}
+    	else
+    	{
+    		throw new \Exception("Aucun commentaire ne correspond à l'identifiant '$idReference'");
+    	}
+    }
+    
     /** 
     * 
     * Méthode ajouterCommentaire
@@ -113,7 +165,140 @@ class ManagerCommentaire extends \Framework\Manager
         // il faut formater la date en cha�ne de caract�re
         $date = $odate->format('Y-m-d H:i:s');
         
-        $this->executerRequete($sql,array($idReference,$date,$auteur,$contenu),'\Framework\Entites\Commentaire');
+        $requeteSQL = $this->executerRequete($sql,array($idReference,$date,$auteur,$contenu),'\Framework\Entites\Commentaire');
+    }
+    
+    /**
+     * Méthode supprimerCommentaire
+     *
+     * cette méthode permet de supprimer un commentaire
+     * 
+     * @param int $table identifiant de la table concernée en BDD
+     * @param int $idCommentaire
+     */
+    public function supprimerCommentaire($table, $idCommentaire)
+    {
+    	switch ($table)
+    	{
+    		// commentaire d'un billet
+    		case 1 :
+    			$sql = 'delete from T_COMMENTAIRE where COM_ID = ?';
+    							break;
+    	
+    		// commentaire d'un article
+    		case 2 :
+    			$sql = 'delete from T_COMMENTAIRE_ARTICLE where COM_ART_ID = ?';
+    							break;
+    	
+    		// message d'erreur
+    		default:
+    			throw new \Exception ("mauvaise selection de la table");
+    	}
+        
+        $requeteSQL = $this->executerRequete($sql, array($idCommentaire),'\Framework\Entites\Commentaire');
+        
+        return ($requeteSQL->rowcount()==1);
+    }
+    
+    /**
+     * 
+     * Méthode actualiserCommentaire
+     * 
+     * cette méthode permet d'actualiser le contenu et la date d'un commentaire
+     * 
+     * @param int $table
+     * @param int $idCommentaire
+     * @param string $contenu à actualiser
+     */
+    public function actualiserCommentaire ($table, $idCommentaire, $contenu)
+    {
+    	switch ($table)
+    	{
+    		// commentaire d'un billet
+    		case 1 :
+    			$sql = 'update T_COMMENTAIRE set COM_CONTENU=?, COM_DATEMODIF=? where COM_ID=?';
+    					break;
+    	
+    		// commentaire d'un article
+    		case 2 :
+    			$sql = 'update T_COMMENTAIRE_ARTICLE set COM_ART_CONTENU=?, COM_ART_DATEMODIF=? where COM_ART_ID=?';
+    					break;
+    	
+    		// message d'erreur
+    		default:
+    			throw new \Exception ("mauvaise selection de la table");
+    	}
+    	
+    	//utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
+        $odate = new \DateTime();
+        
+        // il faut formater la date en cha�ne de caract�re
+        $dateModif = $odate->format('Y-m-d H:i:s');
+    	
+    	// préparation du tableau de valeurs de la requête
+    	$donnees['contenu'] = $contenu;
+    	$donnees['dateModif']=$dateModif;
+    	$donnees['id']= $idCommentaire;
+    	 
+    	// transformation du tableau en tableau indexé
+    	$donnees = array_values($donnees);
+    	 
+    	$resultat = $this->executerRequete($sql,$donnees,'\Framework\Entites\Commentaire');
+    	
+    	if ($resultat===FALSE)
+    	{
+    		//TODO msg Flash non OK
+    		throw new \Exception("Données du commentaire '$idCommentaire' non mises à jour");
+    	}
+    }
+    
+    
+    /**
+     * Méthode getIdParent
+     * 
+     * cette méthode permet de récupérer l'id du billet ou de l'article auquel le commentaire en paramètre est associé
+     * 
+     * @param int $table
+     * @param int $idCommentaire
+     * @throws \Exception en cas d'échec au choix de la table
+     * @throws \Exception en cas d'échec de la requête SQL pour trouver l'identifiant
+     * @return array $tableauRésultat, à une entrée comportant l'id du Parent
+     */
+    public function getIdParent($table, $idCommentaire)
+    {
+    	switch ($table)
+    	{
+    		// commentaire d'un billet
+    		case 1 :
+    			$sql = 'select BIL_ID as idParent from T_COMMENTAIRE where COM_ID = ?';
+    			break;
+    			 
+    		// commentaire d'un article
+    		case 2 :
+    			$sql = 'select ART_ID as idParent from T_COMMENTAIRE_ARTICLE where COM_ART_ID = ?';
+    			break;
+    			 
+    		// message d'erreur
+    		default:
+    			throw new \Exception ("mauvaise selection de la table");
+    	}
+    	  	
+    	$requeteSQL = $this->executerRequete($sql, array($idCommentaire),'\Framework\Entites\Commentaire');
+    	
+    	if ($requeteSQL->rowcount()==1)
+    	{
+    		// modification du type de récupération des données de la BDD, ici sous forme de tableau
+    		$tableauResultat = $requeteSQL->fetch(\PDO::FETCH_ASSOC);
+    		
+    		// liberer la connexion
+    		$requeteSQL->closeCursor();
+    		
+    		return $tableauResultat;
+    	}
+    	else
+    	{
+    		throw new \Exception("Impossible d'obtenir l'identifiant du billet");
+    	}
     }
 }
     

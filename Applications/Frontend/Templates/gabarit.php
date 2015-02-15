@@ -24,7 +24,7 @@
 
             <nav id="menu">
                  <a class = "lienMenu" href="Accueil">Accueil</a> <a class = "lienMenu" href="Connexion">Forum </a>
-                 <a class = "lienMenu" href="Blog">Blog</a><a class = "lienMenu" href="Connexion">Mon compte</a>
+                 <a class = "lienMenu" href="Blog">Blog</a><a class = "lienMenu" href="Inscription">Mon compte</a>
             </nav>
 
             <div id="contenu">

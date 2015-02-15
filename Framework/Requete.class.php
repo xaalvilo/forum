@@ -70,6 +70,19 @@ class Requete extends ApplicationComponent
     }
     
     /**
+     * Méthode setParametre
+     * 
+     * Cette méthode permet de modifier la valeur d'un paramètre. Elle s'utilise pour les redirections "internes"
+     * 
+     * @param string $nom du paramètre
+     * @param mixed $valeur du paramètre
+     */
+    public function setParametre($nom,$valeur)
+    {
+    	$this->_parametres[$nom]=$valeur;
+    }
+    
+    /**
      * 
      * Méthode getMethode
      * 

@@ -26,14 +26,14 @@ class ManagerSession extends \Framework\Manager
         //requête avec classement des billets dans l'ordre décroissant 
         $sql = 'select SESSION_IDENTIFIANT as identifiant, SESSION_MAXLIFEDATETIME as maxLifeDatetime,'
                 . ' SESSION_NAME as name, SESSION_DATA as data from T_SESSION'
-                . ' order by SESSION_MAXLIFETIME desc';
+                . ' order by SESSION_MAXLIFEDATETIME desc';
         
         // instanciation d'objets "Entites\Session" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
         $requeteSQL = $this->executerRequete($sql,NULL,'\Framework\Entites\Session');
         
         //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions , les colonnes sont li�s aux attributs de la
         //la classe
-        $sessions = $requete->fetchAll();
+        $sessions = $requeteSQL->fetchAll();
         
         foreach ($sessions as $session)
         {
@@ -71,6 +71,10 @@ class ManagerSession extends \Framework\Manager
         if ($requeteSQL->rowcount()==1)
         {
             $session = $requeteSQL->fetch();
+            
+            // liberer la connexion
+            $requeteSQL->closeCursor();
+            
             return $session;
         }
         else
@@ -104,6 +108,10 @@ class ManagerSession extends \Framework\Manager
             // rappel : PDO::FETCH_ASSOC: retourne un tableau indexé par le nom de la colonne comme retourné 
             // dans le jeu de résultats. il faut retourner la valeur et non le tableau
             $session = $requeteSQL->fetch(\PDO::FETCH_ASSOC);
+            
+            // liberer la connexion
+            $requeteSQL->closeCursor();
+            
             return $session['data'];
         }
         else
@@ -132,6 +140,10 @@ class ManagerSession extends \Framework\Manager
         {
             // modification du type de récupération des données de la BDD, ici sous forme de tableau
             $tableauResultat = $requeteSQL->fetch(\PDO::FETCH_ASSOC);
+            
+            // liberer la connexion
+            $requeteSQL->closeCursor();
+            
             return $tableauResultat;
         }
         else
@@ -237,6 +249,9 @@ class ManagerSession extends \Framework\Manager
             }
             else
             {
+            	//liberer la connexion
+            	$requeteSQL->closeCursor();
+            	
                 //TODO msg Flash OK
             }   
     }
@@ -267,6 +282,10 @@ class ManagerSession extends \Framework\Manager
         {
             // modification du type de récupération des données de la BDD, ici sous forme de tableau
             $tableauResultat = $requeteSQL->fetchAll(\PDO::FETCH_COLUMN);
+            
+            // liberer la connexion à la BDD
+            $requeteSQL->closeCursor();
+            
             return $tableauResultat;
         }
     }

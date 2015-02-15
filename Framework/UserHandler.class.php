@@ -30,6 +30,9 @@ class UserHandler extends ApplicationComponent
     /* objet User */
     protected $_user;
     
+    /* objet manager User */
+    protected $_managerUser;
+    
     /**
      *
      * Méthode __construct
@@ -44,6 +47,7 @@ class UserHandler extends ApplicationComponent
         parent::__construct($app);
         $this->_session = $session;
         $this->_user = $user;
+        $this->_managerUser = new \Framework\Modeles\ManagerUser();        	
     }
 
     /**
@@ -99,6 +103,18 @@ class UserHandler extends ApplicationComponent
         $this->_session->set($cle, $valeur) ;
     }
 
+    /**
+     * Méthode managerUser
+     * 
+     * getter de l'attribut managerUser
+     * 
+     * @return \Framework\Modeles\ManagerUser
+     */
+    public function managerUser()
+    {
+    	return $this->_managerUser;
+    }
+    
     /**
      * 
      * Méthode removeAttribute
@@ -168,6 +184,24 @@ class UserHandler extends ApplicationComponent
                 && $_SESSION['user']['authenticated'] === true 
                 && $ip === $_SESSION['user']['ip']
                 && $browserVersion === $_SESSION['user']['browserVersion'];
+    }
+    
+    /**
+     *
+     * Méthode IsUserAutorised
+     *
+     * cette m�thode permet de v�rifier que l'utilisateur est bien autorisé à commenter sur le Blog
+     *
+     * @return Boolean, valeur de retour TRUE si autorisé
+     *
+     */
+    public function IsUserAutorised()
+    {
+    	// si l'utilisateur est uathenifié, il est automatiquement autorisé
+    	if ($this->IsUserAuthenticated())
+    		return TRUE;
+    	else
+    		return isset($_SESSION['user']['autorised']) && $_SESSION['user']['autorised'] === TRUE;
     }
     
     /**
@@ -254,11 +288,9 @@ class UserHandler extends ApplicationComponent
             $this->_app->sessionHandler()->managerSession()->actualiserSession($oldIdentifiant, $NewMaxLifeDatetime);
             $this->detruireCookieSession(30);
             
-            try 
-            {
-                // creation d'une session PHP sans détruire la précédente
-                session_regenerate_id($delete_old_session);
-                
+			// creation d'une session PHP sans détruire la précédente
+            if(session_regenerate_id($delete_old_session))
+            {                
                 // recupération du nouvelle identifiant dans l'objet Session
                 $newIdentifiant = session_id();
                 $this->_session->setIdentifiant($newIdentifiant);
@@ -274,9 +306,9 @@ class UserHandler extends ApplicationComponent
                 $this->_session->setParamCookieSession(0,$path);
                 session_start();              
             }
-            catch (\Exception $e) 
+            else 
             {
-                $this->_app->routeur()->gererErreur($e);
+            	throw new \Exception ("erreur regénération identifiant de session  après login");
             }            
         }
     }
@@ -342,7 +374,7 @@ class UserHandler extends ApplicationComponent
     public function getUserIp()
     {
         if(isset($_SERVER))
-        {
+        {       	
             if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
             {
                 $ipReelle=$_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -364,7 +396,7 @@ class UserHandler extends ApplicationComponent
             }
             elseif (getenv('HTTP_CLIENT_IP'))
             {
-                $ipReellep=getenv('HTTP_CLIENT_IP');
+                $ipReelle=getenv('HTTP_CLIENT_IP');
             }
             else 
             {

@@ -107,9 +107,9 @@ class ControleurConnexion extends \Framework\Controleur
             if ($form->isValid())
             {
                 // vérification de la validité du login
-                $tableauDonnees = $this->_managerUser->recherchePseudo($pseudo);            
+                $tableauDonnees = $this->_managerUser->recherchePseudo($pseudo);
                                                      
-                if (array_key_exists('id',$tableauDonnees) && array_key_exists('_hash',$tableauDonnees))
+                if (($tableauDonnees!=FALSE) && array_key_exists('id',$tableauDonnees) && array_key_exists('_hash',$tableauDonnees))
                 {
                     $hash = $tableauDonnees['_hash'];
                     
@@ -137,7 +137,7 @@ class ControleurConnexion extends \Framework\Controleur
                          // hydratation de l'instance User créée par le UserHandler avec l'ensemble des donnees
                         $user = $this->_app->userHandler()->user();
                         $valeurAttributs = $this->_managerUser->getUser($idUser);
-                        
+                      
                         // ajout de données non stockées en BBD
                         $valeurAttributs['browserVersion']=$this->_app->userHandler()->getUserBrowserVersion();
                         $user->hydrate($valeurAttributs);     
@@ -150,6 +150,7 @@ class ControleurConnexion extends \Framework\Controleur
                         
                         // remplissage de la variable $_SESSION
                         $this->_app->userHandler()->peuplerSuperGlobaleSession(array('user'=>array('pseudo'=>$user->pseudo(),
+                        																			'id'=>$user->id(),
                                                                                                     'statut'=>$user->statut(),
                                                                                                     'browserVersion'=>$user->browserVersion(),
                                                                                                     'ip'=>$user->ip())));

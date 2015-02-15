@@ -29,17 +29,17 @@ class ManagerUser extends \Framework\Manager
         $sql = 'select USER_ID as id,'
                 . ' USER_STATUT as _statut, USER_PSEUDO as _pseudo, USER_MAIL as _mail,'
                 . ' USER_TELEPHONE as _telephone, USER_AVATAR as _avatar,'
-                . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum,'        
+                . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum, USER_NBREBILLETSFORUM as _nbreBilletsForum,'
                 . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance, USER_IP as _ip, USER_HASH as _hash,'
                 . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion from T_User'
                 . ' order by USER_ID desc';
         
         // instanciation d'objets "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
-        $requete = $this->executerRequete($sql,NULL,'\Framework\Entites\User');
+        $resultat = $this->executerRequete($sql,NULL,'\Framework\Entites\User');
         
         //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions , les colonnes sont li�s aux attributs de la
         //la classe
-        $users = $requete->fetchAll();
+        $users = $resultat->fetchAll();
         
         // spécification de la langue utilisée pour l'affichage de la date et heure
         // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
@@ -53,7 +53,7 @@ class ManagerUser extends \Framework\Manager
         }
         
         //permettre � la requ�te d'�tre de nouveau ex�cut�e
-        $requete->closeCursor();
+        $resultat->closeCursor();
         return $users;
     }
     
@@ -72,20 +72,23 @@ class ManagerUser extends \Framework\Manager
         $sql = 'select USER_ID as id,'
                 . ' USER_STATUT as _statut, USER_PSEUDO as _pseudo, USER_MAIL as _mail,'
                 . ' USER_TELEPHONE as _telephone, USER_AVATAR as _avatar,'
-                . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum,'        
+                . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum, USER_NBREBILLETSFORUM as _nbreBilletsForum,'
                 . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance, USER_IP as _ip, USER_HASH as _hash,'
                 . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion  from T_User' 
                 . ' where USER_ID=?';
         	 
   		// instanciation d'objet "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
-        $requete = $this->executerRequete($sql, array($idUser),'\Framework\Entites\User');
+        $resultat = $this->executerRequete($sql, array($idUser),'\Framework\Entites\User');
                 
         //si un User correspond (row_count() retourne le nombre de lignes affectées par la dernière requête) , renvoyer ses informations 
         //(fetch() renvoie la première ligne d'une requête )
-        if ($requete->rowcount()==1)
+        if ($resultat->rowcount()==1)
         {
             // récupération sous forme de tableau
-            $user = $requete->fetch(\PDO::FETCH_ASSOC);
+            $user = $resultat->fetch(\PDO::FETCH_ASSOC);
+            
+            // liberer la connexion
+            $resultat->closeCursor();
             
             // il faut transformer l'attribut Date en objet DateTime
             $user['_dateConnexion'] = new \DateTime($user['_dateConnexion']);
@@ -114,9 +117,9 @@ class ManagerUser extends \Framework\Manager
         //requ�te avec insertion de l'utilisateur
         $sql = 'insert into T_USER (USER_STATUT, USER_PSEUDO,'
                 . ' USER_MAIL, USER_TELEPHONE, USER_AVATAR, USER_NBRECOMMENTAIRESBLOG,'
-                . ' USER_NBRECOMMENTAIRESFORUM, USER_NOM, USER_PRENOM, USER_NAISSANCE,'
+                . ' USER_NBRECOMMENTAIRESFORUM, USER_NBREBILLETSFORUM, USER_NOM, USER_PRENOM, USER_NAISSANCE,'
                 . 'USER_IP, USER_HASH, USER_PAYS, USER_DATEINSCRIPTION, USER_DATECONNEXION)'
-                . ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                . ' values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         
         // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
         $odate = new \DateTime();
@@ -124,10 +127,10 @@ class ManagerUser extends \Framework\Manager
         // il faut formater les dates en cha�ne de caract�re , les dates sont identiques
         $param[] = $odate->format('Y-m-d H:i:s');
         $param[]=  $odate->format('Y-m-d H:i:s');      
-                 
-        $requete = $this->executerRequete($sql,$param,'\Framework\Entites\User');
-        
-        // msg flash destiné à l'utilisateur pour l'informer du succès de son Inscription à faire par le controleur
+                
+        $resultat = $this->executerRequete($sql,$param,'\Framework\Entites\User');
+       
+       	return $resultat;
     }
     
     /**
@@ -145,12 +148,12 @@ class ManagerUser extends \Framework\Manager
         $sql = 'select USER_ID as id, USER_HASH as _hash from T_USER'
                 . ' where USER_PSEUDO=?';
                 
-        $requete = $this->executerRequete($sql,array($pseudo),'\Framework\Entites\User');
+        $resultat = $this->executerRequete($sql,array($pseudo),'\Framework\Entites\User');
         
-        if ($requete->rowcount()==1)
+        if ($resultat->rowcount()==1)
         {           
             // modification du type de récupération des données de la BDD, ici sous forme de tableau
-             $tableauResultat = $requete->fetch(\PDO::FETCH_ASSOC);
+             $tableauResultat = $resultat->fetch(\PDO::FETCH_ASSOC);
              return $tableauResultat;             
         }
         else
@@ -208,17 +211,13 @@ class ManagerUser extends \Framework\Manager
          // transformation du tableau en tableau indexé
          $donnees = array_values($donnees);
          
-         $requete = $this->executerRequete($sql,$donnees,'\Framework\Entites\User');
-        
-         if ($requete===FALSE)
+         $resultat = $this->executerRequete($sql,$donnees,'\Framework\Entites\User');
+            
+         if ($resultat===FALSE)
          {
              //TODO msg Flash non OK
-             throw new \Exception("Données de l'utilisateur '$idUser' non mises à jour");             
+             throw new \Exception("Données de l'utilisateur '$idUser' non mises à jour");
          }             
-         else
-         {
-             //TODO msg Flash OK
-         }
     }
     
     /**
