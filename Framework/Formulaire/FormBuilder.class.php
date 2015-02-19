@@ -1,22 +1,26 @@
 <?php
 /**
- * 
+ *
  * @author Frédéric Tarreau
  *
- * 18 sept. 2014 - file_name
- * 
+ * 18 sept. 2014 - FormBuilder.class.php
+ *
  * Classe abstraire dont le r�le est la construction d'un formulaire
- *        
+ *
  */
 namespace Framework\Formulaire;
 
-abstract class FormBuilder 
+abstract class FormBuilder
 {
-	/* formulaire � cr�er */
+    /* constante type de formulaire */
+    CONST LONG=1;
+    CONST COURT=2;
+
+	/* @var formulaire � cr�er */
 	protected $form;
-	
-	/** 
-	 * Méthode constructeur
+
+	/**
+	 * Constructeur
 	 *
 	 * @param Entite $entity
 	 */
@@ -24,39 +28,40 @@ abstract class FormBuilder
 	{
 		$this->setForm(new Form($entite,$method,$action));
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Méthode abstraite build
 	 *
 	 * permet de construire le formulaire , ses champs et ses boutons
 	 *
+	 * @param int $type précisant un type de formulaire à construire (ex : long, court...)
+	 *
 	 */
-	abstract public function build();
-	
+	abstract public function build($type = NULL);
+
 	/**
-	 * 
+	 *
 	 * Setter
 	 *
 	 * return_type
-	 * 
+	 *
 	 * @param unknown $form
-	 * @return Form
 	 */
 	public function setForm($form)
 	{
 		$this->form = $form;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Getter
-	 * 
-	 * @return Form  
+	 *
+	 * @return Form
 	 */
-	public function form() 
+	public function form()
 	{
 		return $this->form;
 	}
-	
+
 }

@@ -1,13 +1,13 @@
-<?php 
-namespace Framework\FormBuilder; 
+<?php
+namespace Framework\FormBuilder;
 require_once './Framework/autoload.php';
 
 /**
- * 
+ *
  * @author Fr�d�ric Tarreau
  *
- * 7 sept. 2014 
- * 
+ * 7 sept. 2014
+ *
  * Classe fille de FormBuilder dont le r�le est de cr�er le formulaire associ� aux billets
  *
  */
@@ -15,13 +15,13 @@ require_once './Framework/autoload.php';
  {
  	/**
  	 * Méthode build
- 	 * 
+ 	 *
  	 * Méthode permettant de construire le formulaire d'ajout de billet
- 	 * 
+ 	 *
  	 * @see \Framework\FormBuilder::build()
- 	 * 
+ 	 *
  	 */
- 	public function build()
+ 	public function build($type = NULL)
  	{
  		 $this->form->add(new \Framework\Formulaire\InputField(array(
  		                                                    'type'=>'text',
@@ -59,9 +59,8 @@ require_once './Framework/autoload.php';
  		 							                     'placeholder'=>'votre billet',
  		 			                                     'validators'=>array(new \Framework\Formulaire\NotNullValidator('Merci d\'ecrire un billet')
  		 					))));
- 		 				 			
+
  		 	// ajout du bouton de validation du formulaire permettant de valider l'édition du le nouveau billet
  		 	$this->form->addButton(new \Framework\Formulaire\Button('submit','Editer'));
  	}
  }
- 

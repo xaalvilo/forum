@@ -7,7 +7,7 @@
 *
 * Classe héritée de ApplicationComponent
 *
-* cette classe a pour r�le d'enregistrer les informations 
+* cette classe a pour r�le d'enregistrer les informations
 * temporaires concernant l'utilisateur (classe User) sur le serveur et de g�rer sa session:
 *             - assigner un attribut
 *             - obtenir la valeur d'un attribut
@@ -26,13 +26,13 @@ class UserHandler extends ApplicationComponent
 {
     /* objet session */
     protected $_session;
-    
+
     /* objet User */
     protected $_user;
-    
+
     /* objet manager User */
     protected $_managerUser;
-    
+
     /**
      *
      * Méthode __construct
@@ -47,55 +47,67 @@ class UserHandler extends ApplicationComponent
         parent::__construct($app);
         $this->_session = $session;
         $this->_user = $user;
-        $this->_managerUser = new \Framework\Modeles\ManagerUser();        	
+        $this->_managerUser = new \Framework\Modeles\ManagerUser();
     }
 
     /**
-     * 
+     *
      * Méthode session
      *
      * getter de l'atttribut session (objet \Framework\Entites\Session)
-     * 
+     *
      * @return \Framework\Entites\Session
-     */    
+     */
     public function session()
     {
         return $this->_session;
     }
-    
+
     /**
-     * 
+     *
      * Méthode setSession
-     * 
+     *
      * setter de l'attribut session
-     * 
+     *
      * @param \Framework\Entites\Session $session
      */
     public function setSession(\Framework\Entites\Session $session)
     {
         $this->_session = $session;
     }
-    
+
     /**
-     * 
+     *
      * Méthode user
      *
-     * getter de l'attribut user 
-     * 
+     * getter de l'attribut user
+     *
      * @return \Framework\Entites\User
      */
     public function user()
     {
         return $this->_user;
     }
-    
+
+    /**
+     * Méthode setUser
+     *
+     * setter de l'attribut user
+     *
+     * @param \Framework\Entites\User $user
+     */
+    public function setUser($user)
+    {
+        $this->_user=$user;
+    }
+
     /**
      *
      * Méthode setAttribute
      *
      * cette m�thode permet d'assigner un attribut associ� � l'utilisateur à l'objet Session
      *
-     * @param string $cle 
+     * @param string $cle
      * @param mixed $valeur valeur de l'attribut
      */
     public function setAttribute($cle,$valeur)
@@ -105,29 +117,29 @@ class UserHandler extends ApplicationComponent
 
     /**
      * Méthode managerUser
-     * 
+     *
      * getter de l'attribut managerUser
-     * 
+     *
      * @return \Framework\Modeles\ManagerUser
      */
     public function managerUser()
     {
     	return $this->_managerUser;
     }
-    
+
     /**
-     * 
+     *
      * Méthode removeAttribute
      *
      * cette methode permet de supprimer une donnée de la superglobale $_SESSION
-     * 
+     *
      * @param string $cle
      */
     public function removeAttribute($cle)
     {
         $this->_session->remove($cle);
     }
-    
+
     /**
      *
      * Méthode getAttribute
@@ -146,7 +158,7 @@ class UserHandler extends ApplicationComponent
 
     /**
      *
-     * Méthode setAuthenticated
+     * Méthode setUserAuthenticated
      *
      * cette m�thode permet de pr�ciser que l'utilisateur est bien authentifi�
      *
@@ -161,10 +173,12 @@ class UserHandler extends ApplicationComponent
             throw new \Exception ('la valeur sp�cifi�e � User�::authenticated doit �tre un bool�en');
         }
         $this->_user->setAuthenticated($authenticated);
-        //$this->_session->set('authenticated',$authenticated);
-        $this->setAttribute('user', array('authenticated'=>true));
+        $this->setAttribute('user', array('authenticated'=>$authenticated));
+        if($authenticated)
+            $this->peuplerSuperGlobaleSession(array('user'=>array('browserVersion'=>$this->_user->browserVersion(),
+                                                                    'ip'=>$this->_user->ip())));
     }
-   
+
     /**
      *
      * Méthode IsUserAuthenticated
@@ -179,13 +193,33 @@ class UserHandler extends ApplicationComponent
         // verification contre le vol de session par comparaison du couple IP, Version du navigateur
         $ip = $this->getUserIp();
         $browserVersion = $this->getUserBrowserVersion();
-        
-        return isset($_SESSION['user']['authenticated']) 
-                && $_SESSION['user']['authenticated'] === true 
+
+        return isset($_SESSION['user']['authenticated'])
+                && $_SESSION['user']['authenticated'] === true
                 && $ip === $_SESSION['user']['ip']
                 && $browserVersion === $_SESSION['user']['browserVersion'];
     }
-    
+
+    /**
+     *
+     * Méthode setAutorised
+     *
+     * cette m�thode permet de pr�ciser que l'utilisateur est bien autorisé
+     *
+     * @param boolean $autorised
+     * @throws \Exception si le paramètre n'est pas un booléen
+     *
+     */
+    public function setUserAutorised($autorised=true)
+    {
+        if(!is_bool($autorised))
+        {
+            throw new \Exception ('la valeur sp�cifi�e � User�::autorised doit �tre un bool�en');
+        }
+        $this->_user->setAutorised($autorised);
+        $this->setAttribute('user', array('autorised'=>true));
+    }
+
     /**
      *
      * Méthode IsUserAutorised
@@ -197,29 +231,29 @@ class UserHandler extends ApplicationComponent
      */
     public function IsUserAutorised()
     {
-    	// si l'utilisateur est uathenifié, il est automatiquement autorisé
+    	// si l'utilisateur est authenifié, il est automatiquement autorisé
     	if ($this->IsUserAuthenticated())
     		return TRUE;
     	else
     		return isset($_SESSION['user']['autorised']) && $_SESSION['user']['autorised'] === TRUE;
     }
-    
+
     /**
-     * 
+     *
      * Méthode peuplerSuperGlobaleSession
      *
      * cette méthode permet d'enregistrer des variables dans la superglobale $_SESSION
-     * 
-     * @param array $donnees 
+     *
+     * @param array $donnees
      */
     public function peuplerSuperGlobaleSession(array $donnees)
-    {      
+    {
         foreach ($donnees as $cle=>$valeur)
-        {                
+        {
             $this->setAttribute($cle, $valeur);
         }
     }
-        
+
     /**
      *
      * Méthode setFlash
@@ -262,10 +296,10 @@ class UserHandler extends ApplicationComponent
      *
      */
     public function getBandeau()
-    { 
+    {
         return (isset($_SESSION['bandeau'])) ? $_SESSION['bandeau']: NULL;
     }
-    
+
     /**
      *
      * Méthode regenerIdSession
@@ -287,37 +321,37 @@ class UserHandler extends ApplicationComponent
             $oldIdentifiant = $this->_session->identifiant();
             $this->_app->sessionHandler()->managerSession()->actualiserSession($oldIdentifiant, $NewMaxLifeDatetime);
             $this->detruireCookieSession(30);
-            
+
 			// creation d'une session PHP sans détruire la précédente
             if(session_regenerate_id($delete_old_session))
-            {                
+            {
                 // recupération du nouvelle identifiant dans l'objet Session
                 $newIdentifiant = session_id();
                 $this->_session->setIdentifiant($newIdentifiant);
-             
+
                 // fermeture des sessions pour permettre à d'autres scripts de les utiliser
                 session_write_close();
-    
+
                 // reprise de la nouvelle session PHP
                 session_id($newIdentifiant);
-                
+
                 // il faut bien spécifier que le nouveau cookie de session est valable pour tout le site Forum
                 $path = \Framework\Configuration::get('racineWeb');
                 $this->_session->setParamCookieSession(0,$path);
-                session_start();              
+                session_start();
             }
-            else 
+            else
             {
             	throw new \Exception ("erreur regénération identifiant de session  après login");
-            }            
+            }
         }
     }
-    
+
     /**
-     * 
+     *
      * Méthode detruireCookieSession
-     * 
-     * méthode de destruction d'un cookie en lui mettant une durée de vie courte 
+     *
+     * méthode de destruction d'un cookie en lui mettant une durée de vie courte
      *
      *@param int $maxLifetime durée de vie restante ne seconde
      */
@@ -328,45 +362,45 @@ class UserHandler extends ApplicationComponent
         {
             $param = $this->_session->paramCookieSession();
             $expire = time() - $maxLifetime;
-            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);         
+            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);
         }
     }
-    
+
     /**
      *
      * Méthode detruireSession
      *
      * Cette méthode permet de mettre fin à une session, de supprimer les donnees en BBD
      * ainsi que les données dans la superglobale $_SESSION et de détruire le cookie de session
-     * id session ??????????? 
+     * id session ???????????
      */
     public function detruireSession()
     {
-        $this->_session->detruireVariableSession();  
+        $this->_session->detruireVariableSession();
         $this->detruireCookieSession(10);
         session_destroy();
         $this->_session->__destruct();
         $this->setUserAuthenticated(FALSE);
     }
-    
+
     /**
-     * 
+     *
      * Méthode defineStatut
-     * 
+     *
      * Cette méthode permet de définir le statut de l'utilisateur, ouvrant des droits sur l'espace privé du site
      *
-     * @param int $statut de l'utilisateur 
+     * @param int $statut de l'utilisateur
      *
      */
     public function defineStatut($statut)
     {
-    
-    } 
-    
+
+    }
+
     /**
-     * 
+     *
      * Méthode getUserIp
-     * 
+     *
      * Cette méthode permet de récupérer l'adresse Ip de l'utilisateur
      *
      * @return string $ip
@@ -374,7 +408,7 @@ class UserHandler extends ApplicationComponent
     public function getUserIp()
     {
         if(isset($_SERVER))
-        {       	
+        {
             if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
             {
                 $ipReelle=$_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -383,12 +417,12 @@ class UserHandler extends ApplicationComponent
             {
                 $ipReelle=$_SERVER['HTTP_CLIENT_IP'];
             }
-            else 
+            else
             {
                 $ipReelle=$_SERVER['REMOTE_ADDR'];
-            }           
+            }
         }
-        else 
+        else
         {
             if(getenv('HTTP_X_FORWARDER_FOR'))
             {
@@ -398,20 +432,20 @@ class UserHandler extends ApplicationComponent
             {
                 $ipReelle=getenv('HTTP_CLIENT_IP');
             }
-            else 
+            else
             {
                 $ipReelle=getenv('REMOTE_ADDR');
-            }           
+            }
         }
         return $ipReelle;
     }
-    
+
     /**
-     * 
+     *
      * Méthode getUserBrowserVersion
      *
      * elle permet d'obtenir la version du navigateur de l'utilisateur
-     * 
+     *
      * @return string $browserVersion, description de la version du navigateur     *
      */
     public function getUserBrowserVersion()
@@ -420,17 +454,17 @@ class UserHandler extends ApplicationComponent
         if(isset($_SERVER['HTTP_USER_AGENT']))
         {
             $browserVersion = $_SERVER['HTTP_USER_AGENT'];
-        }  
-        return $browserVersion; 
+        }
+        return $browserVersion;
     }
-    
+
     /**
-     * 
+     *
      * Méthode VerifierUserCountry
-     * 
+     *
      * Cette méthode permet de récupérer le pays de connexion de l'utilisateur
      * en fonction de son adresse Ip
-     * 
+     *
      * @param string $ip
      * @return string $country
      */

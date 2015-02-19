@@ -1,11 +1,11 @@
 <?php
-namespace Framework\FormBuilder; 
+namespace Framework\FormBuilder;
 use Framework\Form;
 require_once './Framework/autoload.php';
 /**
-  * 
+  *
   * @author Fr�d�ric Tarreau
-  * 
+  *
   * Classe fille de FormBuilder dont le r�le est de cr�er le formulaire associ� à l'utilisateur (inscription)
   *
   */
@@ -13,19 +13,22 @@ require_once './Framework/autoload.php';
  {
  	/**
  	* Méthode permettant de construire le formulaire d'ajout d'un utilisateur
- 	* 
- 	* @see \Framework\FormBuilder::build()
- 	* 
+ 	*
+ 	* @see \Framework\FormBuilder::build($type)
+ 	*
  	*/
- 	public function build()
+ 	public function build($type=NULL)
  	{
-  	    $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo");
- 	    $longMaxNom = \Framework\Configuration::get("longMaxNom");
- 	    $longMinMdp = \Framework\Configuration::get("longMinMdp"); 
- 	    $longMaxMdp = \Framework\Configuration::get("longMaxMdp");
- 	    
- 	    // ajout du champ du nom , attention, il faut bien reprendre le nom de l'attribut "nom" de l'objet User, idem pour les autres champs
- 	    $this->form->add(new \Framework\Formulaire\InputField(array(
+      switch ($type)
+ 	    {
+ 	        case 1 :
+  	                 $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo");
+ 	                 $longMaxNom = \Framework\Configuration::get("longMaxNom");
+ 	                 $longMinMdp = \Framework\Configuration::get("longMinMdp");
+ 	                 $longMaxMdp = \Framework\Configuration::get("longMaxMdp");
+
+ 	                  // ajout du champ du nom , attention, il faut bien reprendre le nom de l'attribut "nom" de l'objet User, idem pour les autres champs
+ 	                  $this->form->add(new \Framework\Formulaire\InputField(array(
  	                                                        'type'=>'text',
  		 													'label'=>'Nom  ',
  		 													'name'=>'nom',
@@ -38,8 +41,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier le nom de l\'utilisateur'),
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxNom, $longMaxNom),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
- 		 			       ))))
- 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                        'type'=>'text',
  		 													'label'=>'Prénom  ',
  		 													'name'=>'prenom',
@@ -52,8 +55,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier le prenom de l\'utilisateur'),
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxNom, $longMaxNom),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
- 		 			       ))))
- 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                        'type'=>'text',
  		 													'label'=>'Pays  ',
  		 													'name'=>'pays',
@@ -61,9 +64,9 @@ require_once './Framework/autoload.php';
  		 													'size'=>30,
  		 													'required'=>false,
  		 													'placeholder'=> 'votre pays',
- 		 													'validators'=>array(new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique'))   
- 		 			        )))
- 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 													'validators'=>array(new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                        'type'=>'email',
  		 													'label'=>'Mail  ',
  		 													'name'=>'mail',
@@ -75,8 +78,8 @@ require_once './Framework/autoload.php';
  		 													'validators'=>array(
  		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier l\'adresse email de l\'utilisateur'),
  		 																		new \Framework\Formulaire\MailValidator('Merci d\'entrer le bon format d\'un email')
- 		 			       ))))
- 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                        'type'=>'tel',
  		 													'label'=>'Téléphone  ',
  		 													'name'=>'telephone',
@@ -86,8 +89,8 @@ require_once './Framework/autoload.php';
  		 													'required'=>false,
  		 													'placeholder'=> 'votre telephone',
  		 													'validators'=>array(new \Framework\Formulaire\TphValidator('Merci d\'entrer un numero de telephone à 10 chiffres')
- 		 			       ))))
- 		 			       ->add(new \Framework\Formulaire\InputField(array(
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                         'type'=>'date',
  		 			                                         'label'=>'Année de naissance  ',
  		 			                                         'name'=>'naissance',
@@ -97,8 +100,8 @@ require_once './Framework/autoload.php';
  		 			                                         'required'=>false,
  		 			                                         'placeholder'=> '19XX ou 20YY',
  		 			                                         'validators'=>array(new \Framework\Formulaire\DateNaissanceValidator('Merci d\'entrer une année de la forme 19XX ou 20YY')
- 		 			        ))))
- 		 			->add(new \Framework\Formulaire\InputField(array(
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                        'type'=>'text',
  		 													'label'=>'Avatar  ',
  		 													'name'=>'avatar',
@@ -109,9 +112,9 @@ require_once './Framework/autoload.php';
  		 													'placeholder'=> 'votre avatar',
  		 													'validators'=>array(
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a 15', 15),
- 		 													                   
- 		 			       ))))
- 		 			 ->add(new \Framework\Formulaire\InputField(array(
+
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                        'type'=>'text',
  		 													'label'=>'Pseudo  ',
  		 													'name'=>'pseudo',
@@ -124,8 +127,8 @@ require_once './Framework/autoload.php';
  		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier le pseudo de l\'utilisateur'),
  		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxPseudo, $longMaxPseudo),
  		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
- 		 			       ))))
- 		 			  ->add(new \Framework\Formulaire\InputField(array(
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
  		 			                                        'type'=>'password',
  		 													'label'=>'Mot de passe  ',
  		 													'name'=>'mdp',
@@ -135,10 +138,47 @@ require_once './Framework/autoload.php';
  		 													'required'=>true,
  		 													'placeholder'=> 'votre mot de passe',
  		 													'validators'=>array(new \Framework\Formulaire\PasswordValidator('Merci d\'entrer une chaine de' .$longMinMdp .'à' .$longMaxMdp .'caracteres alphanumeriques')
- 		 			       ))));
- 		 
- 		 // ajout du bouton de validation du formulaire
- 		 $this->form->addButton(new \Framework\Formulaire\Button('submit','Valider'));
+ 		 			                     ))));
+
+ 		                 // ajout du bouton de validation du formulaire
+ 		                 $this->form->addButton(new \Framework\Formulaire\Button('submit','Valider'));
+ 		      break;
+
+ 	        case 2 :
+ 	                   $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo");
+ 	                   $this->form->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                        'type'=>'text',
+ 		 													'label'=>'Pseudo  ',
+ 		 													'name'=>'pseudo',
+ 		 													'maxLength'=>$longMaxPseudo,
+ 		 													'id'=>'prenom',
+ 		 													'size'=>$longMaxPseudo ,
+ 		 													'required'=>true,
+ 		 													'placeholder'=> 'votre pseudo',
+ 		 													'validators'=>array(
+ 		 																		new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier le pseudo de l\'utilisateur'),
+ 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fixe a' .$longMaxPseudo, $longMaxPseudo),
+ 		 													                    new \Framework\Formulaire\StringValidator('Merci d\'entrer une chaine de caractere alphanumerique')
+ 		 			                     ))))
+ 		 			             ->add(new \Framework\Formulaire\InputField(array(
+ 		 			                                         'type'=>'email',
+ 		 			                                         'label'=>'Mail  ',
+ 		 			                                         'name'=>'mail',
+ 		 			                                         'maxLength'=>25,
+ 		 			                                         'id'=>'mail',
+ 		 			                                         'size'=>30,
+ 		 			                                         'required'=>true,
+ 		 			                                         'placeholder'=> 'votre email',
+ 		 			                                         'validators'=>array(
+ 		 			                                                             new \Framework\Formulaire\NotNullValidator('Merci de sp�cifier l\'adresse email de l\'utilisateur'),
+ 		 			                                                             new \Framework\Formulaire\MailValidator('Merci d\'entrer le bon format d\'un email')
+ 		 			                     ))));
+
+ 		 			       // ajout du bouton de validation du formulaire
+ 		 			       $this->form->addButton(new \Framework\Formulaire\Button('submit','Valider'));
+ 		 	   break;
+
+ 		     default: throw new \Exception("Type de formulaire d'inscription non reconnu");
+ 	    }
  	}
  }
- 

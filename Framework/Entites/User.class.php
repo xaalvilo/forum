@@ -1,17 +1,17 @@
 <?php
 /**
- * 
+ *
  * @author Frédéric Tarreau
  *
  * 16 nov. 2014 - User.class.php
- * 
+ *
  * Classe héritée de Entite
- * 
+ *
  * cette classe repr�sente un visiteur du site. Elle permet notamment de :
  *             - savoir si l'utilisateur est authentifié
- *             - savoir si l'utilisateur a un message informatif             
- * 
- */ 
+ *             - savoir si l'utilisateur a un message informatif
+ *
+ */
 namespace Framework\Entites;
 require_once './Framework/autoload.php';
 
@@ -19,67 +19,70 @@ class User extends \Framework\Entite
 {
     /* identifiant de session */
     protected $_idSession;
-    
+
     /* pseudo */
     protected $_pseudo;
-    
+
     /* nom */
     protected $_nom;
-    
+
     /* prenom */
     protected $_prenom;
-    
+
     /* date de naissance */
     protected $_naissance;
-    
+
     /* mail */
     protected $_mail;
-    
+
     /* pays sous forme de tableau associatif */
     protected $_pays;
-    
+
     /* telephone */
     protected $_telephone;
-    
+
     /* hash du password */
     protected $_hash;
-    
+
     /* statut du visiteur */
     protected $_statut;
-    
+
     /* adresse IP utilisée */
     protected $_ip;
-    
+
     /* fichier avatar */
     protected $_avatar;
-    
+
     /* date Inscription */
     protected $_dateInscription;
-    
+
     /* dernière date connexion */
     protected $_dateConnexion;
-    
+
     /* nombre de commentaires sur le Forum */
     protected $_nbreCommentairesForum;
-    
+
     /* nombre de Billets sur le Forum */
     protected $_nbreBilletsForum;
-    
+
     /* nombre de commentaires sur le Blog */
     protected $_nbreCommentairesBlog;
-    
+
     /* mot de passe de l'utilisateur , il ne sera jamais stocké en BDD */
     protected $_mdp;
-    
+
     /* propriétés du navigateur */
     protected $_browserVersion;
-    
+
     /* drapeau d'authentification */
     protected $_authenticated;
-    
+
+    /* drapeau d'autorisation blog */
+    protected $_autorised;
+
     /* constante correspondant au statut possible des visiteurs du site (notamment pour le forum) permettant de donner + ou - de droits */
     const MAX_STATUT=4;
-    
+
     /* constante permettant de reporter le type d'erreur */
     const CHAINE_INVALIDE = 4;
     const STATUT_USER_INVALIDE = 5;
@@ -88,43 +91,32 @@ class User extends \Framework\Entite
     const NOM_FICHIER_AVATAR_INVALIDE = 8;
     const FORME_HASH_INVALIDE = 9;
     const FORME_MDP_INVALIDE = 10;
-		
-    
-    /**
-     * constructeur qui hydratera l'objet si un tableau de valeurs lui est fourni
-     */
-  //  public function __construct (array $donnees = array())
-    //{
-      //  parent::__construct();
-        //$this->hydrate($donnees);
-    //}
-    
-    
+
     /**
      *
      * Méthode setPseudo
      *
      * Cette méthode est le setter de pseudo
-     * 
-     * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur 
-     * à la longueur spécifiée en configuration 
+     *
+     * il vérifie qu'il s'agit bien d'une chaîne de caractère inférieur
+     * à la longueur spécifiée en configuration
      *
      * @param string $pseudo
      *
      */
-    public function setpseudo($pseudo)
+    public function setPseudo($pseudo)
     {
-        $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo", 30);
+        $longMaxPseudo = \Framework\Configuration::get("longMaxPseudo",30);
         if(!is_string($pseudo) || empty($pseudo) || strlen($pseudo) > $longMaxPseudo)
         {
             $this->erreurs[]= self::CHAINE_INVALIDE;
         }
-        else 
-        {    
+        else
+        {
             $this->_pseudo = $pseudo;
         }
     }
-    
+
     /**
      *
      * Méthode pseudo
@@ -137,46 +129,72 @@ class User extends \Framework\Entite
     {
         return $this->_pseudo;
     }
-    
+
     /**
-     * 
+     *
      * Méthode authenticated
-     * 
+     *
      * getter de l'attribut protégé authenticated
      *
-     * @return bool attribut authenticated     
+     * @return bool attribut authenticated
      */
     public function authenticated()
     {
         return $this->_authenticated;
     }
-    
+
     /**
-     * 
+     *
      * Méthode setAuthenticated
-     * 
+     *
      * setter de l'attribut protégé authenticated
-     * 
+     *
      * @param bool $authenticated
      */
     public function setAuthenticated($authenticated = TRUE)
     {
         $this->_authenticated = $authenticated;
     }
-    
+
     /**
-     * 
+     *
+     * Méthode autorised
+     *
+     * getter de l'attribut protégé authenticated
+     *
+     * @return bool attribut authenticated
+     */
+    public function autorised()
+    {
+        return $this->_autorised;
+    }
+
+    /**
+     *
+     * Méthode setAutorised
+     *
+     * setter de l'attribut protégé autorised
+     *
+     * @param bool $autorised
+     */
+    public function setAutorised($autorised = TRUE)
+    {
+        $this->_autorised = $autorised;
+    }
+
+    /**
+     *
      * Méthode browserVersion
      *
      * getter de browserVersin
-     * 
+     *
      * @return string version du navigateur client
      */
     public function browserVersion()
     {
-        return $this->_browserVersion;        
+        return $this->_browserVersion;
     }
-    
+
     /**
      *
      * Méthode setBrowserVersion
@@ -189,7 +207,7 @@ class User extends \Framework\Entite
     {
         $this->_browserVersion = $browserVersion;
     }
-    
+
     /**
      *
      * Méthode setMdp
@@ -215,7 +233,7 @@ class User extends \Framework\Entite
             $this->_mdp = $mdp;
         }
     }
-    
+
     /**
      *
      * Méthode mdp
@@ -228,7 +246,7 @@ class User extends \Framework\Entite
     {
         return $this->_mdp;
     }
-    
+
     /**
      *
      * Méthode setNom
@@ -253,7 +271,7 @@ class User extends \Framework\Entite
             $this->_nom = $nom;
         }
     }
-    
+
     /**
      *
      * Méthode nom
@@ -266,7 +284,7 @@ class User extends \Framework\Entite
     {
         return $this->_nom;
     }
-    
+
     /**
      *
      * Méthode setPrenom
@@ -291,7 +309,7 @@ class User extends \Framework\Entite
             $this->_prenom = $prenom;
         }
     }
-    
+
     /**
      *
      * Méthode prenom
@@ -304,7 +322,7 @@ class User extends \Framework\Entite
     {
         return $this->_prenom;
     }
-    
+
     /**
      *
      * Méthode setNaissance
@@ -318,7 +336,7 @@ class User extends \Framework\Entite
     {
         $this->_naissance = $naissance;
     }
-    
+
     /**
      *
      * Méthode naissance
@@ -331,7 +349,7 @@ class User extends \Framework\Entite
     {
         return $this->_naissance;
     }
-    
+
     /**
      *
      * Méthode setMail
@@ -348,12 +366,12 @@ class User extends \Framework\Entite
         {
             $this->erreurs[]=self::MAIL_INVALIDE;
         }
-        else 
+        else
         {
             $this->_mail = $mail;
         }
     }
-    
+
     /**
      *
      * Méthode mail
@@ -366,13 +384,13 @@ class User extends \Framework\Entite
     {
         return $this->_mail;
     }
-    
+
     /**
      *
      * Méthode setPays
      *
      * Cette méthode est le setter de pays
-     * 
+     *
      * @param string $pays
      *
      */
@@ -380,7 +398,7 @@ class User extends \Framework\Entite
     {
         $this->_pays = $pays;
     }
-    
+
     /**
      *
      * Méthode pays
@@ -392,14 +410,14 @@ class User extends \Framework\Entite
     public function pays()
     {
         return $this->_pays;
-    }    
-    
+    }
+
     /**
      *
      * Méthode setTelephone
      *
      * Cette méthode est le setter de Telephone
-     * 
+     *
      * il vérifie que l'argument correspond bien à une chaîne de caractère d'une longueur = 10
      * cet argument peut être NULL
      *
@@ -412,12 +430,12 @@ class User extends \Framework\Entite
         {
             $this->erreurs[]= self::TELEPHONE_INVALIDE;
         }
-        else 
+        else
         {
             $this->_telephone = $telephone;
         }
     }
-    
+
     /**
      *
      * Méthode telephone
@@ -430,7 +448,7 @@ class User extends \Framework\Entite
     {
         return $this->_telephone;
     }
-    
+
     /**
      *
      * Méthode setStatut
@@ -441,7 +459,7 @@ class User extends \Framework\Entite
      *
      */
     public function setStatut($statut)
-    {       
+    {
         if ((!empty($statut)) && ((int)$statut <= self::MAX_STATUT))
         {
             $this->_statut = (int)$statut;
@@ -489,7 +507,7 @@ class User extends \Framework\Entite
     {
         return $this->_ip;
     }
-    
+
     /**
      *
      * Méthode setAvatar
@@ -505,17 +523,17 @@ class User extends \Framework\Entite
         {
             $this->erreurs[]=self::NOM_FICHIER_AVATAR_INVALIDE;
         }
-        else 
+        else
         {
             $this->_avatar = $avatar;
         }
     }
-    
+
     /**
      *
      * Méthode avatar
      *
-     * Cette méthode est le getter de Avatar 
+     * Cette méthode est le getter de Avatar
      *
      * @return string $_avatar
      */
@@ -523,7 +541,7 @@ class User extends \Framework\Entite
     {
         return $this->_avatar;
     }
-    
+
     /**
      *
      * Méthode setHash
@@ -544,7 +562,7 @@ class User extends \Framework\Entite
             $this->_hash = $hash;
         }
     }
-    
+
     /**
      *
      * Méthode hash
@@ -557,21 +575,21 @@ class User extends \Framework\Entite
     {
         return $this->_hash;
     }
-    
+
     /**
      *
      * Méthode setDateConnexion
      *
      * Cette méthode est le setter de dateConnexion
      *
-     * @param \DateTime $dateConnexion 
+     * @param \DateTime $dateConnexion
      *
      */
     public function setDateConnexion(\DateTime $dateConnexion)
     {
-        $this->_dateConnexion = $dateConnexion;        
+        $this->_dateConnexion = $dateConnexion;
     }
-    
+
     /**
      *
      * Méthode dateConnexion
@@ -584,7 +602,7 @@ class User extends \Framework\Entite
     {
         return $this->_dateConnexion;
     }
-    
+
     /**
      *
      * Méthode setDateInscription
@@ -598,7 +616,7 @@ class User extends \Framework\Entite
     {
         $this->_dateInscription = $dateInscription;
     }
-    
+
     /**
      *
      * Méthode dateInscription
@@ -611,7 +629,7 @@ class User extends \Framework\Entite
     {
         return $this->_dateInscription;
     }
-    
+
     /**
      *
      * Méthode setNbreCommentairesBlog
@@ -625,7 +643,7 @@ class User extends \Framework\Entite
     {
          $this->_nbreCommentairesBlog =(int) $nbreCommentairesBlog;
     }
-    
+
     /**
      *
      * Méthode nbreCommentairesBlog
@@ -633,13 +651,13 @@ class User extends \Framework\Entite
      * Cette méthode est le getter de NbreCommentairesBlog
      *
      * @return int $_nbreCommentairesBlog
-     * 
+     *
      */
     public function nbreCommentairesBlog()
     {
         return $this->_nbreCommentairesBlog;
     }
-    
+
     /**
      *
      * Méthode setNbreCommentairesForum
@@ -653,7 +671,7 @@ class User extends \Framework\Entite
     {
          $this->_nbreCommentairesForum = (int) $nbreCommentairesForum;
     }
-    
+
     /**
      *
      * Méthode nbreCommentairesForum
@@ -661,13 +679,13 @@ class User extends \Framework\Entite
      * Cette méthode est le getter de NbreCommentairesForum
      *
      * @return int $_NbreCommentairesForum
-     * 
+     *
      */
     public function nbreCommentairesForum()
     {
         return $this->_nbreCommentairesForum;
     }
-    
+
     /**
      *
      * Méthode setNbreBilletsForum
@@ -681,7 +699,7 @@ class User extends \Framework\Entite
     {
     	$this->_nbreBilletsForum = (int) $nbreBilletsForum;
     }
-    
+
     /**
      *
      * Méthode nbreBilletsForum
@@ -695,22 +713,22 @@ class User extends \Framework\Entite
     {
     	return $this->_nbreBilletsForum;
     }
-    
+
 	/**
-	 * 
+	 *
 	 * Méthode hasFlash
-	 * 
+	 *
 	 * cette m�thode permet de savoir si un message ��flash�� informatif  est associé à
 	 * l'utilisateur
 	 *
 	 * @return boolean TRUE si il y a un message informatif
-	 * 
+	 *
 	 */
 	public function hasFlash()
 	{
 		return isset($_SESSION['flash']);
 	}
-	
+
 	/**
 	 *
 	 * Méthode hasBandeau

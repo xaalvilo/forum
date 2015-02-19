@@ -1,13 +1,13 @@
-<?php 
-namespace Framework\FormBuilder; 
+<?php
+namespace Framework\FormBuilder;
 require_once './Framework/autoload.php';
 
 /**
- * 
+ *
  * @author Fr�d�ric Tarreau
  *
- *  25 oct 2014 
- * 
+ *  25 oct 2014
+ *
  * Classe fille de FormBuilder dont le r�le est de cr�er le formulaire associ� aux articles du blog
  *
  */
@@ -16,7 +16,7 @@ require_once './Framework/autoload.php';
  	/*
  	 * m�thode de construction du formulaire d'ajout d'article de blog
  	 */
- 	public function build()
+ 	public function build($type = NULL)
  	{
  		 $this->form->add(new \Framework\Formulaire\InputField(array(
  		                                                    'type'=>'text',
@@ -63,9 +63,8 @@ require_once './Framework/autoload.php';
  		 			                                         'placeholder'=>'nom du fichier image',
  		 			                                         'validators'=>array(new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fix� � 20', 20)
  		 			))));
- 		 				 			
+
  		 	// ajout du bouton de validation du formulaire permettant de valider l'édition du nouvel article
  		 	$this->form->addButton(new \Framework\Formulaire\Button('submit','Editer'));
  	}
  }
- 

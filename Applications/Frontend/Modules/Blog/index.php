@@ -54,7 +54,7 @@
          <?php $courant = $this->nettoyer($curseur);
                foreach ($listeArticles as $key=>$idPage):
                     if($this->nettoyer($idPage)==$courant):?>
-                       <p class = "lienMenu"> <?= $this->nettoyer($key + 1)?></p>;
+                       <p class = "lienMenu"> <?= $this->nettoyer($key + 1)?></p>
              <?php  else :?>
                        <a class = "lienMenu" href="<?= "blog/index/".$this->nettoyer($idPage)?>"><?=round($this->nettoyer($key + 1))?></a>
               <?php endif;?>

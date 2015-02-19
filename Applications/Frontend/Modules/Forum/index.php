@@ -18,10 +18,16 @@
            	</td>
         	<td>
         		<p><?= $this->nettoyer($billet['contenu']) ?></p>
+        		<?php if ($this->nettoyer($billet['auteur'])==$pseudo):?>
+        		<a href="<?= "forum/supprimer/" . $this->nettoyer($billet['id']) ?>">
+            	<button> Supprimer </button></a>
+            	<a href="<?= "forum/modifier/" . $this->nettoyer($billet['id']) ?>">
+            	<button> Modifier </button></a>
+            	<?php endif;?>
         	</td>
     	</article>
     </tr>
 <?php endforeach; ?>
 </table>
 <!-- Formulaire de création de commentaire -->
-   <?= $this->nettoyer($formulaire)?>    
+   <?= $this->nettoyer($formulaire)?>

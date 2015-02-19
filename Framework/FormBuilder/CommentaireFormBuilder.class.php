@@ -1,11 +1,11 @@
 <?php
-namespace Framework\FormBuilder; 
+namespace Framework\FormBuilder;
 use Framework\Form;
 require_once './Framework/autoload.php';
 /**
-  * 
+  *
   * @author Fr�d�ric Tarreau
-  * 
+  *
   * Classe fille de FormBuilder dont le r�le est de cr�er le formulaire associ� aux commentaires
   *
   */
@@ -13,11 +13,11 @@ require_once './Framework/autoload.php';
  {
  	/**
  	* Méthode permettant de construire le formulaire d'ajout de commentaire
- 	* 
+ 	*
  	* @see \Framework\FormBuilder::build()
- 	* 
+ 	*
  	*/
- 	public function build()
+ 	public function build($type = NULL)
  	{
  	    // ajout du champ de nom auteur, attention, il faut bien reprendre le nom de l'attribut "auteur" de l'objet commentaire
  	    $this->form->add(new \Framework\Formulaire\InputField(array(
@@ -45,12 +45,11 @@ require_once './Framework/autoload.php';
  		 													'placeholder'=>'votre commentaire',
  		 													'validators'=>array(new \Framework\Formulaire\NotNullValidator('Merci d\'ecrire un commentaire')
  		 					))));
- 		 			
+
  		 // prise en compte de la valeur cachée à transmettre
  		 $hiddenValue=$this->form->entite()->idReference();
- 		 
+
  		 // ajout du bouton de validation du formulaire
  		 $this->form->addButton(new \Framework\Formulaire\Button('submit','Commenter','id',$hiddenValue));
  	}
  }
- 
