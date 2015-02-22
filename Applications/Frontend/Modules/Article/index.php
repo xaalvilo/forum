@@ -1,7 +1,7 @@
 <!-- Portion de Vue spécifique à l'affichage des commentaires d'un Article du Blog -->
 
-<section> 
-    <article> 
+<section class="row"> 
+    <article class="col-xs-12"> 
         <?php $this->_titre = "Blog AtelierBlancNordOuest- ".$this->nettoyer($article['titre']);?>
         
 
