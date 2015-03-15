@@ -1,11 +1,11 @@
 <!-- Portion de Vue spécifique à l'affichage du bandeau -->
 
 	<!-- Pseudo de l'utilisateur -->
-	<div class="col-xs-1 col-xs-offset-2"><p><?=$this->nettoyer($pseudo) ?></p></div>
-	
+	<li class="disabled"><a href="#"><?=$this->nettoyer($pseudo) ?></a></li>
+
 	<!-- lien de deconnexion de l'utilisateur -->
-	<div class="col-xs-2"><a href="<?= "connexion/deconnecter/"?>"><p><?= $this->nettoyer($connexion) ?></p></a></div>
-	
+	<li><a href="<?= "connexion/deconnecter/"?>"><?= $this->nettoyer($connexion) ?></a></li>
+
 	<!-- Etat du panier -->
-	<div class="col-xs-2"><p>Panier</p></div>
-	
+	<li class="disabled"><a href="#">Panier</a></li>
+

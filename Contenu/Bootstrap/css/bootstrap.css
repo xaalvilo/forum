@@ -216,7 +216,6 @@ th {
   pre,
   blockquote {
     border: 1px solid #999;
-
     page-break-inside: avoid;
   }
   thead {
@@ -1081,12 +1080,15 @@ body {
   background-color: #fff;
 }
 input,
-button,
 select,
 textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+}
+button {
+	border-radius: 10px;
+	font-size: 6px;
 }
 a {
   color: #337ab7;
@@ -1456,8 +1458,9 @@ abbr[data-original-title] {
 }
 blockquote {
   padding: 10px 20px;
-  margin: 0 0 20px;
-  font-size: 17.5px;
+  margin: 0 0 0px;
+  font-size: 12px;
+  font-style: italic;
   border-left: 5px solid #eee;
 }
 blockquote p:last-child,
@@ -2478,8 +2481,8 @@ legend {
   display: block;
   width: 100%;
   padding: 0;
-  margin-bottom: 20px;
-  font-size: 21px;
+  margin-bottom: 10px;
+  font-size: 16px;
   line-height: inherit;
   color: #333;
   border: 0;
@@ -2530,7 +2533,7 @@ output {
 .form-control {
   display: block;
   width: 100%;
-  height: 34px;
+  height: 35px;
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
@@ -2941,12 +2944,12 @@ select[multiple].form-group-lg .form-control {
   min-height: 27px;
 }
 .form-horizontal .form-group {
-  margin-right: -15px;
-  margin-left: -15px;
+  margin-right: 0px;
+  margin-left: 0px;
 }
 @media (min-width: 768px) {
   .form-horizontal .control-label {
-    padding-top: 7px;
+    padding-top: 0;
     margin-bottom: 0;
     text-align: right;
   }
@@ -4051,7 +4054,8 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar {
   position: relative;
   min-height: 50px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 10px;
   border: 1px solid transparent;
 }
 @media (min-width: 768px) {
@@ -4356,8 +4360,9 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   margin-bottom: 14px;
 }
 .navbar-text {
-  margin-top: 15px;
-  margin-bottom: 15px;
+  font-size: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 @media (min-width: 768px) {
   .navbar-text {
@@ -4372,7 +4377,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
   .navbar-right {
     float: right !important;
-    margin-right: -15px;
+    margin-right: -1px;
   }
   .navbar-right ~ .navbar-right {
     margin-right: 0;
@@ -4796,7 +4801,7 @@ a.label:focus {
   display: inline-block;
   min-width: 10px;
   padding: 3px 7px;
-  font-size: 12px;
+  font-size: 8px;
   font-weight: bold;
   line-height: 1;
   color: #fff;

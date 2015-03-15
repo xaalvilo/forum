@@ -1,31 +1,42 @@
 <?php
-namespace Framework\Entites;
-require_once './Framework/autoload.php';
-
 /**
- * 
+ *
  * @author Frédéric Tarreau
  *
  * 20 oct. 2014 - Article.class.php
- * 
+ *
  * Cette classe hérite de la classe entité et représente l'article d'un Blog
  *
  */
+namespace Framework\Entites;
+require_once './Framework/autoload.php';
 
 class Article extends \Framework\Entite
 {
-  protected $date;
-  protected $dateModif;
-  protected $titre;
-  protected $contenu;
-  protected $image;
-  
-  /* libellé d'un article */
-  protected $libelle;
-  
+    /*@var date */
+    protected $date;
+
+    /*@var date */
+    protected $dateModif;
+
+    /*@var string titre*/
+    protected $titre;
+
+    /*@var string contenu*/
+    protected $contenu;
+
+    /*@var string nom fichier image*/
+    protected $image;
+
+    /*@var int nbre commentaires*/
+    protected $nbComents;
+
+    /*]@var string libellé d'un article */
+    protected $libelle;
+
   const TITRE_INVALIDE=2;
   const CONTENU_INVALIDE=3;
-  
+
     /**
     * mÃ©thode testant si l'objet Article est valide
     * elle utilise la fonction "empty(var)" qui  retourne FALSE si la variable existe et est non vide
@@ -36,13 +47,13 @@ class Article extends \Framework\Entite
     //{
       //  return !(empty($this->auteur) || empty($this->contenu) || empty($this->titre));
     //}
-    
+
     /**
-     * 
+     *
      * Méthode setTitre
-     * 
+     *
      * Setter de titre
-     * 
+     *
      * @param string $titre
      */
     public function setTitre($titre)
@@ -52,18 +63,44 @@ class Article extends \Framework\Entite
         {
         	$this->erreurs[]=self::TITRE_INVALIDE;
         }
-        else 
+        else
         {
         	$this->titre=$titre;
         }
     }
-          
+
     /**
-     * 
+     *
+     * Méthode setnbComents
+     *
+     * setter de l'attribut protégé nbComents
+     *
+     * @param int $nbComents
+     */
+    public function setNbComents($nbComents)
+    {
+        $this->nbComents=$nbComents;
+    }
+
+    /**
+     *
+     * Méthode nbComents
+     *
+     * getter de l'attribut protégé nbComents
+     *
+     * @return int
+     */
+    public function nbComents()
+    {
+        return $this->nbComents;
+    }
+
+    /**
+     *
      * Méthode setContenu
-     * 
+     *
      * Setter de contenu
-     * 
+     *
      * @param string $contenu
      */
     public function setContenu($contenu)
@@ -77,11 +114,11 @@ class Article extends \Framework\Entite
     		$this->contenu=$contenu;
     	}
     }
-    
+
     /**
-     * 
+     *
      * Méthode setLibelle
-     * 
+     *
      * setter de libelle
      *
      * @param string $libelle
@@ -97,20 +134,20 @@ class Article extends \Framework\Entite
             $this->libelle=$libelle;
         }
     }
-    
+
     /**
-     * 
+     *
      * Méthode setDate
-     * 
+     *
      * Setter de date
-     * 
+     *
      * @param \DateTime $date
      */
     public function setDate(\DateTime $date)
     {
-    	$this->date=$date; 
+    	$this->date=$date;
     }
-    
+
     /**
      *
      * Méthode setDateModif
@@ -136,11 +173,11 @@ class Article extends \Framework\Entite
     {
         $this->image=$image;
     }
-    
+
     /**
-     * 
+     *
      * Méthode titre
-     * 
+     *
      * Getter de titre
      *
      * @return string $_titre
@@ -149,13 +186,13 @@ class Article extends \Framework\Entite
     {
     	return $this->titre;
     }
-    
+
     /**
-     * 
+     *
      * Méthode libelle
      *
      * getter du libelle d'un article
-     * 
+     *
      * @return string $libelle
      *
      */
@@ -163,46 +200,46 @@ class Article extends \Framework\Entite
     {
         return $this->libelle;
     }
-    
+
     /**
-     * 
+     *
      * Méthode contenu
      *
      * Getter de contenu
-     * 
+     *
      * @return string $contenu
      */
     public function contenu()
     {
     	return $this->contenu;
     }
-    
+
     /**
-     * 
+     *
      * Méthode date
-     * 
+     *
      * Getter de date
-     * 
+     *
      * @return string $date au format de date
      */
     public function date()
     {
     	return $this->date;
     }
-    
+
     /**
-     * 
+     *
      * Méthode dateModif
-     * 
+     *
      * Getter de dateModif
-     * 
+     *
      * @return string $dateModif au format de date
      */
     public function dateModif()
     {
     	return $this->dateModif;
     }
-    
+
     /**
      *
      * Méthode image
@@ -216,8 +253,8 @@ class Article extends \Framework\Entite
         return $this->image;
     }
 }
-       
-            
+
+
 
 
 

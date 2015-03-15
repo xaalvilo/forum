@@ -14,7 +14,7 @@ require_once './Framework/autoload.php';
 
 class ControleurBlog extends \Framework\Controleur
 {
-    /* Manager de article */
+    /* manager de article */
     private $_managerArticle;
 
     /**
@@ -23,7 +23,7 @@ class ControleurBlog extends \Framework\Controleur
     public function __construct(\Framework\Application $app)
     {
     	parent::__construct($app);
-        $this->_managerArticle= new \Framework\Modeles\ManagerArticle();
+         $this->_managerArticle= \Framework\FactoryManager::createManager('Article');
     }
 
     /**
@@ -39,7 +39,7 @@ class ControleurBlog extends \Framework\Controleur
     * - calculerPagination : en fonction du nombre d'article
     * - selectionnerArticles : avec un filtre
     *
-    * et exploite la superGlobale de session pour savoir si la navigation au seind es articles est limlitée à un libellé ou non
+    * et exploite la superGlobale de session pour savoir si la navigation au sein des articles est limitée à un libellé ou non
     *
     * @param array $donnees tableau de données éventuellement passé en paramètre, permettant d'afficher dans le formulaire les champs valides saisis lors d'une
     * requête précédente ou de restreindre la navigation dans un libelle d'article pré selectionné
@@ -85,8 +85,6 @@ class ControleurBlog extends \Framework\Controleur
                 }
             }
         }
-        // supprimer la variable de session permettant la navigation dans des articles correspondants à un libellé particulier
-        // $this->_app->userHandler()->removeAttribute('choixLibelle');
         // il y a des données relatives au libelle en session
         else
         {
@@ -144,7 +142,7 @@ class ControleurBlog extends \Framework\Controleur
      *
      * Méthode selectionnerArticles
      *
-     * en fonction du filtre elle sélectionne les artciles à afficher et récupère l'ensemble des libellés pour alimenter la barre latérale (aside)
+     * en fonction du filtre elle sélectionne les articles à afficher et récupère l'ensemble des libellés pour alimenter la barre latérale (aside)
      *
      * @param array $donneesFiltre, paramètres du filtre de la BDD suivant les articles à sélectionner
      */
@@ -199,7 +197,6 @@ class ControleurBlog extends \Framework\Controleur
 
         // créer la variable de session
         $this->_app->userHandler()->setAttribute('choixLibelle',$choixLibelle);
-        var_dump($_SESSION);
         $this->executerAction('index',array('choixLibelle'=>$choixLibelle));
     }
 
@@ -238,7 +235,7 @@ class ControleurBlog extends \Framework\Controleur
             if ($form->isValid())
             {
                 // appelle de la m�thode permettant d'enregistrer un article en BDD
-                $this->_managerArticle->ajouterArticle($titre,$libelle,$contenu,$image);
+                $this->_managerArticle->ajouterArticle($titre,$libelle,$contenu,$image,0);
             }
             else
             {

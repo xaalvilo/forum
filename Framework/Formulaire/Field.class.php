@@ -10,30 +10,30 @@ abstract class Field
 {
 	// label HTML du champ
 	protected $label;
-	
-	// Nom HTML du champ. Il est rappelé que ce nom apparaît dans les superglobales sous forme de tableau 
+
+	// Nom HTML du champ. Il est rappelé que ce nom apparaît dans les superglobales sous forme de tableau
 	// $GET, $POST, $REQUEST, il est donc important de ne pas choisir ce nom au hasard par rapport aux objets à hydrater
 	// avec les valeurs des INPUT
 	protected $name;
-	
+
 	// valeur du champ
 	protected $value;
-	
+
 	// id du champ, permettant en HTML de li� le champ à son nom
 	protected $id;
-	
+
 	// message d'erreur associ� au champ
 	protected $errorMessage;
-	
+
 	//tableau des validateurs
 	protected $validators = array();
-	
+
 	// indication pour remplir le champ
 	protected $placeholder;
-	
+
 	// indication HTML de champ obligatoire
 	protected $required;
-	
+
 	/**
 	* Le constructeur  demande la liste des attributs avec leur valeur afin d'hydrater l'objet
 	*
@@ -46,15 +46,15 @@ abstract class Field
 			$this->hydrate($options);
 		}
 	}
-	
+
 	/**
 	* Méthode abstraite à implémenter par les classes filles permettant de construire le code HTML de chaque champ
 	*/
 	abstract public function buildWidget() ;
-	
+
 	/**
 	* Méthode hydrate
-	* 
+	*
 	* cette méthode permet d'hydrater le champ avec les valeurs passées en paramètre au constructeur
 	*
 	* @param array $options
@@ -65,14 +65,12 @@ abstract class Field
 		{
 			$method='set'.ucfirst($type);
 			if (is_callable(array($this,$method)))
-			{
 				$this->$method($value);
-			}
 		}
 	}
-	
+
 	/**
-	* Méthode permettant d'acter que la valeur d'un champ est valide                                                                             
+	* Méthode permettant d'acter que la valeur d'un champ est valide
 	*
 	*@return boolean Vrai si le champ est valide
 	*/
@@ -88,7 +86,7 @@ abstract class Field
 		}
 		return TRUE;
 	}
-	
+
 	/**
 	* getter de label
 	*/
@@ -96,7 +94,7 @@ abstract class Field
 	{
 		return $this->label;
 	}
-	
+
 	/**
 	* getter de name
 	*/
@@ -104,7 +102,7 @@ abstract class Field
 	{
 		return $this->name;
 	}
-	
+
 	/**
 	* getter de value
 	*/
@@ -112,7 +110,7 @@ abstract class Field
 	{
 		return $this->value;
 	}
-	
+
 	/**
 	* getter de l'id
 	*/
@@ -120,7 +118,7 @@ abstract class Field
 	{
 		return $this->id;
 	}
-	
+
 	/**
 	 * getter de validators
 	 */
@@ -128,7 +126,7 @@ abstract class Field
 	{
 		return $this->validators;
 	}
-	
+
 	/**
 	 * getter de placeholder
 	 */
@@ -136,8 +134,8 @@ abstract class Field
 	{
 		return $this->placeholder;
 	}
-	
-	/**  
+
+	/**
 	 * getter de required
 	 */
 	public function required()
@@ -146,7 +144,7 @@ abstract class Field
 	}
 	/**
 	 * setter de validators
-	 * 
+	 *
 	 * @param array $validators
 	 */
 	public function setValidators(array $validators)
@@ -160,7 +158,7 @@ abstract class Field
 			}
 		}
 	}
-	
+
 	/**
 	* setter de label
 	*/
@@ -175,7 +173,7 @@ abstract class Field
 	{
 		$this->name=$name;
 	}
-	
+
 	/**
 	* setter de value
 	*/
@@ -183,7 +181,7 @@ abstract class Field
 	{
 		$this->value=$value;
 	}
-	
+
 	/**
 	* setter de l'id
 	*/
@@ -198,11 +196,11 @@ abstract class Field
 	{
 		$this->placeholder=$placeholder;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Setter de required
-	 * 
+	 *
 	 * @param unknown $required
 	 */
 	public function setRequired($required)

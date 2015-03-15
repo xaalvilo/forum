@@ -1,112 +1,130 @@
 <?php
 
-/** 
-* cette classe a pour rôle de représenter un formulaire composé d'une liste de champs
-*
-*/
-
+/**
+ *
+ * @author Frédéric Tarreau
+ *
+ * 27 févr. 2015 - Form.class.php
+ *
+ * cette classe a pour rôle de représenter un formulaire composé d'une liste de champs
+ *
+ */
 namespace Framework\Formulaire;
 
 class Form
 {
 	/* objet instance d'une classe fille de Entité, auquel sera rattaché le formulaire  */
 	protected $entite;
-	
+
 	/* methode associée au formulaire */
-	protected $method;
-	
+	protected $methode;
+
 	/* action associée au formulaire */
 	protected $action;
-	
-	/* liste des champs sous forme de tableau */
-	protected $fields;
-	
+
+	/* @var array liste des fieldset du formulaire */
+	protected $_fieldSets;
+
 	/* liste des boutons sous forme de tableau */
 	protected $buttons;
-	
+
 	/*liste des couples nom/valeur des champs valides sous forme de tableau associatif */
 	protected $_validField;
-	
-	public function __construct(\Framework\Entite $entite,$method,$action)
+
+	/* @var mixed valeur optionnelle à passer dans le formulaire */
+	protected $value;
+
+	public function __construct(\Framework\Entite $entite,$donnees)
 	{
-		$this->setEntite($entite);	
-		
-		if((!empty($method))&&(!empty($action)))
-		{
-		  $this->setMethod($method);
-		  $this->setAction($action);
-		}
+		$this->setEntite($entite);
+		$this->hydrate($donnees);
 	}
-	
+
 	/**
-	* 
-	* Méthode add
-	* 
-	* Méthode permettant d'ajouter des champs au formulaire
-	* 
-	* @param Field champs à ajouter
+	 * Méthode hydrate
+	 *
+	 * cette méthode permet d'hydrater le champ avec les valeurs passées en paramètre au constructeur
+	 *
+	 * @param array $options
+	 */
+	public function hydrate($options)
+	{
+	    foreach($options as $type=>$value)
+	    {
+	        $method='set'.ucfirst($type);
+	        if (is_callable(array($this,$method)))
+	            $this->$method($value);
+	    }
+	}
+
+	/**
+	*
+	* Méthode addFieldSet
+	*
+	* Méthode permettant d'ajouter des fieldsets au formulaire
+	*
+	* @param FieldSet à ajouter
 	* @return Form nouveau formulaire
 	*/
-	public function add(Field $field)
+	public function addFieldSet(FieldSet $fieldSet)
 	{
-		// récupération du nom du champ
-		$attr=$field->name();
-		
-		// assignation de la valeur correspondante au champ
-		$field->setValue($this->entite->$attr());
-		
-		// ajout du champ passé en argument à la liste de champs
-		$this->fields[]=$field;
-		
+	    foreach ($fieldSet->fields() as $field)
+	    {
+	        // récupération du nom du champ
+	        $attr=$field->name();
+
+	        // assignation de la valeur correspondante au champ
+	        $field->setValue($this->entite->$attr());
+	    }
+	    // ajout du fieldset à la liste des fieldsets
+		$this->_fieldSets[]=$fieldSet;
 		return $this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Méthode addButton
-	 * 
+	 *
 	 * Cette méthode permet d'ajouter un bouton au formulaire
 	 *
-	 * \Framework\Form
-	 * 
 	 * @param Button $button
-	 * @return \Framework\Form
+	 * @return \Framework\Formulaire\Form
 	 */
 	public function addButton(Button $button)
 	{
 	    // ajout du bouton passé en argument à la liste des boutons
 	    $this->buttons[]=$button;
-	   
+
 	    return $this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Méthode baliseForm
 	 *
 	 * Cette méthode permet de créer les balises HTML 5 d'ouverture et de cloture d'un formulaire
-	 * 
-	 * return_type string
-	 * 
-	 * @param string $method méthode associée au formulaire
+	 *
+	 * Remarque : l'utilisation des classes bootstrap CSS ici
+	 *
+	 * @param string $methode méthode associée au formulaire
 	 * @param string $action action associée au formulaire
 	 */
 	public function baliseForm()
 	{
-	   if (isset($this->method,$this->action))
+	   if (isset($this->methode,$this->action))
 	   {
-	      $balise='<form method="'.$this->method.'" action="'.$this->action.'"><p>';
+	      $balise='<form class="form-horizontal" method="'.$this->methode.'" action="'.$this->action.'"><div class="form-group">';
 	   }
 	   else
 	   {
-	      $balise ='<form><p>';
+	      $balise='<form class="form-horizontal"><div class="form-group">';
 	   }
 	   return $balise;
 	}
-	
+
 	/**
 	* Méthode createView
-	* 
+	*
 	* permet de générer l'affichage de tous les champs associés au formulaire
 	*
 	* @return string View, portion de vue correspondant au formulaire c.a.d HTML
@@ -114,31 +132,40 @@ class Form
 	public function createView()
 	{
 	    $view = $this->baliseForm();
-		
-		// g�n�ration pas � pas de chaque champ du formulaire
-		foreach($this->fields as $field)
-		{
-			$view.=$field->buildWidget().'<br />';
-		}	
-		
-		// insertion des éventuels boutons du formulaire
-		if (!empty($this->buttons))
-		{		   
-		    foreach($this->buttons as $button)
-		    {
-		        $view.=$button->buildWidget().'<br />';
-		    }
-		}
-		
+
+	    foreach ($this->_fieldSets as $fieldSet)
+	    {
+	        // un fieldset avec une entrée est considéré comme un champ simple
+	        if(count($this->_fieldSets)>0)
+	            $view.=$fieldSet->buildWidget();
+
+	        // g�n�ration pas � pas de chaque champ du formulaire
+	        foreach($fieldSet->fields() as $field)
+	        {
+	            $view.=$field->buildWidget();
+	        }
+
+	       if(count($this->_fieldSets)>0)
+	            $view.='</fieldset>';
+	    }
+
+	    // insertion des éventuels boutons du formulaire
+	    if (!empty($this->buttons))
+	    {
+	        foreach($this->buttons as $button)
+	        {
+	            $view.=$button->buildWidget();
+	        }
+	    }
+
 		// insertion de la balise de cloture du formulaire
-		$view.='</p></form>';
-				
+		$view.='</div></form>';
 		return $view;
 	}
-	
+
 	/**
 	* Méthode isValid
-	* 
+	*
 	* Cette méthode permet d'acter que tous les champs du formulaire sont valides
 	*
 	* @return Boolean Vrai si le formulaire est valide, Faux sinon
@@ -146,22 +173,21 @@ class Form
 	public function isValid()
 	{
 		$valid=true;
-		
+
 		//vérification pas à pas que les champs sont valides
-		foreach($this->fields as $field)
+		foreach($this->_fieldSets as $fieldSet)
 		{
-			if (!$field->isValid())
-			{
-				$valid=false;
-			}
-			else 
-			{
-				$this->_validField[$field->name()]=$field->value();
-			}
+		    foreach($fieldSet->fields() as $field)
+		    {
+		        if (!$field->isValid())
+		            $valid=false;
+		        else
+		            $this->_validField[$field->name()]=$field->value();
+		    }
 		}
 		return $valid;
 	}
-	
+
 	/**
 	* setter de entite
 	*/
@@ -169,7 +195,7 @@ class Form
 	{
 		$this->entite=$entite;
 	}
-	
+
 	/**
 	* getter de entite
 	*/
@@ -177,32 +203,35 @@ class Form
 	{
 		return $this->entite;
 	}
-	
+
 	/**
-	 * setter de method
+	 * setter de methode
+	 *
+	 * @param string
 	 */
-	public function setMethod($method)
+	public function setMethode($methode)
 	{
-	    if(is_string($method))
+	    if(is_string($methode))
 	    {
-	         $this->method=$method;
-	    }	   
+	         $this->methode=$methode;
+	    }
 	}
-	
+
 	/**
-	 * 
-	 * getter de method
 	 *
-	 * return_type
+	 * getter de methode
 	 *
+	 * @return string
 	 */
 	public function method()
 	{
 	    return $this->method;
 	}
-	
+
 	/**
 	 * setter de action
+	 *
+	 * @param string
 	 */
 	public function setAction($action)
 	{
@@ -211,15 +240,40 @@ class Form
 	       $this->action=$action;
 	    }
 	}
-	
+
 	/**
 	 * getter de action
+	 *
+	 * @return string
 	 */
 	public function action()
 	{
 	    return $this->action;
 	}
-	
+
+	/**
+	 * setter de value
+	 *
+	 * @param mixed
+	 */
+	public function setValue($value)
+	{
+	    $this->value=$value;
+	}
+
+	/**
+	 *
+	 * getter de value
+	 *
+	 * @return mixed
+	 */
+	public function value()
+	{
+	    return $this->value;
+	}
+
+
+
 	/**
 	 * setter de validField
 	 */
@@ -227,7 +281,7 @@ class Form
 	{
 	    $this->_validField=$validField;
     }
-	
+
 	/**
 	 * getter de validField
 	 */
@@ -235,6 +289,4 @@ class Form
 	{
 	    return $this->_validField;
 	}
-	
-}		
-	
+}

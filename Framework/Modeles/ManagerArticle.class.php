@@ -27,7 +27,8 @@ class ManagerArticle extends \Framework\Manager
     {
         // requête avec classement des articles dans l'ordre décroissant des dates
         $sql = 'select ART_ID as id, ART_TITRE as titre, ART_LIBELLE as libelle, ART_DATE as date,'
-                . ' ART_DATE_MODIF as dateModif,  ART_CONTENU as contenu, ART_IMAGE as image from T_ARTICLE';
+                . ' ART_DATE_MODIF as dateModif,  ART_CONTENU as contenu, ART_IMAGE as image,'
+                . ' ART_NBCOMENTS as nbComents from T_ARTICLE';
 
         if(!empty($libelle))
             $sql.= ' where ART_LIBELLE=?';
@@ -94,7 +95,7 @@ class ManagerArticle extends \Framework\Manager
     public function getArticle($idArticle)
     {
         $sql = 'select ART_ID as id, ART_TITRE as titre, ART_LIBELLE as libelle, ART_DATE as date,'
-                . ' ART_DATE_MODIF as dateModif, ART_CONTENU as contenu, ART_IMAGE as image from T_ARTICLE'
+                . ' ART_DATE_MODIF as dateModif, ART_CONTENU as contenu, ART_IMAGE as image, ART_NBCOMENTS as nbComents from T_ARTICLE'
                 . ' where ART_ID=?';
 
   		// instanciation d'objet "Modele\Article" dont les attributs prennent pour valeur les donn�es de la BDD de cet article
@@ -132,8 +133,8 @@ class ManagerArticle extends \Framework\Manager
     {
         // requête de classement des articles par date, dans l'ordre décroissant avec filtre sur le premier, donc le plus récent
         $sql = 'select ART_ID as id, ART_TITRE as titre, ART_LIBELLE as libelle, ART_DATE as date,'
-                . ' ART_DATE_MODIF as dateModif, ART_CONTENU as contenu, ART_IMAGE as image from T_ARTICLE'
-                . ' order by ART_DATE desc limit 0,1';
+                . ' ART_DATE_MODIF as dateModif, ART_CONTENU as contenu, ART_IMAGE as image, ART_NBCOMENTS as nbComents'
+                . ' from T_ARTICLE order by ART_DATE desc limit 0,1';
 
       	// instanciation d'objet "Modele\Article" dont les attributs prennent pour valeur les donn�es de la BDD de cet article
         $requete =$this->executerRequete($sql,NULL,'\Framework\Entites\Article');
@@ -170,11 +171,11 @@ class ManagerArticle extends \Framework\Manager
      * @param string $image
      * @param string $contenu
      */
-    public function ajouterArticle($titre,$libelle,$contenu,$image)
+    public function ajouterArticle($titre,$libelle,$contenu,$image,$nbComents)
     {
         //requ�te avec insertion de l'article
-        $sql = 'insert into T_ARTICLE( ART_TITRE, ART_LIBELLE, ART_DATE, ART_CONTENU, ART_IMAGE)'
-                . ' values(?, ?, ?, ?, ?)';
+        $sql = 'insert into T_ARTICLE( ART_TITRE, ART_LIBELLE, ART_DATE, ART_CONTENU, ART_IMAGE, ART_NBCOMENTS)'
+                . ' values(?, ?, ?, ?, ?, ?)';
 
         // utilisation de la classe DateTime pour faire correspondre le format Php avec le format DateTime de MySql, time courant de la machine
         $odate = new \DateTime();
@@ -182,7 +183,7 @@ class ManagerArticle extends \Framework\Manager
         // il faut formater la date en cha�ne de caract�re
         $date = $odate->format('Y-m-d H:i:s');
 
-        $this->executerRequete($sql,array($titre,$libelle,$date,$contenu,$image),'\FrameWork\Entites\Article');
+        $this->executerRequete($sql,array($titre,$libelle,$date,$contenu,$image,$nbComents),'\FrameWork\Entites\Article');
     }
 
     /**
@@ -205,6 +206,29 @@ class ManagerArticle extends \Framework\Manager
         //permettre � la requ�te d'être de nouveau exécutée
         $requeteSQL->closeCursor();
         return $tableauResultat;
+    }
+
+    /**
+     *
+     * Méthode actualiserNbComents
+     *
+     * permet d'actualiser le nbre de commentaires associés à l'article
+     *
+     * @param int $idArticle
+     * @param int $modif
+     */
+    public function actualiserNbComents($idArticle,$modif)
+    {
+        // préparation de la requête SQL UPDATE
+        $sql = 'update T_ARTICLE set ART_NBCOMENTS=ART_NBCOMENTS + '.$modif.' where ART_ID=?';
+
+        $resultat = $this->executerRequete($sql,array($idArticle),'Framework\Entites\Article');
+
+        if ($resultat===FALSE)
+        {
+            //TODO msg Flash non OK
+            throw new \Exception("Données de l'article '$idArticle' non mises à jour");
+        }
     }
 }
 
