@@ -38,6 +38,7 @@ abstract class Application
 	{
 		$this->_routeur = new Routeur($this);
 		$this->_httpReponse = new Reponse($this);
+		$this->_nom ='';
 
 		// instanciation d'un objet session
 		$this->_sessionHandler = new MySessionHandler($this);
@@ -48,17 +49,19 @@ abstract class Application
 		if(!isset($_SESSION['user']))
 		    $_SESSION['user']=array();
 		$user = new \Framework\Entites\User($_SESSION['user']);
-
 		$this->_userHandler = new UserHandler($this,$session,$user);
 
-		$this->_nom ='';
+		// si l'utilisateur est authentifié, on hydrate l'instance User avec l'ensemble des données
+		if($this->_userHandler->IsUserAuthenticated())
+		{
+		    $idUser = $this->_userHandler->user()->id();
+		    $completedUser = $this->_userHandler->initUser($idUser);
+		}
 	}
 
 	/**
 	 *
 	 * Méthode abstraite run
-	 *
-	 * return_type
 	 *
 	 */
 	abstract public function run();
@@ -66,7 +69,6 @@ abstract class Application
 	/**
 	 *
 	 * Méthode httpRequete
-	 *
 	 *
 	 */
 	public function httpRequete()

@@ -38,8 +38,7 @@ abstract class Manager
     */
     protected function executerRequete($sql,$params=null,$entite=null)
     {
-        if($params==null)
-        {
+        if($params==null){
             //execution directe de la requete s'il n'y a pas de paramètre
             $resultat = self::getBdd()->query($sql);
 
@@ -47,8 +46,7 @@ abstract class Manager
            	if(!$resultat)
             	return $resultat->errorInfo();
         }
-        else
-        {
+        else {
             //execution de la requete pr�par�e
             $resultat = self::getBdd()->prepare($sql);
 

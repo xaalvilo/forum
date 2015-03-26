@@ -25,25 +25,28 @@ class ManagerCommentaire extends \Framework\Manager
     * méthode renvoyant la liste de l'ensemble des commentaires d'un Billet ou d'un article
     *
     * @param int $table identifiant de la table concernée dans la BDD
-    * @param int $idReference identifiant du billet ou de l'article
+    * @param int $idParent identifiant du billet ou de l'article
     *
     * @return PDOStatement la liste des commentaires
     */
-    public function getListeCommentaires($table,$idReference)
+    public function getListeCommentaires($table,$idParent)
     {
         //requête avec classement des commentaires dans l'ordre décroissant
         switch ($table)
         {
             // commentaire d'un billet
             case 1 :
-                    $sql = 'select COM_ID as id, COM_DATE as date,'
-                    . ' COM_AUTEUR as auteur, COM_CONTENU as contenu from T_COMMENTAIRE'
-                    . ' where BIL_ID=?';
+                    $sql ='select C.COM_ID as id, C.COM_DATE as date, C.COM_DATEMODIF as dateModif,'
+                    . ' U.USER_PSEUDO as auteur, C.COM_CONTENU as contenu,'
+                    .  'U.USER_NBRECOMMENTAIRESFORUM as nbUserComents, U.USER_NBREBILLETSFORUM as nbUserBillets'
+                    . ' from T_COMMENTAIRE C'
+                    . ' join T_USER U on U.USER_ID =C.USER_ID'
+                    . ' where C.BIL_ID=?';
                     break;
 
             // commentaire d'un article
             case 2 :
-                    $sql = 'select COM_ART_ID as id, COM_ART_DATE as date,'
+                    $sql = 'select COM_ART_ID as id, COM_ART_DATE as date, COM_ART_DATEMODIF as dateModif,'
                     . ' COM_ART_AUTEUR as auteur, COM_ART_CONTENU as contenu from T_COMMENTAIRE_ARTICLE'
                     . ' where ART_ID=?';
                     break;
@@ -54,11 +57,14 @@ class ManagerCommentaire extends \Framework\Manager
         }
 
         //instanciation d'objets "Modele\Commentaire" dont les attributs publics prennent pour valeur les donn�es de la BDD
-        $requete = $this->executerRequete($sql,array($idReference),'\Framework\Entites\Commentaire');
+        $requete = $this->executerRequete($sql,array($idParent),'\Framework\Entites\Commentaire');
 
         //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions, les colonnes sont li�s aux attributs de la
         //la classe
         $commentaires = $requete->fetchAll();
+
+        //permettre � la requ�te d'�tre de nouveau ex�cut�e
+        $requete->closeCursor();
 
         // spécification de la langue utilisée pour l'affichage de la date et heure
         // grâce au trait Affichage utilisé par la classe mère
@@ -68,10 +74,8 @@ class ManagerCommentaire extends \Framework\Manager
         {
             // il faut transformer l'attribut Date en objet DateTime
             $commentaire->setDate(new \DateTime($commentaire->date()));
+            $commentaire->setDateModif(new \DateTime($commentaire->dateModif()));
         }
-
-        //permettre � la requ�te d'�tre de nouveau ex�cut�e
-        $requete->closeCursor();
         return $commentaires;
     }
 
@@ -82,24 +86,27 @@ class ManagerCommentaire extends \Framework\Manager
      * méthode renvoyant la liste de l'ensemble des commentaires d'un Billet ou d'un article
      *
      * @param int $table identifiant de la table concernée dans la BDD
-     * @param int $idReference identifiant du commentaire de billet ou d'article
-     * @return PDOStatement le commentaire sous forme de tableau
+     * @param int $id identifiant du commentaire de billet ou d'article
+     * @return PDOStatement le commentaire sous forme d'objet
      * @throws \Exception en cas d'erreur
      */
-    public function getCommentaire($table,$idReference)
+    public function getCommentaire($table,$id)
     {
     	switch ($table)
     	{
     		// commentaire d'un billet
     		case 1 :
-    		$sql = 'select BIL_ID as idParent, COM_AUTEUR as auteur, COM_CONTENU as contenu from T_COMMENTAIRE'
-    		. ' where COM_ID=?';
+    		$sql = 'select C.BIL_ID as idParent, U.USER_PSEUDO as auteur, C.COM_CONTENU as contenu,'
+    		     . ' C.COM_DATE as date, C.COM_DATEMODIF as dateModif, C.COM_ID as id from T_COMMENTAIRE C'
+    		     . ' join T_USER U on U.USER_ID=C.USER_ID'
+    		     . ' where C.COM_ID=?';
                     break;
 
             // commentaire d'un article
             case 2 :
-    		$sql = 'select ART_ID as idParent, COM_ART_CONTENU as contenu from T_COMMENTAIRE_ARTICLE'
-    		. ' where COM_ART_ID=?';
+    		$sql = 'select ART_ID as idParent, COM_ART_CONTENU as contenu, COM_ART_DATE as date, COM_ART_DATEMODIF as dateModif '
+    		     . ' from T_COMMENTAIRE_ARTICLE'
+    		     . ' where COM_ART_ID=?';
                     break;
 
             // message d'erreur
@@ -107,23 +114,69 @@ class ManagerCommentaire extends \Framework\Manager
                 throw new \Exception ("mauvaise selection de la table");
     	}
 
-    	//instanciation d'objets "Modele\Commentaire" dont les attributs publics prennent pour valeur les donn�es de la BDD
-    	$resultat = $this->executerRequete($sql,array($idReference),'\Framework\Entites\Commentaire');
+    	//instanciation d'objets "Modele\Commentaire" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
+    	$resultat = $this->executerRequete($sql,array($id),'\Framework\Entites\Commentaire');
 
-    	if ($resultat->rowcount()==1)
-    	{
+    	if ($resultat->rowcount()==1){
     		// récupération sous forme de tableau
-    		$commentaire = $resultat->fetch(\PDO::FETCH_ASSOC);
+    		$commentaire = $resultat->fetch();
 
     		// liberer la connexion
     		$resultat->closeCursor();
 
+    		// spécification de la langue utilisée pour l'affichage de la date et heure
+    		// cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
+    		$this->setHeureDateLocale();
+
+    		// il faut transformer l'attribut Date et DateModif en objet DateTime
+    		$commentaire->setDate(new \DateTime($commentaire->date()));
+    		$commentaire->setDateModif(new \DateTime($commentaire->dateModif()));
     		return $commentaire;
     	}
-    	else
-    	{
-    		throw new \Exception("Aucun commentaire ne correspond à l'identifiant '$idReference'");
-    	}
+    	else throw new \Exception("Aucun commentaire ne correspond à l'identifiant '$id'");
+    }
+
+    /**
+     *
+     * Méthode getNewCommentaires
+     *
+     * permet de récupérer tous les nouveaux commentaires postérieurs à une date de dernière connexion d'un utilisateur
+     *
+     * @param string $date
+     * @return \PDOStatement liste des commentaires
+     * @throws \Exception
+     */
+    public function getNewCommentaires($date)
+    {
+       $sql = 'select C.BIL_ID as idParent, U.USER_PSEUDO as auteur, C.COM_CONTENU as contenu,'
+    		   . ' C.COM_DATE as date, C.COM_DATEMODIF as dateModif, C.COM_ID as id,'
+    		   . ' B.BIL_TITRE as titre, B.TOPIC_ID as idTopic, T.TOPIC_TITRE as titreTopic from T_COMMENTAIRE C'
+    		   . ' join T_USER U on U.USER_ID=C.USER_ID'
+    		   . ' join T_BILLET B on B.BIL_ID=C.BIL_ID'
+    		   . ' join T_FORUM_TOPIC T on T.TOPIC_ID = B.TOPIC_ID'
+    		   . ' where C.COM_DATE > ?';
+
+       //instanciation d'objets "Modele\Commentaire" dont les attributs publics prennent pour valeur les donn�es de la BDD
+       $resultat = $this->executerRequete($sql,array($date),'\Framework\Entites\Commentaire');
+
+       //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions, les colonnes sont li�s aux attributs de la
+       //la classe
+       $commentaires = $resultat->fetchAll();
+
+       //permettre � la requ�te d'�tre de nouveau ex�cut�e
+       $resultat->closeCursor();
+
+       // spécification de la langue utilisée pour l'affichage de la date et heure
+       // grâce au trait Affichage utilisé par la classe mère
+       $this->setHeureDateLocale();
+
+       foreach ($commentaires as $commentaire)
+       {
+           // il faut transformer l'attribut Date en objet DateTime
+           $commentaire->setDate(new \DateTime($commentaire->date()));
+           $commentaire->setDateModif(new \DateTime($commentaire->dateModif()));
+       }
+       return $commentaires;
     }
 
     /**
@@ -133,25 +186,25 @@ class ManagerCommentaire extends \Framework\Manager
     * Méthode permettant d'ajouter un commentaire
     *
     * @param int $table identifiant de la table concernée dans la BDD
-    * @param string $auteur nom de l'auteur
-    * @param int $idBillet identifiant du Billet
+    * @param int $idAuteur identifiant de l'auteur dans la BDD User si Forum ou nom de l'auteur si Blog
+    * @param int $idParent identifiant du Billet
     * @param string $contenu texte du commentaire
     */
-    public function ajouterCommentaire($table,$idReference, $auteur, $contenu)
+    public function ajouterCommentaire($table,$idParent, $idAuteur, $contenu)
     {
        //requ�te avec insertion du commentaire
         switch ($table)
         {
             // commentaire d'un billet
             case 1 :
-                    $sql = 'insert into T_COMMENTAIRE(BIL_ID, COM_DATE, COM_AUTEUR, COM_CONTENU)'
-                    . ' values(?, ?, ?, ?)';
+                    $sql = 'insert into T_COMMENTAIRE(BIL_ID, COM_DATE, USER_ID, COM_CONTENU)'
+                         . ' values(?, ?, ?, ?)';
                      break;
 
             // commentaire d'un article
             case 2 :
                     $sql = 'insert into T_COMMENTAIRE_ARTICLE(ART_ID, COM_ART_DATE, COM_ART_AUTEUR, COM_ART_CONTENU)'
-                    . ' values(?, ?, ?, ?)';
+                         . ' values(?, ?, ?, ?)';
                     break;
 
             // message d'erreur
@@ -165,7 +218,7 @@ class ManagerCommentaire extends \Framework\Manager
         // il faut formater la date en cha�ne de caract�re
         $date = $odate->format('Y-m-d H:i:s');
 
-        $requeteSQL = $this->executerRequete($sql,array($idReference,$date,$auteur,$contenu),'\Framework\Entites\Commentaire');
+        $requeteSQL = $this->executerRequete($sql,array($idParent,$date,$idAuteur,$contenu),'\Framework\Entites\Commentaire');
     }
 
     /**
@@ -213,14 +266,10 @@ class ManagerCommentaire extends \Framework\Manager
     public function actualiserCommentaire ($table, $idCommentaire, $donnees)
     {
         if(array_key_exists('date', $donnees))
-        {
             $donnees['date']= $donnees['date']->format('Y-m-d H:i:s');
-        }
 
         if(array_key_exists('dateModif', $donnees))
-        {
             $donnees['dateModif']= $donnees['dateModif']->format('Y-m-d H:i:s');
-        }
 
         // création de la chaîne de caractère pour la requête SQL
         // retirer au préalable l'identifiant qui n'est jamais actualisé
@@ -238,9 +287,7 @@ class ManagerCommentaire extends \Framework\Manager
     		        $i++;
     		        $modification.='COM_'.strtoupper($attribut).'=?';
     		        if ($i<$nbreModifications)
-    		        {
     		            $modification.=', ';
-    		        }
     		    }
     			$sql = 'update T_COMMENTAIRE set '.$modification.' where COM_ID=?';
     					break;
@@ -273,10 +320,8 @@ class ManagerCommentaire extends \Framework\Manager
     	$resultat = $this->executerRequete($sql,$donnees,'\Framework\Entites\Commentaire');
 
     	if ($resultat===FALSE)
-    	{
     		//TODO msg Flash non OK
     		throw new \Exception("Données du commentaire '$idCommentaire' non mises à jour");
-    	}
     }
 
 
@@ -335,10 +380,10 @@ class ManagerCommentaire extends \Framework\Manager
      * Permet de connaître le nbre de commentaires d'un billet ou article
      * TODO sera utile pour le backend
      * @param int $table, table de BDD concernée
-     * @param int $idReference, id du parent (billet ou article)
+     * @param int $idParent, id du parent (billet ou article)
      * @throws \Exception en cas d'erreur de sélection de la table de BDD concernée
      */
-    public function getNbComents($table,$idReference)
+    public function getNbComents($table,$idParent)
     {
         switch ($table)
         {
@@ -357,7 +402,7 @@ class ManagerCommentaire extends \Framework\Manager
                     throw new \Exception ("mauvaise selection de la table");
         }
         // instanciation d'objets "Modele\Commentaire" dont les attributs prennent pour valeur les donn�es de la BDD
-        $requeteSQL = $this->executerRequete($sql,array($idReference),'\Framework\Entites\Commentaire');
+        $requeteSQL = $this->executerRequete($sql,array($idParent),'\Framework\Entites\Commentaire');
 
         $count = $requeteSQL->fetchcolumn();
 

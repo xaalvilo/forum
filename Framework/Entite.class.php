@@ -23,9 +23,7 @@ abstract class Entite implements \ArrayAccess
     {
         // si on a sp�cifi� des valeurs, on hydrate l'objet
     	if (!empty($donnees))
-        {
            $this->hydrate($donnees);
-        }
     }
 
     /**
@@ -43,7 +41,7 @@ abstract class Entite implements \ArrayAccess
     */
     public function setId($id)
     {
-        $this->id = (int) $id ;
+        $this->id = (int)$id ;
     }
 
     /**
@@ -99,19 +97,15 @@ abstract class Entite implements \ArrayAccess
      */
     public function offsetGet($var)
     {
-    	if (isset($this->$var) && is_callable(array($this, $var)))
-    	{
+    	if (isset($this->$var) && is_callable(array($this,$var)))
     		return $this->$var();
-    	}
     }
 
     public function offsetSet($var, $value)
     {
     	$method = 'set'.ucfirst($var);
     	if (isset($this->$var) && is_callable(array($this, $method)))
-    	{
     		$this->$method($value);
-    	}
     }
 
     public function offsetExists($var)
@@ -122,5 +116,25 @@ abstract class Entite implements \ArrayAccess
     public function offsetUnset($var)
     {
     	throw new \Exception('Impossible de supprimer une quelconque valeur');
+    }
+
+    /**
+     *
+     * Méthode EntiteToArray
+     *
+     * Complémentaire à l'interface, elle permet de transformer un objet en tableau en utilisant le "cast" to array
+     * qui permet de prendre en compte tous les attributs (même protégés), alors que get_object_vars() ne retourne que les
+     * attributs publics
+     *
+     * @return array
+     */
+    protected function EntiteToArray()
+    {
+        $tableau= (array)$this;
+        foreach ($tableau as $cle=>$valeur)
+        {
+            $tableau[str_replace(chr(0).'*'.chr(0),'',$cle)]=$valeur;
+        }
+        return $tableau;
     }
 }

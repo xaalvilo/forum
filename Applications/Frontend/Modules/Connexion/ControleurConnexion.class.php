@@ -46,8 +46,7 @@ class ControleurConnexion extends \Framework\Controleur
     public function index(array $donnees = array())
     {
         // tester si l'utilisateur s'est déjà authentifié avec succès lors d'une précédente requête
-        if(!$this->_app->userHandler()->IsUserAuthenticated())
-        {
+        if(!$this->_app->userHandler()->IsUserAuthenticated()){
             // s'il y a un paramètre id dans la requete on le récupère
             if($this->_requete->existeParametre('id'))
                 $id=$this->_requete->getParametre('id');
@@ -69,8 +68,10 @@ class ControleurConnexion extends \Framework\Controleur
             $this->genererVue(array('formulaire'=>$form->createView()));
         }
         // l'utilisateur est déjà identifié lors d'une précédente requête
-        else
-        {
+        else {
+            $idUser = $this->_app->userHandler()->user()->id();
+            $user = $this->_app->userHandler()->initUser($idUser);
+
             //TODO redirection interne il faut coder cette fonction
             $_GET['controleur']='Forum';
             $_GET['action']='';
@@ -111,16 +112,13 @@ class ControleurConnexion extends \Framework\Controleur
         $options = array();
 
         // si la methode est bien POST et que le formulaire est valide, recherche du login correspondant en BDD
-        if (($this->_requete->getMethode() =='POST'))
-        {
+        if (($this->_requete->getMethode() =='POST')){
             // le formulaire est valide
-            if ($form->isValid())
-            {
+            if ($form->isValid()){
                 // vérification de la validité du login, récupération du statut et de l'id en BDD
                 $tableauDonnees = $this->_app->userHandler()->managerUser()->recherchePseudo($pseudo);
 
-                if (($tableauDonnees!=FALSE) && array_key_exists('id',$tableauDonnees) && array_key_exists('_hash',$tableauDonnees))
-                {
+                if (($tableauDonnees!=FALSE) && array_key_exists('id',$tableauDonnees) && array_key_exists('_hash',$tableauDonnees)){
                     $hash = $tableauDonnees['_hash'];
 
                     // vérification du hash avec le mot de passe, resultat sous forme de tableau associatif
@@ -130,30 +128,32 @@ class ControleurConnexion extends \Framework\Controleur
                     $statutMembre = \Framework\Configuration::get('membre',1);
 
                     // si la vérification du hash a réussi et que le statut est bien au minimum "membre"
-                    if (($resultat['valide']) && ($tableauDonnees['_statut']<= $statutMembre))
-                    {
+                    if (($resultat['valide']) && ($tableauDonnees['_statut']<= $statutMembre)){
                         $idUser = $tableauDonnees['id'];
 
                         // actualisation au besoin du hash
                         if (!empty($resultat['hash']))
-                        {
                             $donnees['hash']=$resultat['hash'];
-                        }
 
-                        // actualisation de la date de connexion "now"
+                        // actualisation de la date de connexion "now" et mise à jour concommittante de la
+                        // date de connexion précédente par le managerUser
                         $odateConnexion = new \DateTime();
                         $donnees['_dateConnexion']= $odateConnexion;
 
                         // Inscription des données actualisées en BB
-                        $this->_app->userHandler()->managerUser()->actualiserUser($idUser, $donnees);
+                        if(isset($donnees)&&(!empty($donnees)))
+                            $this->_app->userHandler()->managerUser()->actualiserUser($idUser, $donnees);
 
                         // regeneration de l'Id de la session en conservant les données
                         $this->_app->userHandler()->regenererIdSession();
 
                         // hydratation de l'instance User créée par le UserHandler avec l'ensemble des donnees
-                        $user = $this->_app->userHandler()->managerUser()->getUser($idUser);
+                        /*$user = $this->_app->userHandler()->managerUser()->getUser($idUser);
                         $user->setBrowserVersion($this->_app->userHandler()->getUserBrowserVersion());
-                        $this->_app->userHandler()->setUser($user);
+                        $user->setIp($this->_app->userHandler()->getUserIp());
+                        $this->_app->userHandler()->setUser($user);*/
+
+                        $user = $this->_app->userHandler()->initUser($idUser);
 
                         // utilisateur vu  comme authentifié dans la session associée
                         $this->_app->userHandler()->setUserAuthenticated();
@@ -236,7 +236,7 @@ class ControleurConnexion extends \Framework\Controleur
      *
      * cette méthode correspond à l'action de déconnexion de l'utilisateur.
      * Elle ne doit pourvoir s'exécuter que si l'utilisateur est déjà connecter
-     * Après la déconnexion, il faut rediriger vers la page d'accueil en instanciant un nouvelle
+     * Après la déconnexion, il faut rediriger vers la page d'accueil en instanciant un nouvel
      * objet Session
      *
      */
@@ -244,14 +244,26 @@ class ControleurConnexion extends \Framework\Controleur
     {
         if($this->_app->userHandler()->IsUserAuthenticated()===TRUE)
         {
+            // actualisation de la dernière date de connexion "now"
+            $odateConnexion = new \DateTime();
+            $donnees['_dateConnexion']= $odateConnexion;
+
+            // Inscription des données actualisées en BB
+            $idUser=$this->_app->userHandler()->user()->id();
+            $this->_app->userHandler()->managerUser()->actualiserUser($idUser, $donnees);
+
             $this->_app->userHandler()->detruireSession();
-        }
-        //TODO redirection interne il faut coder cette fonction
+
+            //TODO redirection interne il faut coder cette fonction
             $_GET['controleur']='Accueil';
             $_GET['action']='';
             $_GET['id']='';
+
             $session=new \Framework\Entites\Session();
-            $this->_app->userHandler()->setSession($session);
+
+            // TODO destruction et recréation de l'objet user ?
             $this->_app->routeur()->routerRequete($this->_app);
+        }
+
     }
 }

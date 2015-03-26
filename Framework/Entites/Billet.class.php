@@ -30,8 +30,14 @@ class Billet extends \Framework\Entite
   /* @var int nbre de commentaires associés au billet */
   protected $nbComents;
 
+  /* @var int identifiant du dernier commentaire */
+  protected $lastComent;
+
   /* @var int thème du billet */
   protected $idTopic;
+
+  /* @var int nbre affichage du billet */
+  protected $nbVu;
 
   const AUTEUR_INVALIDE=1;
   const TITRE_INVALIDE=2;
@@ -72,6 +78,13 @@ class Billet extends \Framework\Entite
         $this->idTopic=$idTopic;
     }
 
+    /**
+     * @param int $nbVu
+     */
+    public function setNbVu($nbVu)
+    {
+        $this->nbVu=$nbVu;
+    }
 
     /**
     * @param string $auteur
@@ -91,6 +104,14 @@ class Billet extends \Framework\Entite
     public function setNbComents($nbComents)
     {
         $this->nbComents=$nbComents;
+    }
+
+    /**
+     * @param int $lastComent
+     */
+    public function setLastComent($lastComent)
+    {
+        $this->lastComent=$lastComent;
     }
 
     /**
@@ -128,9 +149,20 @@ class Billet extends \Framework\Entite
     	return $this->auteur;
     }
 
+    /**
+     * @return int
+     */
     public function idTopic()
     {
         return $this->idTopic;
+    }
+
+    /**
+     * @return int
+     */
+    public function nbVu()
+    {
+        return $this->nbVu;
     }
 
     /**
@@ -155,6 +187,14 @@ class Billet extends \Framework\Entite
     public function nbComents()
     {
         return $this->nbComents;
+    }
+
+    /**
+     * @return int
+     */
+    public function lastComent()
+    {
+        return $this->lastComent;
     }
 
     /**

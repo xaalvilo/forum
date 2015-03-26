@@ -54,7 +54,7 @@ require_once './Framework/autoload.php';
  		 $this->form->addFieldSet($fieldSet);
 
  		 // prise en compte de la valeur cachée à transmettre
- 		 $hiddenValue=$this->form->entite()->idReference();
+ 		 $hiddenValue=$this->form->entite()->idParent();
 
  		 // ajout du bouton de validation du formulaire
  		 $this->form->addButton(new \Framework\Formulaire\Button('submit','Valider','id',$hiddenValue));

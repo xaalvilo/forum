@@ -160,34 +160,26 @@ class ControleurInscription extends \Framework\Controleur
                 	$erreur =&$idUser;
 
                 	// On vérifie que l'erreur concerne bien un doublon - Le code d'erreur 23000 signifie "doublon" dans le standard ANSI SQL
-                	if (23000 == $erreur[0])
-                	{
+                	if (23000 == $erreur[0]){
                 		// expression rationnelle appliquée sur le message d'erreur SQL pour rechercher la valeur à l'origine du doublon
                 		preg_match("`Duplicate entry '(.+)' for key`", $erreur[2], $valeur_probleme);
 
                 		$valeur_probleme = $valeur_probleme[1];
 
-                		if ($pseudo == $valeur_probleme)
-                		{
+                		if ($pseudo == $valeur_probleme){
                 			$this->_app->userHandler()->setFlash("Ce pseudo est déjà utilisé.");
                 			$options['pseudo'] ='';
                 		}
-						else if ($mail == $valeur_probleme)
-						{
+						else if ($mail == $valeur_probleme){
                 			$this->_app->userHandler()->setFlash("Cette adresse e-mail est déjà utilisée.");
                 			$options['mail'] ='';
 						}
- 						else
- 						{
+ 						else {
  							$this->_app->userHandler()->setFlash("Doublon non identifié dans la base de données, reéssayez.");
  							$options['pseudo'] ='';
  							$options['mail'] ='';
  						}
-       				}
-       				else
-       				{
-                    	$this->_app->userHandler()->setFlash("L'inscription a échoué, le pseudo ou le mail existe déjà");
-       				}
+       				} else $this->_app->userHandler()->setFlash("L'inscription a échoué, le pseudo ou le mail existe déjà");
 
                  //il s'agit  d'executer l'action par d�faut permettant d'afficher à nouveau le formulaire d'inscription
                  // pré rempli avec les champs valides
@@ -269,8 +261,8 @@ class ControleurInscription extends \Framework\Controleur
                 if(ctype_digit($idUser))
                 {
                     // hydratation de l'instance User créée par le UserHandler avec l'ensemble des donnees
-                    $user = $this->_app->userHandler()->managerUser()->getUser($idUser);
-                    $this->_app->userHandler()->setUser($user);
+                    $donneesUser = $this->_app->userHandler()->managerUser()->getUser($idUser);
+                    $this->_app->userHandler()->user()->hydrate($donneesUser);
 
                     //l'utilisateur est autorisé
                     $this->_app->userHandler()->setUserAutorised();

@@ -233,19 +233,14 @@ class ControleurBlog extends \Framework\Controleur
         if (($this->_requete->getMethode() =='POST'))
         {
             if ($form->isValid())
-            {
                 // appelle de la m�thode permettant d'enregistrer un article en BDD
                 $this->_managerArticle->ajouterArticle($titre,$libelle,$contenu,$image,0);
-            }
             else
-            {
                 // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
                 $options=$form->validField();
-            }
         }
 
         //il s'agit sinon ou ensuite d'executer l'action par d�faut permettant d'afficher la liste des articles
         $this->executerAction("index",$options);
     }
-
 }

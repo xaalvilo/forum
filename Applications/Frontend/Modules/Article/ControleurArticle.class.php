@@ -68,7 +68,7 @@ class ControleurArticle extends \Framework\Controleur
         // l'utilisateur est autorisé, car inscrit, il faut directement affiché le formulaire de commentaire
     	if($this->_app->userHandler()->isUserAutorised())
         {
-            $tableauValeur = array('idReference'=>$idArticle,'methode'=>'post','action'=>'article/commenter');
+            $tableauValeur = array('idParent'=>$idArticle,'methode'=>'post','action'=>'article/commenter');
 
             //il faut préremplir le champ avec le pseudo fourni
             $donnees['auteur']= $this->_app->userHandler()->user()->pseudo();
@@ -133,7 +133,7 @@ class ControleurArticle extends \Framework\Controleur
         $contenu = $this->_requete->getParametre("contenu");
 
         // création du formulaire d'ajout de commentaire en l'hydratant avec les valeurs de la requête
-        $form=$this->initForm('Commentaire',array('idReference'=>$idArticle,'auteur'=>$auteur,'contenu'=>$contenu,'methode'=>'post','action'=>'article/commenter'));
+        $form=$this->initForm('Commentaire',array('idParent'=>$idArticle,'auteur'=>$auteur,'contenu'=>$contenu,'methode'=>'post','action'=>'article/commenter'));
 
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
         if (($this->_requete->getMethode() =='POST'))

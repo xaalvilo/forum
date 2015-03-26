@@ -58,18 +58,26 @@ class ControleurBillet extends \Framework\Controleur
     public function index(array $donnees=array())
     {
         // spécification de la table concernée dans la BDD
-        $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_BILLET;
+        $table=\Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_BILLET;
 
         // récupération des paramètres de la requête
         $idBillet=$this->_requete->getParametre("id");
 
+        //actualiser nbre de vu du Billet
+        $this->_managerBillet->actualiserBillet($idBillet,array('nbVu'=>1));
+
         // extraction du billet concerné dans la BDD
         $billet=$this->_managerBillet->getBillet($idBillet);
 
-        // extraction des commentaires associés dans la BDD
-        $commentaires=$this->_managerCommentaire->getListeCommentaires($table, $idBillet);
+        // et de données récupérées par la requête avec jointure
+        $topic = $billet->topic;
+        $nbUserComents = $billet->nbUserComents;
+        $nbUserBillets = $billet->nbUserBillets;
 
-        $tableauValeur=array('idReference'=>$idBillet,'methode'=>'post','action'=>'billet/valider');
+        // extraction des commentaires associés dans la BDD
+        $commentaires=$this->_managerCommentaire->getListeCommentaires($table,$idBillet);
+
+        $tableauValeur=array('idParent'=>$idBillet,'methode'=>'post','action'=>'billet/valider');
 
         // il faut préremplir le champ avec le pseudo fourni
         $donnees['auteur']=$this->_app->userHandler()->user()->pseudo();
@@ -80,12 +88,13 @@ class ControleurBillet extends \Framework\Controleur
         // array_merge(..)
         if(!empty ($donnees))
             $tableauValeur=array_merge($tableauValeur,$donnees);
-
         // création du formulaire d'ajout de commentaire
         $form=$this->initForm('Commentaire',$tableauValeur);
 
         // génération de la vue avec les données : billet, commentaire et formulaire d'ajout de commentaire
-        $this->genererVue(array('pseudo'=>$pseudo,'billet'=>$billet,'commentaires'=>$commentaires,'formulaire'=>$form->createView() ));
+        $this->genererVue(array('pseudo'=>$pseudo,'nbUserComents'=>$nbUserComents,'nbUserBillets'=>$nbUserBillets,
+                                'billet'=>$billet,'topic'=>$topic,
+                                'commentaires'=>$commentaires,'formulaire'=>$form->createView() ));
     }
 
     /**
@@ -108,39 +117,34 @@ class ControleurBillet extends \Framework\Controleur
         $contenu = $this->_requete->getParametre("contenu");
 
         // création du formulaire d'ajout de commentaire en l'hydratant avec les valeurs de la requête
-        $form=$this->initForm('Commentaire',array('idReference'=>$idBillet,'auteur'=>$auteur,'contenu'=>$contenu,'methode'=>'post','action'=>'billet/valider'));
+        $form=$this->initForm('Commentaire',array('idParent'=>$idBillet,'auteur'=>$auteur,'contenu'=>$contenu,'methode'=>'post','action'=>'billet/valider'));
 
         $options = array();
 
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
-        if (($this->_requete->getMethode()=='POST'))
-        {
-            if ($form->isValid())
-            {
+        if (($this->_requete->getMethode()=='POST')){
+            if ($form->isValid()){
                 // si le commentaire est nouveau
-                if (empty($_SESSION['modifCommentaire']))
-                {
+                if (empty($_SESSION['modifCommentaire'])){
+                    $idAuteur=$this->_app->userHandler()->user()->id();
                 	// appelle de la m�thode permettant d'enregistrer un commentaire en BDD
-                	$this->_managerCommentaire->ajouterCommentaire($table, $idBillet, $auteur, $contenu);
+                	$this->_managerCommentaire->ajouterCommentaire($table,$idBillet,$idAuteur,$contenu);
 
                 	// actualisation du nbre de commentaires du billet //
-                	$this->_managerBillet->actualiserNbComents($idBillet,1);
+                	$this->_managerBillet->actualiserBillet($idBillet,array('nbComents'=>1));
 
                 	// actualiser l'utilisateur en BDD
-                	$idUser = $this->_app->userHandler()->user()->id();
                 	$nbreCommentairesForum = $this->_app->userHandler()->user()->nbreCommentairesForum();
                 	$nbreCommentairesForum++;
-                	$this->_app->userHandler()->managerUser()->actualiserUser($idUser,array('_nbreCommentairesForum'=>$nbreCommentairesForum));
+                	$this->_app->userHandler()->managerUser()->actualiserUser($idAuteur,array('_nbreCommentairesForum'=>$nbreCommentairesForum));
                 }
                 // il s'agit d'une actualisation de commentaire
-                else
-                {
+                else {
                     $dateModif = new \DateTime();
                 	$this->_managerCommentaire->actualiserCommentaire($table, $_SESSION['modifCommentaire'], array('contenu'=>$contenu,'dateModif'=>$dateModif));
                 	$this->_app->userHandler()->removeAttribute('modifCommentaire');
                 }
-            }
-            else
+            } else
             {
                  // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
                 $options=$form->validField();
@@ -174,12 +178,17 @@ class ControleurBillet extends \Framework\Controleur
     	// suppression du commentaire dans la BDD
  		$resultat = $this->_managerCommentaire->supprimerCommentaire($table, $idCommentaire);
 
- 		if($resultat)
-    	{
+ 		if($resultat){
     		$this->_app->userHandler()->setFlash('commentaire supprimé');
 
     	    // actualisation du nbre de commentaires du billet //
- 		    $this->_managerBillet->actualiserNbComents($idBillet,-1);
+ 		    $this->_managerBillet->actualiserBillet($idBillet,array('nbComents'=>-1));
+
+ 		    // actualiser l'utilisateur en BDD
+ 		    $nbreCommentairesForum = $this->_app->userHandler()->user()->nbreCommentairesForum();
+ 		    $nbreCommentairesForum--;
+ 		    $idAuteur=$this->_app->userHandler()->user()->id();
+ 		    $this->_app->userHandler()->managerUser()->actualiserUser($idAuteur,array('_nbreCommentairesForum'=>$nbreCommentairesForum));
     	}
     	else
     		$this->_app->userHandler()->setFlash('échec de la tentative de suppression de commentaire');
@@ -211,17 +220,20 @@ class ControleurBillet extends \Framework\Controleur
     	$idCommentaire=$this->_requete->getParametre("id");
 
     	// récupération du commentaire à modifier
-    	$tableauCommentaire = $this->_managerCommentaire->getCommentaire($table,$idCommentaire);
+    	$commentaire = $this->_managerCommentaire->getCommentaire($table,$idCommentaire);
 
     	// mise en tampon de l'idBillet associée au commentaire
-    	$idBillet=$tableauCommentaire["idParent"];
+    	$idBillet=$commentaire->idParent();
 
     	// il s'agit d'une citation, on inclut le message dans la fenêtre d'édition d'un commentaire
     	if($citation)
-    	    $tableauCommentaire['contenu']='<blockquote>'.$tableauCommentaire['auteur'].' a écrit :"'.$tableauCommentaire['contenu'].'"</blockquote>';
+    	    $commentaire->setContenu('<blockquote>'.$tableauCommentaire['auteur'].' a écrit :"'.$tableauCommentaire['contenu'].'"</blockquote>');
     	// il faut tracer cette modification jusqu'à l'actualisation du commentaire
     	else
     	    $this->_app->userHandler()->setAttribute("modifCommentaire",$idCommentaire);
+
+    	// transformation de l'objet en tableau
+    	$tableauCommentaire= $commentaire->EntiteToArray();
 
     	// il s'agit d'executer l'action par d�faut permettant d'afficher le billet et la liste des commentaires
     	// en affichant le formulaire pré rempli avec le commentaire à modifier

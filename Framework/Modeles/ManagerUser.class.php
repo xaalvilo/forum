@@ -36,7 +36,8 @@ class ManagerUser extends \Framework\Manager
                 . ' USER_TELEPHONE as _telephone, USER_AVATAR as _avatar,'
                 . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum, USER_NBREBILLETSFORUM as _nbreBilletsForum,'
                 . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance, USER_IP as _ip, USER_HASH as _hash,'
-                . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion from T_User'
+                . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion,'
+                . ' USER_DATELASTCONNEXION as _dateLastConnexion from T_USER'
                 . ' order by USER_ID desc';
 
         // instanciation d'objets "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
@@ -54,6 +55,7 @@ class ManagerUser extends \Framework\Manager
         {
             // il faut transformer l'attribut Date en objet DateTime
         	$user->setDateConnexion(new \DateTime($user->dateConnexion()));
+        	$user->setDateLastConnexion(new \DateTime($user->dateLastConnexion()));
         	$user->setDateInscription(new \DateTime($user->dateInscription()));
         }
 
@@ -78,17 +80,16 @@ class ManagerUser extends \Framework\Manager
                 . ' USER_STATUT as _statut, USER_PSEUDO as _pseudo, USER_MAIL as _mail,'
                 . ' USER_TELEPHONE as _telephone, USER_AVATAR as _avatar,'
                 . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum, USER_NBREBILLETSFORUM as _nbreBilletsForum,'
-                . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance, USER_IP as _ip, USER_HASH as _hash,'
-                . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion  from T_User'
+                . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance,'
+                . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion,'
+                . ' USER_DATELASTCONNEXION as _dateLastConnexion from T_USER'
                 . ' where USER_ID=?';
 
-  		// instanciation d'objet "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
-        $resultat = $this->executerRequete($sql, array($idUser),'\Framework\Entites\User');
+        $resultat = $this->executerRequete($sql, array($idUser),NULL);
 
         //si un User correspond (row_count() retourne le nombre de lignes affectées par la dernière requête) , renvoyer ses informations
         //(fetch() renvoie la première ligne d'une requête )
-        if ($resultat->rowcount()==1)
-        {
+        if ($resultat->rowcount()==1) {
             $user = $resultat->fetch();
 
             // liberer la connexion
@@ -97,12 +98,11 @@ class ManagerUser extends \Framework\Manager
             // il faut transformer l'attribut Date en objet DateTime
             $user['_dateConnexion'] = new \DateTime($user['_dateConnexion']);
             $user['_dateInscription'] = new \DateTime($user['_dateInscription']);
+            $user['_dateLastConnexion'] = new \DateTime($user['_dateLastConnexion']);
+
         	return $user;
         }
-        else
-        {
-            throw new \Exception("Aucun Utilisateur ne correspond à l'identifiant '$idUser'");
-        }
+        else throw new \Exception("Aucun Utilisateur ne correspond à l'identifiant '$idUser'");
     }
 
     /**
@@ -194,14 +194,13 @@ class ManagerUser extends \Framework\Manager
     public function actualiserUser($idUser, array $donnees)
     {
         if(array_key_exists('_dateConnexion', $donnees))
-        {
             $donnees['_dateConnexion']= $donnees['_dateConnexion']->format('Y-m-d H:i:s');
-        }
 
         if(array_key_exists('_dateInscription', $donnees))
-        {
             $donnees['_dateInscription']= $donnees['_dateInscription']->format('Y-m-d H:i:s');
-        }
+
+        if(array_key_exists('_dateLastConnexion', $donnees))
+            $donnees['_dateLastConnexion']= $donnees['_dateLastConnexion']->format('Y-m-d H:i:s');
 
         // création de la chaîne de caractère pour la requête SQL
         // retirer au préalable l'identifiant qui n'est jamais actualisé
@@ -213,9 +212,13 @@ class ManagerUser extends \Framework\Manager
         foreach ($donnees as $attribut=>$valeur)
         {
             $i++;
+
+            // si la date de connexion change, il faut actualiser la date de la précédente connexion
+            if($attribut=='_dateConnexion')
+                $modification.='USER_DATELASTCONNEXION = USER_DATECONNEXION, ';
+
             $modification.='USER'.strtoupper($attribut).'=?';
-            if ($i<$nbreModifications)
-            {
+            if ($i<$nbreModifications){
                 $modification.=', ';
             }
         }
@@ -232,26 +235,32 @@ class ManagerUser extends \Framework\Manager
          $resultat = $this->executerRequete($sql,$donnees,'\Framework\Entites\User');
 
          if ($resultat===FALSE)
-         {
              //TODO msg Flash non OK
-             throw new \Exception("Données de l'utilisateur '$idUser' non mises à jour");
-         }
+             throw new \Exception("Données de l'utilisateur $idUser non mises à jour");
     }
 
     /**
      *
-     * Méthode userExists
+     * Méthode getLastLog
      *
-     * cette méthode regarde si un utilisateur qui cherche à s'inscrire n'exsite pas déjà en
-     * BDD
+     * cette méthode permet de récupérer la dernière date de connexion d'un utilisateur
      *
-     * @return bool TRUE s'il existe déjà, FALSE sinon
-     *
+     * @param int $idUser identifiant de l'utilisateur dans la BDD
+     * @return \PDOStatement résultat de la requête sous forme de tableau
+     * @throws \Exception
      */
-    public function userExists()
+    public function getLastLog($idUser)
     {
-        //
-        return FALSE;
+        $sql = 'select USER_DATELASTCONNEXION as dateLastConnexion from T_USER where USER_ID=?';
+
+        $resultat = $this->executerRequete($sql,array($idUser),NULL);
+
+        if ($resultat->rowcount()==1){
+            // récupération des données de la BDD sous forme de tableau
+            $tableauResultat = $resultat->fetch();
+            return $tableauResultat;
+        }
+        else throw new \Exception("identifiant $idUser invalide");
     }
 }
 

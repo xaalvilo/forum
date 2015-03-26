@@ -27,14 +27,16 @@ class ManagerTopic extends \Framework\Manager
         // les donnees du dernier billet associé (T_BILLET)
         // le nom de la catégorie associée (T_FORUM_CAT)
         $sql = 'select T.TOPIC_ID as id, T.TOPIC_TITRE as titre, T.TOPIC_VU as vu, T.TOPIC_NBPOST as nbPost, B.BIL_ID as idBillet,'
-        . ' B.BIL_AUTEUR as auteur, B.BIL_DATE as date, B.BIL_TITRE as titreBillet, C.CAT_NAME as nomCategorie'
-        . ' from T_FORUM_TOPIC T join T_BILLET B'
+        . ' U.USER_PSEUDO as auteur, B.BIL_DATE as date, B.BIL_TITRE as titreBillet, C.CAT_NAME as nomCategorie'
+        . ' from T_FORUM_TOPIC T'
+        . ' join T_BILLET B'
         . ' on B.BIL_ID=T.TOPIC_LASTPOST'
         . ' join T_FORUM_CAT C'
         . ' on C.CAT_ID=T.CAT_ID'
+        . ' join T_USER U'
+        . ' on B.USER_ID=U.USER_ID'
         . ' where T.CAT_ID=?';
 
-        // instanciation d'objets "Modele\Billet" dont les attributs publics prennent pour valeur les donn�es de la BDD
         $requete = $this->executerRequete($sql,array($idCat),NULL);
 
         //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions
@@ -109,13 +111,15 @@ class ManagerTopic extends \Framework\Manager
         foreach ($donnees as $attribut=>$valeur)
         {
             $i++;
-            if ($attribut=='nbPost')
-            {
+            if ($attribut=='nbPost'){
                 $modification.='TOPIC_NBPOST=TOPIC_NBPOST + '.$valeur.'';
                 unset($donnees['nbPost']);
             }
-            else
-                $modification.='TOPIC_'.strtoupper($attribut).'=?';
+            elseif ($attribut=='vu') {
+                $modification.='TOPIC_VU=TOPIC_VU + '.$valeur.'';
+                unset($donnees['vu']);
+            }
+            else $modification.='TOPIC_'.strtoupper($attribut).'=?';
             if ($i<$nbreModifications)
                 $modification.=', ';
         }

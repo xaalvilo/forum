@@ -20,8 +20,6 @@ class ControleurAccueil extends \Framework\Controleur
     public function __construct(\Framework\Application $app)
     {
     	parent::__construct($app);
-        $id = session_id();
-    	echo $id;
         var_dump($_SESSION);
     }
 

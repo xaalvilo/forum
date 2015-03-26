@@ -65,6 +65,10 @@
             font-size: 8px;
         }
 
+        article {
+            margin-top: 10px;
+        }
+
         .extrait{
             text-overflow: ellipsis;
             overflow: hidden;
@@ -133,6 +137,8 @@
             		                     <li><a href="Connexion/index/2">Vert</a></li>
             		                     <li><a href="Connexion/index/3">Bleu</a></li>
             		                     <li><a href="Connexion/index/4">Blanc</a></li>
+            		                     <li class="divider"></li>
+            		                     <li><a href="Connexion/index">Nouveaux messages</a></li>
             		                  </ul>
             		        <li> <a href="Blog">Blog</a> </li>
             		        <li class="disabled"> <a href="Cours">Cours</a> </li>

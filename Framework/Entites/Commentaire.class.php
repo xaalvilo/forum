@@ -13,17 +13,28 @@ require_once './Framework/autoload.php';
 
 class Commentaire extends \Framework\Entite
 {
-  protected $idReference;
-  protected $date;
-  protected $dateModif;
-  protected $contenu;
-  protected $auteur;
+    /*@var int */
+    protected $idParent;
+
+    /*@var \DateTime */
+    protected $date;
+
+    /*@var \DateTime */
+    protected $dateModif;
+
+    /*@var string */
+    protected $contenu;
+
+    /*@var string */
+    protected $auteur;
 
   const AUTEUR_INVALIDE=1;
   const CONTENU_INVALIDE=3;
 
     /**
-    * méthode testant si l'objet Commentaire est valide
+    * méthode isValid
+    *
+    * Permet de tester si l'objet Commentaire est valide
     * elle utilise la fonction "empty(var)" qui  retourne FALSE si la variable existe et est non vide
     *
     * @return Boolean TRUE valide / FALSE non valide
@@ -36,9 +47,9 @@ class Commentaire extends \Framework\Entite
     /**
     * méthodes "setters" des attributs privés
     */
-   public function setIdReference($idReference)
+   public function setIdParent($idParent)
    {
-        $this->idReference= (int) $idReference ;
+        $this->idParent= (int) $idParent ;
    }
 
     /**
@@ -96,11 +107,11 @@ class Commentaire extends \Framework\Entite
     }
 
     /**
-     * @return int $idReference
+     * @return int $idParent
      */
-   public function idReference()
+   public function idParent()
    {
-    	return $this->idReference;
+    	return $this->idParent;
     }
 
     /**

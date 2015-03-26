@@ -24,13 +24,13 @@ require_once './Framework/autoload.php';
 
 class UserHandler extends ApplicationComponent
 {
-    /* objet session */
+    /* @var \session */
     protected $_session;
 
-    /* objet User */
+    /* @var \User */
     protected $_user;
 
-    /* objet manager User */
+    /* @var \managerUser */
     protected $_managerUser;
 
     /**
@@ -129,6 +129,25 @@ class UserHandler extends ApplicationComponent
 
     /**
      *
+     * Méthode InitUser
+     *
+     * Permet d'hydrater l'entité User avec les données le concernant en BDD, lorsqu'il est authentifié
+     * lorsque l'instance User n'a été hydratée qu'avec les données de session ($_SESSION)
+     *
+     * @param int $idUser
+     */
+    public function initUser($idUser)
+    {
+        $donneesUser = $this->_managerUser->getUser($idUser);
+        $this->_user->hydrate($donneesUser);
+        $this->_user->setBrowserVersion($this->getUserBrowserVersion());
+        $this->_user->setIp($this->getUserIp());
+        $this->_user->setAuthenticated();
+        return $this->_user;
+    }
+
+    /**
+     *
      * Méthode removeAttribute
      *
      * cette methode permet de supprimer une donnée de la superglobale $_SESSION
@@ -160,7 +179,9 @@ class UserHandler extends ApplicationComponent
      *
      * Méthode setUserAuthenticated
      *
-     * cette m�thode permet de pr�ciser que l'utilisateur est bien authentifi�
+     * cette m�thode permet de pr�ciser que l'utilisateur est bien authentifi� en affectant
+     * les bonnes valeurs aux attributs concernés de l'objet User et mettant à jour les données
+     * en session
      *
      * @param boolean $authenticated
      * @throws \Exception si le paramètre n'est pas un booléen
@@ -183,7 +204,8 @@ class UserHandler extends ApplicationComponent
      *
      * Méthode IsUserAuthenticated
      *
-     * cette m�thode permet de v�rifier que l'utilisateur est bien authentifi�
+     * cette m�thode permet de v�rifier que l'utilisateur est bien authentifi� en comparant la version du navigateur, l'adresse IP
+     * avec les données en SESSION
      *
      * @return Boolean, valeur de retour TRUE si authentifié
      *
@@ -342,7 +364,7 @@ class UserHandler extends ApplicationComponent
             }
             else
             {
-            	throw new \Exception ("erreur regénération identifiant de session  après login");
+            	throw new \Exception ("erreur de regénération d'identifiant de session  après le login");
             }
         }
     }
@@ -362,7 +384,7 @@ class UserHandler extends ApplicationComponent
         {
             $param = $this->_session->paramCookieSession();
             $expire = time() - $maxLifetime;
-            $this->_session->setParamCookieSession(TRUE,'',$expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);
+            $this->_session->setParamCookieSession($expire, $param ['path'],$param['domain'],$param['secure'],$param['httponly']);
         }
     }
 
@@ -376,9 +398,16 @@ class UserHandler extends ApplicationComponent
      */
     public function detruireSession()
     {
-        $this->_session->detruireVariableSession();
-        $this->detruireCookieSession(10);
-        session_destroy();
+        if(session_status()=== PHP_SESSION_ACTIVE)
+        {
+            // détruire les variables de session
+            $this->_session->detruireVariableSession();
+            // effacer le cookie de session
+            $this->detruireCookieSession(42000);
+            //détruire la session
+            session_destroy();
+           // session_write_close();
+        }
         $this->_session->__destruct();
         $this->setUserAuthenticated(FALSE);
     }

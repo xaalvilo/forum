@@ -1,10 +1,9 @@
 <?php
 namespace Framework\FormBuilder;
 require_once './Framework/autoload.php';
-
 /**
  *
- * @author Fr�d�ric Tarreau
+ * @author Frédéric Tarreau
  *
  * 7 sept. 2014
  *

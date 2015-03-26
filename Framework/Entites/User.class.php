@@ -56,8 +56,11 @@ class User extends \Framework\Entite
     /* date Inscription */
     protected $_dateInscription;
 
-    /* dernière date connexion */
+    /* @var \DateTime date connexion */
     protected $_dateConnexion;
+
+    /* @var \DateTime date dernière connexion */
+    protected $_dateLastConnexion;
 
     /* nombre de commentaires sur le Forum */
     protected $_nbreCommentairesForum;
@@ -601,6 +604,33 @@ class User extends \Framework\Entite
     public function dateConnexion()
     {
         return $this->_dateConnexion;
+    }
+
+    /**
+     *
+     * Méthode setDateLastConnexion
+     *
+     * Cette méthode est le setter de dateLastConnexion
+     *
+     * @param \DateTime $dateLastConnexion
+     *
+     */
+    public function setDateLastConnexion(\DateTime $dateLastConnexion)
+    {
+        $this->_dateLastConnexion = $dateLastConnexion;
+    }
+
+    /**
+     *
+     * Méthode dateLastConnexion
+     *
+     * Cette méthode est le getter de dateLastConnexion
+     *
+     * @return string $_dateLastConnexion
+     */
+    public function dateLastConnexion()
+    {
+        return $this->_dateLastConnexion;
     }
 
     /**

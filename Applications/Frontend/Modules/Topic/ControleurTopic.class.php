@@ -25,6 +25,9 @@ class ControleurTopic extends \Framework\Controleur
     /* @var manager de Topic */
     private $_managerTopic;
 
+    /* @var manager de commentaire */
+    private $_managerCommentaire;
+
     /**
     * le constructeur instancie les classes "mod�les" requises
     */
@@ -33,6 +36,7 @@ class ControleurTopic extends \Framework\Controleur
         parent::__construct($app);
         $this->_managerBillet= \Framework\FactoryManager::createManager('Billet');
         $this->_managerTopic = \Framework\FactoryManager::createManager('Topic');
+        $this->_managerCommentaire = \Framework\FactoryManager::createManager('Commentaire');
     }
 
     /**
@@ -54,18 +58,20 @@ class ControleurTopic extends \Framework\Controleur
         // récupération de la liste des billets
         $billets = $this->_managerBillet->getBillets($idTopic);
 
-        // récupération des données sur le topic
-        $topic = $this->_managerTopic->getTopic($idTopic);
+        //actualiser nbre de vu du topic
+        $this->_managerTopic->actualiserTopic($idTopic,array('vu'=>1));
 
-        // récupération des données sur les topics de la catégorie
-        $topics = $this->_managerTopic->getTopics($topic['idCat']);
+        // récupération des données sur le topic
+        $topic=$this->_managerTopic->getTopic($idTopic);
+
+        // récupération des données sur les topics de la catégorie pour le menu latéral
+        $topics=$this->_managerTopic->getTopics($topic['idCat']);
 
         // tableau des valeurs à prendre en compte pour le formulaire
         $tableauValeur = array('idTopic'=>$idTopic,'methode'=>'post','action'=>'topic/editer');
 
          //il faut préremplir le champ avec le pseudo fourni
-        $donnees['auteur']=$this->_app->userHandler()->user()->pseudo();
-        $pseudo=$donnees['auteur'];
+        $pseudo=$this->_app->userHandler()->user()->pseudo();
 
         // si le tableau de données transmises n'est pas vide, le fusionner avec le tableau précédent, le tableau $donnees
         // écrasera éventuellement les valeurs du tableau $tableauValeur si les clés sont identiques (cazr est en second argument de la fonction
@@ -77,8 +83,8 @@ class ControleurTopic extends \Framework\Controleur
         $form=$this->initForm('Billet',$tableauValeur);
 
         // génération de la vue avec les données : liste des billets et formulaire d'ajout de billet
-        $this->genererVue(array('pseudo'=>$pseudo,'titreTopic'=>$topic['titre'],'billets'=>$billets,
-                                'formulaire'=>$form->createView(),'topics'=>$topics));
+        $this->genererVue(array('pseudo'=>$pseudo,'titreTopic'=>$topic['titre'],
+                                'billets'=>$billets,'formulaire'=>$form->createView(),'topics'=>$topics));
     }
 
     /**
@@ -111,32 +117,25 @@ class ControleurTopic extends \Framework\Controleur
          $options=array();
 
         // si la methode est bien POST et que le formulaire est valide, insertion des données en BDD
-        if (($this->_requete->getMethode() =='POST'))
-        {
-            if ($form->isValid())
-            {
+        if (($this->_requete->getMethode()=='POST')){
+            if ($form->isValid()){
                 // nouveau billet
-                if (empty($_SESSION['modifBillet']))
-                {
+                if (empty($_SESSION['modifBillet'])){
                     // enregistrer billet en BDD
-                    $idBillet=$this->_managerBillet->ajouterBillet($idTopic,$titre,$auteur,$contenu);
+                    $idAuteur=$this->_app->userHandler()->user()->id();
+                    $idBillet=$this->_managerBillet->ajouterBillet($idTopic,$titre,$idAuteur,$contenu);
 
-                    if(ctype_digit($idBillet))
-                    {
+                    if(ctype_digit($idBillet)){
                         // actualiser utilisateur en BDD
-                        $idUser = $this->_app->userHandler()->user()->id();
                         $nbreBilletsForum = $this->_app->userHandler()->user()->nbreBilletsForum();
                         $nbreBilletsForum++;
-                        $this->_app->userHandler()->managerUser()->actualiserUser($idUser,array('_nbreBilletsForum'=>$nbreBilletsForum));
+                        $this->_app->userHandler()->managerUser()->actualiserUser($idAuteur,array('_nbreBilletsForum'=>$nbreBilletsForum));
 
                         // il faut actualiser les données du Topic (incrementation nbre de post et dernierPost)
                         $donnees['nbPost']=1;
                         $donnees['lastPost']=$idBillet;
-
                         $this->_managerTopic->actualiserTopic($idTopic,$donnees);
-                    }
-                    else
-                    {
+                    } else {
                         $this->_app->userHandler()->setFlash('Echec insertion du billet');
 
                         // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
@@ -144,21 +143,17 @@ class ControleurTopic extends \Framework\Controleur
                     }
                 }
                 // actualisation billet
-                else
-                {
+                else {
                     $dateModif = new \DateTime();
-
                     $this->_managerBillet->actualiserBillet($_SESSION['modifBillet'],array('titre'=>$titre,'contenu'=>$contenu,'dateModif'=>$dateModif));
                     $this->_app->userHandler()->removeAttribute('modifBillet');
                 }
             }
-            else
-            {
+            else {
                 // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
                 $options=$form->validField();
             }
          }
-
          // il s'agit sinon ou ensuite d'executer l'action par d�faut permettant d'afficher la liste des billets
          $this->executerAction("index",$options);
     }
@@ -173,6 +168,9 @@ class ControleurTopic extends \Framework\Controleur
      */
     public function supprimer()
     {
+        // spécification de la table concernée dans la BDD
+        $table = \Framework\Modeles\ManagerCommentaire::TABLE_COMMENTAIRES_BILLET;
+
         // récupération des paramètres de la requête
         $idBillet=$this->_requete->getParametre("id");
 
@@ -181,26 +179,34 @@ class ControleurTopic extends \Framework\Controleur
         $idTopic = $tableauTopic["idParent"];
         $lastPost = $tableauTopic["lastPost"];
 
-        // suppression billet BDD
-        $resultat = $this->_managerBillet->supprimerBillet($idBillet);
+        // flags de réussite de suppression en BDD
+        $resultat1=TRUE;
+        $resultat2=TRUE;
 
-        if($resultat)
-        {
-            $this->_app->userHandler()->setFlash('Billet supprimé');
+        // suppression des commentaires du billet en BDD
+        $commentaires = $this->_managerCommentaire->getListeCommentaires($table,$idBillet);
 
-            // actualisation du topic
-            $donnees['nbPost']='-1';
+        // tous les commentaires ont été supprimés
+        if ($resultat1){
+            // suppression billet BDD
+            $resultat2 = $this->_managerBillet->supprimerBillet($idBillet);
 
-            // le billet supprimé était le dernier du topic
-            if ($idBillet == $lastPost)
-            {
-                $tableauResultat = $this->_managerBillet->getLastBillet($idTopic);
-                $donnees['lastPost']=$tableauResultat['id'];
+            if($resultat2){
+                $this->_app->userHandler()->setFlash('Billet supprimé');
+
+                // actualisation du topic
+                $donnees['nbPost']='-1';
+
+                // le billet supprimé était le dernier du topic
+                if ($idBillet == $lastPost){
+                    $tableauResultat = $this->_managerBillet->getLastBillet($idTopic);
+                    $donnees['lastPost']=$tableauResultat['id'];
+                }
+                $this->_managerTopic->actualiserTopic($idTopic,$donnees);
             }
-            $this->_managerTopic->actualiserTopic($idTopic,$donnees);
+            else $this->_app->userHandler()->setFlash('échec de la tentative de suppression du Billet');
         }
-        else
-            $this->_app->userHandler()->setFlash('échec de la tentative de suppression du Billet');
+        else $this->_app->userHandler()->setFlash('échec de la tentative de suppression du Billet');
 
         //executer l'action par d�faut permettant d'afficher la liste des billets
         // il faut changer l'id du Billet par l'id du Topic pour afficher correctement l'index
@@ -241,6 +247,6 @@ class ControleurTopic extends \Framework\Controleur
         // en affichant le formulaire pré rempli avec le billet à modifier
         // il faut changer l'id du billet par l'id du topic pour afficher correctement l'index
         $this->_requete->setParametre("id",$idTopic);
-        $this->executerAction("index", $tableauBillet);
+        $this->executerAction("index",$tableauBillet);
     }
 }

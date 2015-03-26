@@ -35,11 +35,16 @@ class Session extends \Framework\Entite
     {
         parent::__construct($donnees);
 
-        // le cookie de session est valable pour tout le site Forum
-        $path = \Framework\Configuration::get('racineWeb');
-        $this->setParamCookieSession(0,$path);
-
-        session_start();
+        if(session_status()===PHP_SESSION_NONE){
+            // le cookie de session est valable pour tout le site Forum
+            $path = \Framework\Configuration::get('racineWeb');
+            $this->setParamCookieSession(0,$path);
+            session_start();
+        }
+        else
+        {
+            session_regenerate_id(true);
+        }
         $this->_name = session_name();
         $this->_identifiant = session_id();
     }
@@ -53,10 +58,12 @@ class Session extends \Framework\Entite
      */
     public function  __destruct()
     {
-        if(session_status()=== PHP_SESSION_ACTIVE)
+     /*   if(session_status()=== PHP_SESSION_ACTIVE)
         {
+            session_destroy();
             session_write_close();
-        }
+            session_regenerate_id(true);
+        }*/
     }
 
     /**
@@ -70,17 +77,12 @@ class Session extends \Framework\Entite
      */
     public function set($cle,$donnees)
     {
-        if(is_string($cle))
-        {
-            if(is_array($donnees))
-            {
+        if(is_string($cle)){
+            if(is_array($donnees)){
                 foreach ($donnees as $index=>$valeur)
                     $_SESSION[$cle][$index]=$valeur;
             }
-            else
-            {
-                $_SESSION[$cle]=$donnees;
-            }
+            else $_SESSION[$cle]=$donnees;
         }
     }
 
@@ -109,9 +111,7 @@ class Session extends \Framework\Entite
    public function remove($cle)
    {
        if(isset ($_SESSION[$cle]))
-        {
             unset($_SESSION[$cle]);
-        }
    }
 
    /**
@@ -129,8 +129,16 @@ class Session extends \Framework\Entite
     */
    public function setParamCookieSession($expire,$path=NULL,$domain=NULL,$secure=FALSE,$httponly=TRUE)
    {
-       session_set_cookie_params($expire, $path, $domain, $secure, $httponly);
-
+       if(session_status()===PHP_SESSION_NONE)
+       {
+           // fonction opérante uniquement avant un session_start()
+           session_set_cookie_params($expire, $path, $domain, $secure, $httponly);
+       }
+       else
+       {
+           // TODO tester la valeur de retour
+           $bool = setcookie(session_name(),'',$expire, $path, $domain, $secure, $httponly);
+       }
        // récupération des valeurs du cookie de session php
        $this->_paramCookieSession = session_get_cookie_params();
    }
@@ -213,15 +221,13 @@ class Session extends \Framework\Entite
      */
     public function setMaxLifeDatetime($maxLifetime)
     {
-        if($maxLifetime != get_cfg_var('session.gc_maxlifetime'))
-        {
+        if($maxLifetime != get_cfg_var('session.gc_maxlifetime')){
             // modification de la valeur de configuration juste le temps d'exécution du script
             ini_set('session.gc_maxlifetime', "$maxLifetime");
         }
         $odate = new \DateTime();
         $interval='PT'.$maxLifetime.'S';
         $odate->add(new \DateInterval($interval));
-
         $this->_maxLifeDatetime = $odate;
     }
 

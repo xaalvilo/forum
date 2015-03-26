@@ -1,29 +1,34 @@
 <!-- Portion de Vue spécifique à l'affichage du Forum -->
 <?php $this->_titre = "Forum AtelierBlancNordOuest"; ?>
 <section class="col-sm-10">
-           <h4><?=$this->nettoyer($titreTopic)?></h4>
+    <div class="row">
+        <div class="col-sm-12"><h4><?=$this->nettoyer($titreTopic)?></h4></di
+    </div>
 </section>
 <section class="col-sm-10">
 <?php foreach ($billets as $billet):?>
       <div class="row">
           <article class="col-sm-12">
               <div class="row">
-                  <div class="col-sm-3">
+                  <div class="col-sm-4">
                       <div class="row">
-                          <div class="col-md-2 col-sm-12 col-xs-6">A</div>
-                          <div class="col-md-10 col-sm-12 col-xs-6"><?= $this->nettoyer($billet['auteur'])?></div>
-                          <div class="col-xs-12"><h6 class="badge"><?= $this->nettoyer($billet['nbComents'])?> réponses</h6></div>
+                          <div class="col-sm-12 col-xs-6"><a href="<?="billet/index/". $this->nettoyer($billet['id'])?>"><?= $this->nettoyer($billet['titre'])?></a></div>
+                          <div class="col-sm-12 col-xs-6"><p> créé par <?= $this->nettoyer($billet['auteur'])?><time> le <?= strftime('%A %d %B %Y, %H:%M',$this->nettoyer($billet['date']->getTimestamp())) ?></time></p></div>
                       </div>
                   </div>
-                  <div class="col-sm-9">
+                   <div class="col-sm-7">
                       <div class="row">
-                          <div class="col-sm-4 col-xs-6"><time><?= strftime('%A %d %B %Y, %H:%M',$this->nettoyer($billet['date']->getTimestamp())) ?></time></div>
-                          <div class="col-sm-8 col-xs-6"><a href="<?= "billet/index/". $this->nettoyer($billet['id']) ?>"><?= $this->nettoyer($billet['titre']) ?></a></div>
                           <div class="col-xs-12"><p class="extrait"><?= $this->nettoyer($billet['contenu']) ?></p></div>
-                          <?php if ($this->nettoyer($billet['auteur'])==$pseudo):?>
+                          <?php if ($billet['auteur']==$pseudo):?>
                           <div class="col-xs-6"><a href="<?= "topic/supprimer/" . $this->nettoyer($billet['id']) ?>">Supprimer</a></div>
                           <div class="col-xs-6"><a href="<?= "topic/modifier/" . $this->nettoyer($billet['id']) ?>">Modifier</a></div>
                            <?php endif;?>
+                      </div>
+                  </div>
+                  <div class="col-sm-1">
+                      <div class="row">
+                          <div class="col-sm-12 col-xs-6"><h6><?= $this->nettoyer($billet['nbComents'])?> <span class="glyphicon glyphicon-comment"></span></h6></div>
+                          <div class="col-sm-12 col-xs-6"><h6><?= $this->nettoyer($billet['nbVu'])?> <span class="glyphicon glyphicon-eye-open"></span></h6></div>
                       </div>
                   </div>
               </div>

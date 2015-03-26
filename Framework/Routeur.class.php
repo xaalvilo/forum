@@ -79,8 +79,7 @@ class Routeur extends ApplicationComponent
         $controleur = self::PAGE_ACCUEIL;
 
         // puis de créer le nom du controleur à activer
-        if ($requete->existeParametre('controleur'))
-        {
+        if ($requete->existeParametre('controleur')){
             $controleur=$requete->getParametre('controleur');
 
             // mettre la première lettre en majuscule par cohérence à la convention de nommage des fichiers
@@ -102,8 +101,7 @@ class Routeur extends ApplicationComponent
         $fichierControleur =  $repertoireControleur.$classeControleur.".class.php" ;
 
         // si ce fichier existe, instanciation de l'objet controleur associé à l'action
-        if (file_exists($fichierControleur))
-        {
+        if (file_exists($fichierControleur)){
             // création de l'espace de nom correspondant
             $NamespaceClasseControleur = "\\Applications\\".$nomApplication."\\Modules\\".$controleur."\\".$classeControleur;
 
@@ -114,11 +112,7 @@ class Routeur extends ApplicationComponent
             // la requete en paramètre est associée à ce controleur */
             $controleur->setRequete($requete);
             return $controleur ;
-        }
-        else
-        {
-           throw new \Exception ("Fichier '$fichierControleur' introuvable");
-        }
+        } else throw new \Exception ("Fichier '$fichierControleur' introuvable");
     }
 
     /**
@@ -137,10 +131,8 @@ class Routeur extends ApplicationComponent
 
         // vérification de l'existence du parametre action
         if ($requete->existeParametre('action'))
-        {
             //récupération de l'action de la requete reçue
             $action = $requete->getParametre('action');
-        }
 
         //envoi de l'action récupérée ou de celle par défaut */
         return $action ;
