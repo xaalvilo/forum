@@ -4,7 +4,7 @@ require_once './Framework/autoload.php';
 
 /**
 * Classe abstraite fournissant les fonctionnalites nécessaires à toute entité
-* du modèle. Elle impl�mente notamment l'interface PHP ArrayAccess qui permet d'afficher les attributs de l'objets en
+* du modèle. Elle impl�mente notamment l'interface PHP ArrayAccess qui permet d'afficher les attributs de l'objet en
 * le parcourant comme s'il s'agissait d'un tableau
 */
 

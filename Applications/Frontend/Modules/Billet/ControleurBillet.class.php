@@ -19,7 +19,6 @@
  *  - modifier un commentaire
  *
  */
-
 namespace  Applications\Frontend\Modules\Billet;
 use Modele\CommentaireFormBuilder;
 use Modele\Commentaire;
@@ -94,7 +93,7 @@ class ControleurBillet extends \Framework\Controleur
         // génération de la vue avec les données : billet, commentaire et formulaire d'ajout de commentaire
         $this->genererVue(array('pseudo'=>$pseudo,'nbUserComents'=>$nbUserComents,'nbUserBillets'=>$nbUserBillets,
                                 'billet'=>$billet,'topic'=>$topic,
-                                'commentaires'=>$commentaires,'formulaire'=>$form->createView() ));
+                                'commentaires'=>$commentaires,'formulaire'=>$form->createView()));
     }
 
     /**
@@ -144,8 +143,7 @@ class ControleurBillet extends \Framework\Controleur
                 	$this->_managerCommentaire->actualiserCommentaire($table, $_SESSION['modifCommentaire'], array('contenu'=>$contenu,'dateModif'=>$dateModif));
                 	$this->_app->userHandler()->removeAttribute('modifCommentaire');
                 }
-            } else
-            {
+            } else {
                  // recuperation des nom/valeur des champs valides afin de générer ultérieurement l'affichage du formulaire
                 $options=$form->validField();
             }

@@ -198,7 +198,7 @@ class Billet extends \Framework\Entite
     }
 
     /**
-     * @return string $date au format de date
+     * @return \DateTime $date au format de date
      */
     public function date()
     {
@@ -206,7 +206,7 @@ class Billet extends \Framework\Entite
     }
 
     /**
-     * @return string $_dateModif au format de date
+     * @return \DateTime $_dateModif au format de date
      */
     public function dateModif()
     {

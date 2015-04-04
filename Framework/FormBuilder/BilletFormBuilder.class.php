@@ -35,7 +35,7 @@ require_once './Framework/autoload.php';
  		 													'placeholder'=> 'titre du billet',
  		 													'validators'=>array(
  		 																		new \Framework\Formulaire\NotNullValidator('Merci de donner un titre au billet'),
- 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fix� � 15', 15),
+ 		 																		new \Framework\Formulaire\MaxLengthValidator('le nombre maximal de caract�re est fix� � 15', 15)
  		                  ))))
  		 			->addField(new \Framework\Formulaire\TextField(array(
  		 							                     'label'=>'Billet',

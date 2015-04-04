@@ -228,13 +228,9 @@ class User extends \Framework\Entite
         $longMinMdp = \Framework\Configuration::get("longMinMdp", 8);
         $longMaxMdp = \Framework\Configuration::get("longMaxMdp", 12);
         if(!is_string($mdp) || empty($pseudo) || $longMinMdp > strlen($pseudo) || srlen($pseudo) > $longMaxPseudo)
-        {
             $this->erreurs[]= self::FORME_MDP_INVALIDE;
-        }
         else
-        {
             $this->_mdp = $mdp;
-        }
     }
 
     /**
@@ -266,13 +262,9 @@ class User extends \Framework\Entite
     {
         $longMaxNom = \Framework\Configuration::get("longMaxNom", 30);
         if(!is_string($nom) || empty($nom) || strlen($nom) > $longMaxNom)
-        {
             $this->erreurs[]= self::CHAINE_INVALIDE;
-        }
         else
-        {
             $this->_nom = $nom;
-        }
     }
 
     /**
@@ -304,13 +296,9 @@ class User extends \Framework\Entite
     {
         $longMaxPrenom = \Framework\Configuration::get("longMaxNom", 30);
         if(!is_string($prenom) || empty($prenom) || strlen($prenom) > $longMaxPrenom)
-        {
             $this->erreurs[]= self::CHAINE_INVALIDE;
-        }
         else
-        {
             $this->_prenom = $prenom;
-        }
     }
 
     /**
@@ -366,13 +354,9 @@ class User extends \Framework\Entite
     public function setMail($mail = '')
     {
         if (!is_string($mail))
-        {
             $this->erreurs[]=self::MAIL_INVALIDE;
-        }
         else
-        {
             $this->_mail = $mail;
-        }
     }
 
     /**
@@ -430,13 +414,9 @@ class User extends \Framework\Entite
     public function setTelephone($telephone ='')
     {
         if(!is_string($telephone) || strlen($telephone) != 10)
-        {
             $this->erreurs[]= self::TELEPHONE_INVALIDE;
-        }
         else
-        {
             $this->_telephone = $telephone;
-        }
     }
 
     /**
@@ -464,14 +444,11 @@ class User extends \Framework\Entite
     public function setStatut($statut)
     {
         if ((!empty($statut)) && ((int)$statut <= self::MAX_STATUT))
-        {
             $this->_statut = (int)$statut;
-        }
         else
-        {
             $this->erreurs[]=self::STATUT_USER_INVALIDE;
-        }
     }
+
     /**
      *
      * Méthode statut
@@ -523,13 +500,9 @@ class User extends \Framework\Entite
     public function setAvatar($avatar = '')
     {
         if(!is_string($avatar))
-        {
             $this->erreurs[]=self::NOM_FICHIER_AVATAR_INVALIDE;
-        }
         else
-        {
             $this->_avatar = $avatar;
-        }
     }
 
     /**
@@ -557,13 +530,9 @@ class User extends \Framework\Entite
     public function setHash($hash)
     {
         if(!is_string($hash))
-        {
             $this->erreurs[]=self::FORME_HASH_INVALIDE;
-        }
         else
-        {
             $this->_hash = $hash;
-        }
     }
 
     /**
@@ -599,7 +568,7 @@ class User extends \Framework\Entite
      *
      * Cette méthode est le getter de dateConnexion
      *
-     * @return string $_dateConnexion
+     * @return \DateTime $_dateConnexion
      */
     public function dateConnexion()
     {
@@ -626,7 +595,7 @@ class User extends \Framework\Entite
      *
      * Cette méthode est le getter de dateLastConnexion
      *
-     * @return string $_dateLastConnexion
+     * @return \DateTime $_dateLastConnexion
      */
     public function dateLastConnexion()
     {
@@ -653,7 +622,7 @@ class User extends \Framework\Entite
      *
      * Cette méthode est le getter de dateInscription
      *
-     * @return string $_dateInscription
+     * @return \DateTime $_dateInscription
      */
     public function dateInscription()
     {

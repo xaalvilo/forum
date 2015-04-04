@@ -134,8 +134,7 @@ abstract class Controleur extends ApplicationComponent
         // création du formulaire
         if(array_key_exists('type',$donnees))
             $formBuilder->build($donnees['type']);
-        else
-            $formBuilder->build();
+        else $formBuilder->build();
         $form = $formBuilder->form();
         return $form;
     }

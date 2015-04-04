@@ -2,7 +2,6 @@
 namespace Framework\Modeles ;
 use Framework\Configuration;
 require_once './Framework/autoload.php';
-
 /**
  *
  * @author Frédéric Tarreau
@@ -14,7 +13,7 @@ require_once './Framework/autoload.php';
  */
 class ManagerUser extends \Framework\Manager
 {
-    /* constantes de différenciation entre le nombre de parmatères utilisateurs requis pour s'enregistrer (création compte)
+    /* constantes de différenciation entre le nombre de paramètres utilisateurs requis pour s'enregistrer (création compte)
      * et s'inscrire (droits commentaires blog)
     */
     const NBRE_PARAM_INSCRIPTION = 4;
@@ -38,29 +37,26 @@ class ManagerUser extends \Framework\Manager
                 . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance, USER_IP as _ip, USER_HASH as _hash,'
                 . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion,'
                 . ' USER_DATELASTCONNEXION as _dateLastConnexion from T_USER'
-                . ' order by USER_ID desc';
+                . ' order by USER_DATEINSCRIPTION desc';
 
         // instanciation d'objets "Modele\User" dont les attributs publics et protégés prennent pour valeur les donn�es de la BDD
         $resultat = $this->executerRequete($sql,NULL,'\Framework\Entites\User');
 
-        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions , les colonnes sont li�s aux attributs de la
+        //la requ�te retourne un tableau contenant toutes les lignes du jeu d'Inscriptions, les colonnes sont li�s aux attributs de la
         //la classe
         $users = $resultat->fetchAll();
+        $resultat->closeCursor();
 
         // spécification de la langue utilisée pour l'affichage de la date et heure
         // cela permet d'utliser la fonction strftime() au moment d'afficher l'heure
     	$this->setHeureDateLocale();
 
-        foreach ($users as $user)
-        {
-            // il faut transformer l'attribut Date en objet DateTime
+    	// il faut transformer l'attribut Date en objet DateTime
+        foreach ($users as $user){
         	$user->setDateConnexion(new \DateTime($user->dateConnexion()));
         	$user->setDateLastConnexion(new \DateTime($user->dateLastConnexion()));
         	$user->setDateInscription(new \DateTime($user->dateInscription()));
         }
-
-        //permettre � la requ�te d'�tre de nouveau ex�cut�e
-        $resultat->closeCursor();
         return $users;
     }
 
@@ -82,7 +78,7 @@ class ManagerUser extends \Framework\Manager
                 . ' USER_NBRECOMMENTAIRESBLOG as _nbreCommentairesBlog, USER_NBRECOMMENTAIRESFORUM as _nbreCommentairesForum, USER_NBREBILLETSFORUM as _nbreBilletsForum,'
                 . ' USER_NOM as _nom, USER_PRENOM as _prenom, USER_NAISSANCE as _naissance,'
                 . ' USER_PAYS as _pays, USER_DATEINSCRIPTION as _dateInscription, USER_DATECONNEXION as _dateConnexion,'
-                . ' USER_DATELASTCONNEXION as _dateLastConnexion from T_USER'
+                . ' USER_DATELASTCONNEXION as _dateLastConnexion, USER_IP as _ip from T_USER'
                 . ' where USER_ID=?';
 
         $resultat = $this->executerRequete($sql, array($idUser),NULL);

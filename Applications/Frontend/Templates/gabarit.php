@@ -127,7 +127,6 @@
 			<div class="row">
             	<nav class="col-sm-12">
             		<div class="navbar navbar-default navbar-static-top">
-
             		    <ul class="nav navbar-nav">
             		        <li> <a href="Accueil">Accueil</a> </li>
             		        <li class="dropdown">
@@ -140,10 +139,11 @@
             		                     <li class="divider"></li>
             		                     <li><a href="Connexion/index">Nouveaux messages</a></li>
             		                  </ul>
-            		        <li> <a href="Blog">Blog</a> </li>
-            		        <li class="disabled"> <a href="Cours">Cours</a> </li>
-            		        <li class="disabled"> <a href="Boutique">Boutique</a> </li>
-            		        <li> <a href="Inscription">Mon compte</a> </li>
+            		        <li><a href="Blog">Blog</a> </li>
+            		        <li class="disabled"><a href="Cours">Cours</a></li>
+            		        <li class="disabled"><a href="Boutique">Boutique</a></li>
+            		        <li><a href="Membres">Membres</a></li>
+            		        <li><a href="Inscription">Mon compte</a> </li>
             		     </ul>
             		     <ul class="nav navbar-nav navbar-right">
             		     <p class="navbar-text"><?=$flash?></p>

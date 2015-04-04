@@ -41,14 +41,16 @@ class ManagerCommentaire extends \Framework\Manager
                     .  'U.USER_NBRECOMMENTAIRESFORUM as nbUserComents, U.USER_NBREBILLETSFORUM as nbUserBillets'
                     . ' from T_COMMENTAIRE C'
                     . ' join T_USER U on U.USER_ID =C.USER_ID'
-                    . ' where C.BIL_ID=?';
+                    . ' where C.BIL_ID=?'
+                    . ' order by C.COM_DATE asc';
                     break;
 
             // commentaire d'un article
             case 2 :
                     $sql = 'select COM_ART_ID as id, COM_ART_DATE as date, COM_ART_DATEMODIF as dateModif,'
                     . ' COM_ART_AUTEUR as auteur, COM_ART_CONTENU as contenu from T_COMMENTAIRE_ARTICLE'
-                    . ' where ART_ID=?';
+                    . ' where ART_ID=?'
+                    . ' order by COM_ART_DATE asc';
                     break;
 
             // message d'erreur
